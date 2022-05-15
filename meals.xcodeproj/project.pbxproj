@@ -11,6 +11,16 @@
 		DF07B31D2826933700C164AB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B31C2826933700C164AB /* ContentView.swift */; };
 		DF07B31F2826933800C164AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF07B31E2826933800C164AB /* Assets.xcassets */; };
 		DF07B3222826933800C164AB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF07B3212826933800C164AB /* Preview Assets.xcassets */; };
+		DF07B32C2826939F00C164AB /* MealList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B32B2826939F00C164AB /* MealList.swift */; };
+		DF07B3342826944600C164AB /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B3332826944600C164AB /* Meal.swift */; };
+		DF07B337282694FE00C164AB /* Meals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B336282694FE00C164AB /* Meals.swift */; };
+		DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B33828269A2A00C164AB /* MealEditor.swift */; };
+		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
+		DF937573283012DA00CBE618 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937572283012DA00CBE618 /* Event.swift */; };
+		DF937575283012E100CBE618 /* Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937574283012E100CBE618 /* Metric.swift */; };
+		DF9375772830137200CBE618 /* MetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375762830137200CBE618 /* MetricView.swift */; };
+		DF9375792830156500CBE618 /* MetricGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375782830156500CBE618 /* MetricGraph.swift */; };
+		DF937584283019D100CBE618 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = DF937583283019D100CBE618 /* Algorithms */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +29,15 @@
 		DF07B31C2826933700C164AB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		DF07B31E2826933800C164AB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DF07B3212826933800C164AB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		DF07B32B2826939F00C164AB /* MealList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealList.swift; sourceTree = "<group>"; };
+		DF07B3332826944600C164AB /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
+		DF07B336282694FE00C164AB /* Meals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meals.swift; sourceTree = "<group>"; };
+		DF07B33828269A2A00C164AB /* MealEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEditor.swift; sourceTree = "<group>"; };
+		DF3D07C2282FFB8D003E36BD /* MealDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetails.swift; sourceTree = "<group>"; };
+		DF937572283012DA00CBE618 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		DF937574283012E100CBE618 /* Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metric.swift; sourceTree = "<group>"; };
+		DF9375762830137200CBE618 /* MetricView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricView.swift; sourceTree = "<group>"; };
+		DF9375782830156500CBE618 /* MetricGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricGraph.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF937584283019D100CBE618 /* Algorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,6 +71,9 @@
 		DF07B3192826933700C164AB /* meals */ = {
 			isa = PBXGroup;
 			children = (
+				DF07B335282694F100C164AB /* Storage */,
+				DF07B3322826943B00C164AB /* Models */,
+				DF07B3312826942C00C164AB /* Views */,
 				DF07B31A2826933700C164AB /* mealsApp.swift */,
 				DF07B31C2826933700C164AB /* ContentView.swift */,
 				DF07B31E2826933800C164AB /* Assets.xcassets */,
@@ -65,6 +88,36 @@
 				DF07B3212826933800C164AB /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		DF07B3312826942C00C164AB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DF07B32B2826939F00C164AB /* MealList.swift */,
+				DF07B33828269A2A00C164AB /* MealEditor.swift */,
+				DF3D07C2282FFB8D003E36BD /* MealDetails.swift */,
+				DF9375762830137200CBE618 /* MetricView.swift */,
+				DF9375782830156500CBE618 /* MetricGraph.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		DF07B3322826943B00C164AB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				DF07B3332826944600C164AB /* Meal.swift */,
+				DF937572283012DA00CBE618 /* Event.swift */,
+				DF937574283012E100CBE618 /* Metric.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DF07B335282694F100C164AB /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				DF07B336282694FE00C164AB /* Meals.swift */,
+			);
+			path = Storage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,6 +136,9 @@
 			dependencies = (
 			);
 			name = meals;
+			packageProductDependencies = (
+				DF937583283019D100CBE618 /* Algorithms */,
+			);
 			productName = meals;
 			productReference = DF07B3172826933700C164AB /* meals.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +167,9 @@
 				Base,
 			);
 			mainGroup = DF07B30E2826933700C164AB;
+			packageReferences = (
+				DF937582283019D100CBE618 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+			);
 			productRefGroup = DF07B3182826933700C164AB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,8 +196,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF937573283012DA00CBE618 /* Event.swift in Sources */,
+				DF07B3342826944600C164AB /* Meal.swift in Sources */,
+				DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */,
+				DF07B32C2826939F00C164AB /* MealList.swift in Sources */,
+				DF9375772830137200CBE618 /* MetricView.swift in Sources */,
+				DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */,
 				DF07B31D2826933700C164AB /* ContentView.swift in Sources */,
+				DF9375792830156500CBE618 /* MetricGraph.swift in Sources */,
+				DF937575283012E100CBE618 /* Metric.swift in Sources */,
 				DF07B31B2826933700C164AB /* mealsApp.swift in Sources */,
+				DF07B337282694FE00C164AB /* Meals.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,6 +407,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DF937582283019D100CBE618 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DF937583283019D100CBE618 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF937582283019D100CBE618 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DF07B30F2826933700C164AB /* Project object */;
 }
