@@ -39,7 +39,7 @@ struct MetricView: View {
 struct MetricView_Previews: PreviewProvider {
     static var previews: some View {
         MetricView(
-            event: Event(id: UUID(), date: Date.now)
+            event: Event(meal_id: UUID(), id: UUID(), date: Date.now)
         )
     }
 }

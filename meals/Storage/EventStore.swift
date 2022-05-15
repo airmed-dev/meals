@@ -1,24 +1,23 @@
 //
-//  MealStore.swift
-//  dboard
+//  EventStore.swift
 //
-//  Created by aclowkey on 15/04/2022.
+//  Created by aclowkey on 15/05/2022.
 //
 
 import Foundation
 import SwiftUI
 
-class MealStore: ObservableObject {
-    @Published var meals: [Meal] = []
+class EventStore: ObservableObject {
+    @Published var events: [Event] = []
     
-    func save(meals: [Meal], completion: @escaping (Result<Int, Error>)->Void) {
+    func save(events: [Event], completion: @escaping (Result<Int, Error>)->Void) {
         DispatchQueue.global(qos: .background).async {
             do {
-                let data = try JSONEncoder().encode(meals)
+                let data = try JSONEncoder().encode(events)
                 let outFile = try self.fileURL()
                 try data.write(to: outFile)
                 DispatchQueue.main.async {
-                    completion(.success(meals.count))
+                    completion(.success(events.count))
                 }
             } catch {
                 DispatchQueue.main.async {
@@ -28,7 +27,7 @@ class MealStore: ObservableObject {
         }
     }
     
-    func load(completion: @escaping (Result<[Meal], Error>)->Void){
+    func load(completion: @escaping (Result<[Event], Error>)->Void){
         DispatchQueue.global(qos: .background).async {
             do{
                 let fileURL = try self.fileURL()
@@ -38,9 +37,9 @@ class MealStore: ObservableObject {
                     }
                     return
                 }
-                self.meals = try JSONDecoder().decode([Meal].self, from: file.availableData)
+                self.events = try JSONDecoder().decode([Event].self, from: file.availableData)
                 DispatchQueue.main.async {
-                    completion(.success(self.meals))
+                    completion(.success(self.events))
                 }
                 
             } catch {
@@ -57,7 +56,7 @@ class MealStore: ObservableObject {
             in: .userDomainMask,
             appropriateFor: nil,
             create: false)
-        .appendingPathComponent("meals.data")
+        .appendingPathComponent("event.data")
     }
 }
 

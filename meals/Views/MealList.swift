@@ -8,23 +8,24 @@
 import SwiftUI
 
 struct MealList: View {
-    // TODO: This is for testing
-    @State var meals: [Meal] = [
-                Meal(id:UUID(), name: "Blueberries", description: "My blueberries"),
-                Meal(id:UUID(), name: "My other blueberries", description: "My other blue berries"),
-            ]
+    @EnvironmentObject var mealStore: MealStore
+    
     @State var showNewMeal: Bool = false
     @State var selectedMeal: Meal = Meal(id: UUID(), name: "", description: "")
     
     var body: some View {
+        let eventStore = EventStore()
+        
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
                 VStack {
                     List {
-                        ForEach(meals, id: \.id) { meal in
+                        ForEach(mealStore.meals, id: \.id) { meal in
                             HStack {
                                 NavigationLink(meal.name, destination: {
                                     MealDetails(meal: meal)
+                                        .environmentObject(eventStore)
+                                        .environmentObject(mealStore)
                                 })
                             }
                         }
@@ -49,7 +50,17 @@ struct MealList: View {
                 Text("Create a new meal")
                     .padding()
                 MealEditor(meal: mealDraft, onSave: { meal in
-                    meals.append(meal)
+                    var newMeals = mealStore.meals
+                    newMeals.append(meal)
+                    mealStore.save(meals: newMeals) { result in
+                        switch result {
+                        case .success(let count):
+                            print("Save \(count) meals")
+                            mealStore.meals = newMeals
+                        case .failure(let error):
+                            print("Failed saving a new meal: \(error)")
+                        }
+                    }
                 })
             }
         }
@@ -58,9 +69,8 @@ struct MealList: View {
 
 struct MealList_Previews: PreviewProvider {
     static var previews: some View {
-        MealList(meals: [
-            Meal(id:UUID(), name: "Blueberries", description: "My blueberries"),
-            Meal(id:UUID(), name: "My other blueberries", description: "My other blue berries"),
-        ])
+        MealList()
+            .environmentObject(MealStore(
+            ))
     }
 }

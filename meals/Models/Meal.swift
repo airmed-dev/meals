@@ -14,7 +14,3 @@ struct Meal: Codable {
     var description: String
 }
 
-struct Event {
-    var id: UUID = UUID()
-    var date: Date = Date()
-}
