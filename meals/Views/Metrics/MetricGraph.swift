@@ -26,54 +26,55 @@ struct MetricGraph: View {
     
     var body: some View {
         VStack {
-        Text("Samples: \(samples.count)")
-        Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
-        if let error = error {
-            Text("ERROR: \(error.localizedDescription)")
-        }
-        GeometryReader { geomtry in
-            let maxWidth = geomtry.size.width*1
-            Path { path  in
-                let normalizedGraph = normalizeGraph(
-                    width: Int(maxWidth),
-                    height: Int(geomtry.size.height)
-                )
-                if !normalizedGraph.isEmpty {
-                    path.move(to: normalizedGraph[0])
-                    
-                    normalizedGraph.dropFirst().forEach { samplePoint in
-                        path.addLine(to: samplePoint)
+            Text("Samples: \(samples.count)")
+            Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
+            if let error = error {
+                Text("ERROR: \(error.localizedDescription)")
+            }
+            
+            GeometryReader { geomtry in
+                let maxWidth = geomtry.size.width*1
+                Path { path  in
+                    let normalizedGraph = normalizeGraph(
+                        width: Int(maxWidth),
+                        height: Int(geomtry.size.height)
+                    )
+                    if !normalizedGraph.isEmpty {
+                        path.move(to: normalizedGraph[0])
+                        
+                        normalizedGraph.dropFirst().forEach { samplePoint in
+                            path.addLine(to: samplePoint)
+                        }
                     }
+                    
                 }
+                .strokedPath(StrokeStyle.init(lineWidth: width, lineCap: .round ))
+                .foregroundColor(.blue)
                 
-            }
-            .strokedPath(StrokeStyle.init(lineWidth: width, lineCap: .round ))
-            .foregroundColor(.blue)
-            
-            let glucoseRange = CGFloat(glucoseMax-glucoseMin)
-            let logBar = (geomtry.size.height / glucoseRange)
-            let yLow = geomtry.size.height - (logBar*70)
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: yLow))
-                path.addLine(to: CGPoint(x: geomtry.size.width, y: yLow ))
-            }
-            .strokedPath(StrokeStyle.init(lineWidth: width/5))
-            .foregroundColor(.gray)
-            
-            let yHigh = geomtry.size.height - (logBar*180)
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: yHigh))
-                path.addLine(to: CGPoint(x: geomtry.size.width, y: yHigh ))
-            }
-            .strokedPath(StrokeStyle.init(lineWidth: width/5))
-            
-            .foregroundColor(.red)
-            Text("180")
-                .font(.subheadline)
-                .position(x: 0, y: yHigh)
-            Text("70")
-               .font(.subheadline)
-               .position(x: 0, y: yLow)
+                let glucoseRange = CGFloat(glucoseMax-glucoseMin)
+                let logBar = (geomtry.size.height / glucoseRange)
+                let yLow = geomtry.size.height - (logBar*70)
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: yLow))
+                    path.addLine(to: CGPoint(x: geomtry.size.width, y: yLow ))
+                }
+                .strokedPath(StrokeStyle.init(lineWidth: width/5))
+                .foregroundColor(.gray)
+                
+                let yHigh = geomtry.size.height - (logBar*180)
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: yHigh))
+                    path.addLine(to: CGPoint(x: geomtry.size.width, y: yHigh ))
+                }
+                .strokedPath(StrokeStyle.init(lineWidth: width/5))
+                
+                .foregroundColor(.red)
+                Text("180")
+                    .font(.subheadline)
+                    .position(x: 0, y: yHigh)
+                Text("70")
+                   .font(.subheadline)
+                   .position(x: 0, y: yLow)
 
             }
         }
