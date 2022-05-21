@@ -18,19 +18,24 @@ struct MealList: View {
         NavigationView {
             let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
             ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    LazyVGrid (columns: twoColumns){
-                        ForEach(meals, id: \.id) { meal in
-                                HStack {
-                                    NavigationLink(destination: {
-                                        MealDetails(meal: meal)
-                                    }) {
-                                        MealCard(meal: meal)
+                ZStack {
+                    Color.gray.opacity(0.4)
+                    ScrollView {
+                        LazyVGrid (columns: twoColumns){
+                            ForEach(meals, id: \.id) { meal in
+                                    HStack {
+                                        NavigationLink(destination: {
+                                            MealDetails(meal: meal)
+                                        }) {
+                                            MealCard(meal: meal)
+                                                .padding(10)
+                                        }
                                     }
                                 }
-                            }
+                        }
                     }
-                }.navigationTitle("Meals")
+                    .navigationTitle("Meals")
+                }
                 
                 Button(action: {showNewMeal.toggle() }) {
                    Image(systemName: "plus")
