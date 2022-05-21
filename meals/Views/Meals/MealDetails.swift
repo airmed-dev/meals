@@ -15,47 +15,41 @@ struct MealDetails: View {
     @State var mealEvents: [Event] = []
     
     var body: some View {
-        VStack(alignment: .leading) {
-            ZStack(alignment: .bottom) {
-                Image(systemName: "photo.fill")
-                    .resizable()
-                    .frame(width: 300, height: 300)
-                    .foregroundColor(.blue)
-                Text(meal.name)
-                    .font(.system(size: 30))
-                    .padding()
-                    .background(Color.gray.opacity(0.5))
-            }
-            Text(meal.description)
-                .padding()
-            HStack {
-                Text("Meal events")
-                    .font(.headline)
-                Text("total: \(mealEvents.count)")
-                    .font(.subheadline)
-                    .foregroundColor(Color.black.opacity(0.95))
-            }
+        ZStack(alignment: .bottom) {
             ScrollView {
-                ForEach(mealEvents, id: \.id) { mealEvent in
-                    NavigationLink(
-                        destination: {
-                            MetricView(event: mealEvent)
-                        },
-                        label: {
-                            HStack {
-                               Text(mealEvent.date.ISO8601Format())
-                               Spacer()
-                               Image(systemName: "chart.xyaxis.line")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                            }
+                VStack(alignment: .leading) {
+                    MealCard(meal: meal)
+                    Text(meal.description)
+                        .padding()
+                    
+                    
+                    HStack() {
+                        Text("Meal events")
+                            .font(.headline)
+                        Text("total: \(mealEvents.count)")
+                            .font(.subheadline)
+                            .foregroundColor(Color.black.opacity(0.95))
+                    }.padding()
+                
+                        ForEach(mealEvents, id: \.id) { mealEvent in
+                            NavigationLink(
+                                destination: {
+                                    MetricView(event: mealEvent)
+                                },
+                                label: {
+                                    HStack {
+                                       Text(mealEvent.date.ISO8601Format())
+                                       Spacer()
+                                       Image(systemName: "chart.xyaxis.line")
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                    }
+                                }
+                            )
+                            .foregroundColor(.primary)
                         }
-                    )
-                    .foregroundColor(.primary)
                 }
             }
-            Spacer()
-
             HStack(alignment: .lastTextBaseline) {
                 Button("Log Entry") {
                     var newEvents = eventStore.events
@@ -71,6 +65,8 @@ struct MealDetails: View {
                     }
                 }
             }
+            .frame(maxWidth: .infinity)
+            .background(.white)
         }
         .padding()
         .toolbar {

@@ -19,7 +19,7 @@ struct MealList: View {
             let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
             ZStack(alignment: .bottomTrailing) {
                 ZStack {
-                    Color.gray.opacity(0.4)
+                    Color.gray.opacity(0.1)
                     ScrollView {
                         LazyVGrid (columns: twoColumns){
                             ForEach(meals, id: \.id) { meal in
