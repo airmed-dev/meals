@@ -9,6 +9,11 @@ import SwiftUI
 
 class MealStore: ObservableObject {
     @Published var meals: [Meal] = []
+    static let exampleMeal = Meal(
+           id: UUID(),
+           name: "Pitaya Smoothie Bowl",
+           description: "Add the frozen pitaya, banana, strawberries and coconut water into a high powered blender. Blend on high for one minute, until well combined. jour your pitaya smoothie into a bowl and add your toppings."
+    )
     
     func save(meals: [Meal], completion: @escaping (Result<Int, Error>)->Void) {
         DispatchQueue.global(qos: .background).async {

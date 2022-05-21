@@ -10,9 +10,9 @@ import SwiftUI
 
 struct MetricSample {
     var date: Date
-    var value: Float
+    var value: Double
     
-    init(_ date:Date, _ value:Float){
+    init(_ date:Date, _ value:Double){
         self.date = date
         self.value = value
     }

@@ -8,24 +8,21 @@
 import SwiftUI
 
 struct MealList: View {
-    @EnvironmentObject var mealStore: MealStore
+    var mealStore: MealStore = MealStore()
     
+    @State var meals: [Meal] = []
     @State var showNewMeal: Bool = false
     @State var selectedMeal: Meal = Meal(id: UUID(), name: "", description: "")
     
     var body: some View {
-        let eventStore = EventStore()
-        
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
                 VStack {
                     List {
-                        ForEach(mealStore.meals, id: \.id) { meal in
+                        ForEach(meals, id: \.id) { meal in
                             HStack {
                                 NavigationLink(meal.name, destination: {
                                     MealDetails(meal: meal)
-                                        .environmentObject(eventStore)
-                                        .environmentObject(mealStore)
                                 })
                             }
                         }
@@ -56,12 +53,22 @@ struct MealList: View {
                         switch result {
                         case .success(let count):
                             print("Save \(count) meals")
-                            mealStore.meals = newMeals
+                            meals = newMeals
                         case .failure(let error):
                             print("Failed saving a new meal: \(error)")
                         }
                     }
                 })
+            }
+        }
+        .onAppear {
+            mealStore.load {  result in
+                switch result {
+                case .success(let loadedMeals):
+                   meals = loadedMeals
+                case .failure(let error):
+                    print("Failed saving a new meal: \(error)")
+                }
             }
         }
     }

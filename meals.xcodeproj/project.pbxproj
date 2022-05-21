@@ -15,12 +15,14 @@
 		DF07B3342826944600C164AB /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B3332826944600C164AB /* Meal.swift */; };
 		DF07B337282694FE00C164AB /* MealsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B336282694FE00C164AB /* MealsStore.swift */; };
 		DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B33828269A2A00C164AB /* MealEditor.swift */; };
+		DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF114AF1283223EC0089BF0B /* HealthKit.framework */; };
+		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
+		DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37D5E828354573007BEFE3 /* HealthKit.swift */; };
 		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
 		DF937573283012DA00CBE618 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937572283012DA00CBE618 /* Event.swift */; };
 		DF937575283012E100CBE618 /* Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937574283012E100CBE618 /* Metric.swift */; };
 		DF9375772830137200CBE618 /* MetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375762830137200CBE618 /* MetricView.swift */; };
 		DF9375792830156500CBE618 /* MetricGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375782830156500CBE618 /* MetricGraph.swift */; };
-		DF937584283019D100CBE618 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = DF937583283019D100CBE618 /* Algorithms */; };
 		DFEBBE342830C8F100369EEB /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEBBE332830C8F100369EEB /* EventStore.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +36,10 @@
 		DF07B3332826944600C164AB /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
 		DF07B336282694FE00C164AB /* MealsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealsStore.swift; sourceTree = "<group>"; };
 		DF07B33828269A2A00C164AB /* MealEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEditor.swift; sourceTree = "<group>"; };
+		DF114AEF283223EC0089BF0B /* meals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meals.entitlements; sourceTree = "<group>"; };
+		DF114AF1283223EC0089BF0B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
+		DF37D5E828354573007BEFE3 /* HealthKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKit.swift; sourceTree = "<group>"; };
 		DF3D07C2282FFB8D003E36BD /* MealDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetails.swift; sourceTree = "<group>"; };
 		DF937572283012DA00CBE618 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		DF937574283012E100CBE618 /* Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metric.swift; sourceTree = "<group>"; };
@@ -47,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF937584283019D100CBE618 /* Algorithms in Frameworks */,
+				DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +65,7 @@
 			children = (
 				DF07B3192826933700C164AB /* meals */,
 				DF07B3182826933700C164AB /* Products */,
+				DF114AF0283223EC0089BF0B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,6 +80,7 @@
 		DF07B3192826933700C164AB /* meals */ = {
 			isa = PBXGroup;
 			children = (
+				DF114AEF283223EC0089BF0B /* meals.entitlements */,
 				DF07B335282694F100C164AB /* Storage */,
 				DF07B3322826943B00C164AB /* Models */,
 				DF07B3312826942C00C164AB /* Views */,
@@ -80,6 +88,7 @@
 				DF07B31C2826933700C164AB /* ContentView.swift */,
 				DF07B31E2826933800C164AB /* Assets.xcassets */,
 				DF07B3202826933800C164AB /* Preview Content */,
+				DF37D5E828354573007BEFE3 /* HealthKit.swift */,
 			);
 			path = meals;
 			sourceTree = "<group>";
@@ -95,11 +104,8 @@
 		DF07B3312826942C00C164AB /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DF07B32B2826939F00C164AB /* MealList.swift */,
-				DF07B33828269A2A00C164AB /* MealEditor.swift */,
-				DF3D07C2282FFB8D003E36BD /* MealDetails.swift */,
-				DF9375762830137200CBE618 /* MetricView.swift */,
-				DF9375782830156500CBE618 /* MetricGraph.swift */,
+				DF114AED283223610089BF0B /* Meals */,
+				DF114AEE283223750089BF0B /* Metrics */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -123,6 +129,34 @@
 			path = Storage;
 			sourceTree = "<group>";
 		};
+		DF114AED283223610089BF0B /* Meals */ = {
+			isa = PBXGroup;
+			children = (
+				DF07B32B2826939F00C164AB /* MealList.swift */,
+				DF07B33828269A2A00C164AB /* MealEditor.swift */,
+				DF3D07C2282FFB8D003E36BD /* MealDetails.swift */,
+				DF282F702838B8380044C1EF /* MealCard.swift */,
+			);
+			path = Meals;
+			sourceTree = "<group>";
+		};
+		DF114AEE283223750089BF0B /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				DF9375762830137200CBE618 /* MetricView.swift */,
+				DF9375782830156500CBE618 /* MetricGraph.swift */,
+			);
+			path = Metrics;
+			sourceTree = "<group>";
+		};
+		DF114AF0283223EC0089BF0B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF114AF1283223EC0089BF0B /* HealthKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -140,7 +174,6 @@
 			);
 			name = meals;
 			packageProductDependencies = (
-				DF937583283019D100CBE618 /* Algorithms */,
 			);
 			productName = meals;
 			productReference = DF07B3172826933700C164AB /* meals.app */;
@@ -171,7 +204,6 @@
 			);
 			mainGroup = DF07B30E2826933700C164AB;
 			packageReferences = (
-				DF937582283019D100CBE618 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 			);
 			productRefGroup = DF07B3182826933700C164AB /* Products */;
 			projectDirPath = "";
@@ -201,6 +233,8 @@
 			files = (
 				DF937573283012DA00CBE618 /* Event.swift in Sources */,
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
+				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
+				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
 				DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */,
 				DF07B32C2826939F00C164AB /* MealList.swift in Sources */,
 				DF9375772830137200CBE618 /* MetricView.swift in Sources */,
@@ -336,12 +370,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = meals/meals.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"meals/Preview Content\"";
 				DEVELOPMENT_TEAM = Z2464VPQLZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "The app needs to get glucose data";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "The app needs to get glucose data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -365,12 +402,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = meals/meals.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"meals/Preview Content\"";
 				DEVELOPMENT_TEAM = Z2464VPQLZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "The app needs to get glucose data";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "The app needs to get glucose data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -411,25 +451,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		DF937582283019D100CBE618 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-algorithms.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		DF937583283019D100CBE618 /* Algorithms */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF937582283019D100CBE618 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
-			productName = Algorithms;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DF07B30F2826933700C164AB /* Project object */;
 }
