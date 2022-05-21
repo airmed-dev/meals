@@ -11,18 +11,12 @@ struct MealCard: View {
     @State var meal: Meal
     var body: some View {
         VStack {
-            GeometryReader { geometry in
-                Image(systemName: "photo.fill")
-                    .resizable()
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height / 2
-                    )
-            }
+            Image(systemName: "photo.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
             Text(meal.name)
                 .font(.headline)
-            Spacer()
-
+                .foregroundColor(.black)
         }
     }
 }

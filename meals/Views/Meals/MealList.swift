@@ -16,16 +16,19 @@ struct MealList: View {
     
     var body: some View {
         NavigationView {
+            let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
             ZStack(alignment: .bottomTrailing) {
-                VStack {
-                    List {
+                ScrollView {
+                    LazyVGrid (columns: twoColumns){
                         ForEach(meals, id: \.id) { meal in
-                            HStack {
-                                NavigationLink(meal.name, destination: {
-                                    MealDetails(meal: meal)
-                                })
+                                HStack {
+                                    NavigationLink(destination: {
+                                        MealDetails(meal: meal)
+                                    }) {
+                                        MealCard(meal: meal)
+                                    }
+                                }
                             }
-                        }
                     }
                 }.navigationTitle("Meals")
                 
@@ -76,7 +79,14 @@ struct MealList: View {
 
 struct MealList_Previews: PreviewProvider {
     static var previews: some View {
-        MealList()
+        MealList(meals:[
+            MealStore.exampleMeal,
+            MealStore.exampleMeal,
+            MealStore.exampleMeal,
+            MealStore.exampleMeal,
+            MealStore.exampleMeal,
+            MealStore.exampleMeal
+        ])
             .environmentObject(MealStore(
             ))
     }
