@@ -15,7 +15,7 @@ enum HealthKitUtilsErrors: Error {
 class HealthKitUtils {
     var healthKitStore = HKHealthStore()
     
-    func getSamples(event: Event, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
+    func getSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
         if debug {
             completion(.success(getRandomSamples(for: event)))
         }
@@ -37,9 +37,9 @@ class HealthKitUtils {
             
             let samplePredicate = HKQuery.predicateForSamples(
                 withStart: event.date,
-                end: event.date.advanced(by: threeHours))
+                end: event.date.advanced(by: hours))
             
-            let sampleSort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+            let sampleSort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
             
             let sampleQuery = HKSampleQuery(
                 sampleType: glucoseSampleType,
