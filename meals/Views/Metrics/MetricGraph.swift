@@ -19,6 +19,7 @@ struct MetricGraph: View {
     
     @State var debug = false
     @State var error: Error? = nil
+    @State var hours = 3
     
     var width: CGFloat = 5
     let glucoseMin = 40
@@ -39,12 +40,14 @@ struct MetricGraph: View {
                         width: Int(maxWidth),
                         height: Int(geomtry.size.height)
                     )
-                    if !normalizedGraph.isEmpty {
-                        path.move(to: normalizedGraph[0])
-                        
-                        normalizedGraph.dropFirst().forEach { samplePoint in
-                            path.addLine(to: samplePoint)
-                        }
+                    normalizedGraph.forEach { sample in
+                        path.move(to: sample)
+                        path.addArc(
+                            center: sample,
+                            radius: 3,
+                            startAngle: Angle(), endAngle: Angle(),
+                            clockwise: false
+                        )
                     }
                     
                 }
@@ -54,6 +57,7 @@ struct MetricGraph: View {
                 let glucoseRange = CGFloat(glucoseMax-glucoseMin)
                 let logBar = (geomtry.size.height / glucoseRange)
                 let yLow = geomtry.size.height - (logBar*70)
+                
                 Path { path in
                     path.move(to: CGPoint(x: 0, y: yLow))
                     path.addLine(to: CGPoint(x: geomtry.size.width, y: yLow ))
@@ -75,8 +79,47 @@ struct MetricGraph: View {
                 Text("70")
                    .font(.subheadline)
                    .position(x: 0, y: yLow)
+                
+                // Time slices
+                HStack{
+                    Text(event.date.ISO8601Format())
+                        .font(.subheadline)
+                        .position(x: 50, y: geomtry.size.height)
+                    Spacer()
+                    Text(event.date.advanced(by: 60*60*TimeInterval(hours)).ISO8601Format())
+                        .font(.subheadline)
+                        .position(x: geomtry.size.width-30, y: geomtry.size.height)
+                }
+                .padding()
 
             }
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 15, green: 32, blue: 39),
+                        Color(red: 15, green: 32, blue: 39),
+                        Color(red: 44, green: 83, blue: 100),
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+           
+            Menu {
+                Button {
+                    hours = 3
+                } label: {
+                    Text("3 hours")
+                }
+                Button {
+                    hours = 6
+                } label: {
+                    Text("6 hours")
+                }
+            } label: {
+                Text("Time period: \(hours) hours")
+            }
+            
         }
         .onAppear {
             authorizeHealthKit { authorized, error in
@@ -93,16 +136,25 @@ struct MetricGraph: View {
                 }
                 print("Authorized succesfully")
                 isAuthorized=true
-                
-                HealthKitUtils().getSamples(event: event, debug: debug) { result in
-                    switch result {
-                    case .success(let samples):
-                        self.samples = samples
-                        self.error = nil
-                    case .failure(let error):
-                        self.error = error
-                    }
-                }
+                    
+                loadSamples()
+            }
+        }
+        .onChange(of: self.hours) { _ in
+            loadSamples()
+        }
+    }
+    
+    func loadSamples(){
+        let hoursInSeconds = 60*60*TimeInterval(hours)
+        
+        HealthKitUtils().getSamples(event: event,hours: hoursInSeconds, debug: debug) { result in
+            switch result {
+            case .success(let samples):
+                self.samples = samples
+                self.error = nil
+            case .failure(let error):
+                self.error = error
             }
         }
     }

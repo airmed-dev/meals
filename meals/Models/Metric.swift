@@ -8,7 +8,8 @@
 import SwiftUI
 
 
-struct MetricSample {
+struct MetricSample: Identifiable {
+    var id: UUID = UUID()
     var date: Date
     var value: Double
     
