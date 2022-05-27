@@ -22,7 +22,7 @@ struct MealDetails: View {
                     VStack(alignment: .leading) {
                         Text("Description")
                             .font(.headline)
-                            .padding()
+                            .padding(.bottom)
                         Text(meal.description)
                     }
                     .padding()
@@ -47,18 +47,14 @@ struct MealDetails: View {
                                     MetricView(event: mealEvent)
                                 },
                                 label: {
-                                    HStack {
-                                       Text(mealEvent.date.ISO8601Format())
-                                       Spacer()
-                                       Image(systemName: "chart.xyaxis.line")
-                                            .resizable()
-                                            .frame(width: 30, height: 30)
-                                    }
+                                    MetricView(event: mealEvent)
+                                        .frame(height: 200)
                                 }
                             )
                             .foregroundColor(.primary)
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding()
                     .background(.white)
                     .cornerRadius(15)
