@@ -15,14 +15,14 @@ class MealStore: ObservableObject {
            description: "Add the frozen pitaya, banana, strawberries and coconut water into a high powered blender. Blend on high for one minute, until well combined. jour your pitaya smoothie into a bowl and add your toppings."
     )
     
-    func save(meals: [Meal], completion: @escaping (Result<Int, Error>)->Void) {
+    func save(meals: [Meal], completion: @escaping (Result<[Meal], Error>)->Void) {
         DispatchQueue.global(qos: .background).async {
             do {
                 let data = try JSONEncoder().encode(meals)
                 let outFile = try self.fileURL()
                 try data.write(to: outFile)
                 DispatchQueue.main.async {
-                    completion(.success(meals.count))
+                    completion(.success(meals))
                 }
             } catch {
                 DispatchQueue.main.async {

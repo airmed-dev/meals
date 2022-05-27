@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct MealList: View {
-    var mealStore: MealStore = MealStore()
+    let mealStore: MealStore = MealStore()
+    let photoStore: PhotoStore = PhotoStore()
     
     @State var meals: [Meal] = []
     @State var showNewMeal: Bool = false
@@ -54,29 +55,24 @@ struct MealList: View {
                 )
                 Text("Create a new meal")
                     .padding()
-                MealEditor(meal: mealDraft, onSave: { meal in
-                    var newMeals = mealStore.meals
-                    newMeals.append(meal)
-                    mealStore.save(meals: newMeals) { result in
-                        switch result {
-                        case .success(let count):
-                            print("Save \(count) meals")
-                            meals = newMeals
-                        case .failure(let error):
-                            print("Failed saving a new meal: \(error)")
-                        }
+                MealEditor(meal: mealDraft)
+                    .onDisappear {
+                       loadMeals()
                     }
-                })
             }
         }
         .onAppear {
-            mealStore.load {  result in
-                switch result {
-                case .success(let loadedMeals):
-                   meals = loadedMeals
-                case .failure(let error):
-                    print("Failed saving a new meal: \(error)")
-                }
+           loadMeals()
+        }
+    }
+    
+    func loadMeals() {
+        mealStore.load {  result in
+            switch result {
+            case .success(let loadedMeals):
+               meals = loadedMeals
+            case .failure(let error):
+                print("Failed saving a new meal: \(error)")
             }
         }
     }

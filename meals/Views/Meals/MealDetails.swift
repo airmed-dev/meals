@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MealDetails: View {
+    var photoStore: PhotoStore = PhotoStore()
     var eventStore: EventStore = EventStore()
     var mealStore: MealStore = MealStore()
     
@@ -83,21 +84,7 @@ struct MealDetails: View {
         .toolbar {
             NavigationLink(
                 destination: {
-                    MealEditor(meal: meal, onSave: { meal in
-                        var newMeals = mealStore.meals
-                        let mealIndex = newMeals.firstIndex(where: { $0.id == meal.id })!
-                        newMeals[mealIndex] = meal
-                        
-                        mealStore.save(meals: newMeals, completion: { result in
-                            switch result {
-                            case .success(let count):
-                                print("Saved \(count) meals")
-                            case .failure(let error):
-                                print("Failed saving meals: \(error)")
-                            }
-                        })
-                        
-                    })
+                    MealEditor(meal: meal)
                 },
                 label: {
                    Text("Edit")

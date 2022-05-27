@@ -7,12 +7,23 @@
 
 import Foundation
 import PhotosUI
-
+import SwiftUI
 
 class PhotoStore {
     
     var documentsUrl: URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
+    
+    func getImage(meal: Meal) -> Image {
+        guard let image = load(fileName: "\(meal.id).jpg") else {
+            return Image(systemName: "photo.fill")
+        }
+        return Image(uiImage: image)
+    }
+    
+    func saveImage(meal: Meal, image: UIImage) {
+        save(fileName: "\(meal.id).jpg" , image: image)
     }
     
     private func save(fileName: String, image: UIImage) -> String? {

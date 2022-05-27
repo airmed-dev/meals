@@ -9,10 +9,11 @@ import SwiftUI
 
 struct MealCard: View {
     @State var meal: Meal
+    let photoStore = PhotoStore()
     
     var body: some View {
         ZStack(alignment: .bottomLeading){
-            Image("Blueberry")
+            photoStore.getImage(meal: meal)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
             
