@@ -21,39 +21,43 @@ struct MetricGraph: View {
     @State var error: Error? = nil
     @State var hours = 3
     
-    var width: CGFloat = 5
+    var width: CGFloat = 7
     let glucoseMin = 40
-    let glucoseMax = 500
+    let glucoseMax = 400
+    
+    let rangeMin: Double = 70
+    let rangeMax: Double = 180
     
     var body: some View {
         VStack {
-            Text("Samples: \(samples.count)")
-            Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
+            if debug {
+                Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
+                Text("Samples: \( samples.count )")
+            }
             if let error = error {
                 Text("ERROR: \(error.localizedDescription)")
             }
             
             GeometryReader { geomtry in
-                let maxWidth = geomtry.size.width*1
-                Path { path  in
-                    let normalizedGraph = normalizeGraph(
-                        width: Int(maxWidth),
-                        height: Int(geomtry.size.height)
-                    )
-                    normalizedGraph.forEach { sample in
-                        path.move(to: sample)
-                        path.addArc(
-                            center: sample,
-                            radius: 3,
-                            startAngle: Angle(), endAngle: Angle(),
-                            clockwise: false
-                        )
-                    }
-                    
+                // Glucose values
+                let normalizedGraph = normalizeGraph(
+                    samples: samples,
+                    width: geomtry.size.width,
+                    height: geomtry.size.height,
+                    dateMin: start,
+                    dateMax: end
+                )
+                ForEach(normalizedGraph, id: \.id) { sample in
+                    let color = sample.value > rangeMin && sample.value < rangeMax
+                    ? Color.green
+                    : Color.red
+                    Circle()
+                        .fill(color)
+                        .frame(width: width, height: width)
+                        .position(x: sample.x, y: sample.y)
                 }
-                .strokedPath(StrokeStyle.init(lineWidth: width, lineCap: .round ))
-                .foregroundColor(.blue)
-                
+
+                // Range axises
                 let glucoseRange = CGFloat(glucoseMax-glucoseMin)
                 let logBar = (geomtry.size.height / glucoseRange)
                 let yLow = geomtry.size.height - (logBar*70)
@@ -71,8 +75,19 @@ struct MetricGraph: View {
                     path.addLine(to: CGPoint(x: geomtry.size.width, y: yHigh ))
                 }
                 .strokedPath(StrokeStyle.init(lineWidth: width/5))
-                
                 .foregroundColor(.red)
+                
+                let yVeryHigh = geomtry.size.height - (logBar*250)
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: yVeryHigh))
+                    path.addLine(to: CGPoint(x: geomtry.size.width, y: yVeryHigh ))
+                }
+                .strokedPath(StrokeStyle.init(lineWidth: width/5))
+                .foregroundColor(.red)
+                 
+                Text("250")
+                    .font(.subheadline)
+                    .position(x: 0, y: yVeryHigh)
                 Text("180")
                     .font(.subheadline)
                     .position(x: 0, y: yHigh)
@@ -80,46 +95,44 @@ struct MetricGraph: View {
                    .font(.subheadline)
                    .position(x: 0, y: yLow)
                 
-                // Time slices
+                // Time Axi
                 HStack{
-                    Text(event.date.ISO8601Format())
+                    Text(formatAsTime(date: event.date))
                         .font(.subheadline)
                         .position(x: 50, y: geomtry.size.height)
                     Spacer()
-                    Text(event.date.advanced(by: 60*60*TimeInterval(hours)).ISO8601Format())
-                        .font(.subheadline)
-                        .position(x: geomtry.size.width-30, y: geomtry.size.height)
+                    Text(
+                        formatAsTime(date:
+                            event.date.advanced(by: 60*60*TimeInterval(hours))
+                         )
+                    )
+                    .font(.subheadline)
+                    .position(x: geomtry.size.width-200, y: geomtry.size.height)
                 }
-                .padding()
-
-            }
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(red: 15, green: 32, blue: 39),
-                        Color(red: 15, green: 32, blue: 39),
-                        Color(red: 44, green: 83, blue: 100),
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-           
-            Menu {
-                Button {
-                    hours = 3
-                } label: {
-                    Text("3 hours")
-                }
-                Button {
-                    hours = 6
-                } label: {
-                    Text("6 hours")
-                }
-            } label: {
-                Text("Time period: \(hours) hours")
+                .frame(maxWidth: .infinity)
             }
             
+           
+
+            
+        }
+        .toolbar {
+            ToolbarItemGroup {
+                 Menu {
+                    Button {
+                        hours = 3
+                    } label: {
+                        Text("3 hours")
+                    }
+                    Button {
+                        hours = 6
+                    } label: {
+                        Text("6 hours")
+                    }
+                } label: {
+                    Text("\(hours) hours")
+                }
+            }
         }
         .onAppear {
             authorizeHealthKit { authorized, error in
@@ -145,13 +158,20 @@ struct MetricGraph: View {
         }
     }
     
+    func formatAsTime(date:Date) -> String {
+        let hourlyFormatter = DateFormatter()
+        hourlyFormatter.dateFormat = "HH:mm"
+        return hourlyFormatter.string(from: date)
+    }
+    
     func loadSamples(){
         let hoursInSeconds = 60*60*TimeInterval(hours)
         
-        HealthKitUtils().getSamples(event: event,hours: hoursInSeconds, debug: debug) { result in
+        HealthKitUtils().getSamples(event: event, hours: hoursInSeconds) { result in
             switch result {
             case .success(let samples):
                 self.samples = samples
+                self.end = event.date.advanced(by: hoursInSeconds)
                 self.error = nil
             case .failure(let error):
                 self.error = error
@@ -159,16 +179,23 @@ struct MetricGraph: View {
         }
     }
     
-    func normalizeGraph(width: Int, height: Int) -> [CGPoint] {
-        let xOffset = 0
-        let yOffset = 0
+    func normalizeGraph(samples: [MetricSample],
+                        width: Double, height: Double,
+                        dateMin: Date, dateMax: Date) -> [GraphPoint] {
+        let xScale = width / (dateMax.timeIntervalSince(dateMin) * 60.0)
+        let yScale = height / Double(glucoseMax - glucoseMin)
         
-        return samples.enumerated().map { sampleIndex, samplePoint in
-            let xScale = width / (samples.count)
-            let yScale = height / (glucoseMax-glucoseMin)
+        return samples.enumerated().map { _, samplePoint in
             
-            let y = height - Int(samplePoint.value) * yScale
-            return CGPoint(x: xOffset + sampleIndex*xScale, y: y)
+            let y = height - samplePoint.value * yScale
+            let x = (samplePoint.date.timeIntervalSince(dateMin) * 60.0)
+                    * xScale
+            return GraphPoint(
+                x: x,
+                y: y,
+                value: samplePoint.value,
+                id: "\(x)"
+            )
         }
     }
         
@@ -191,16 +218,26 @@ struct MetricGraph: View {
         HKHealthStore().requestAuthorization(toShare: [], read: healthKitTypesToRead) { (success, error) in
            completion(success, error)
         }
-        
     }
 }
 
+
+struct GraphPoint: Identifiable, Equatable {
+    let x: Double
+    let y: Double
+    let value: Double
+    let id: String
+}
 
 struct MetricGraph_Previews: PreviewProvider {
     static var previews: some View {
         MetricGraph(
             samples: [
-                MetricSample(Date.init(timeIntervalSinceNow: 480), 70),
+                MetricSample(Date.init(timeIntervalSinceNow: 480), 100),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 100),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 150),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 200),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
             ],
             event: Event(meal_id: UUID()),
@@ -209,6 +246,5 @@ struct MetricGraph_Previews: PreviewProvider {
             debug: true
         )
         .frame(width: 300, height: 300)
-        .border(.black)
     }
 }
