@@ -19,18 +19,28 @@ struct MealDetails: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     MealCard(meal: meal)
-                    Text(meal.description)
-                        .padding()
-                    
-                    
-                    HStack() {
-                        Text("Meal events")
+                    VStack(alignment: .leading) {
+                        Text("Description")
                             .font(.headline)
-                        Text("total: \(mealEvents.count)")
-                            .font(.subheadline)
-                            .foregroundColor(Color.black.opacity(0.95))
-                    }.padding()
-                
+                            .padding()
+                        Text(meal.description)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .background(.white)
+                    .cornerRadius(15)
+                    
+                    
+                    VStack(alignment: .leading) {
+                        HStack() {
+                            Text("Meal events")
+                                .font(.headline)
+                            Text("total: \(mealEvents.count)")
+                                .font(.subheadline)
+                                .foregroundColor(Color.black.opacity(0.95))
+                        }
+
+                        
                         ForEach(mealEvents, id: \.id) { mealEvent in
                             NavigationLink(
                                 destination: {
@@ -48,6 +58,10 @@ struct MealDetails: View {
                             )
                             .foregroundColor(.primary)
                         }
+                    }
+                    .padding()
+                    .background(.white)
+                    .cornerRadius(15)
                 }
             }
             HStack(alignment: .lastTextBaseline) {
@@ -69,6 +83,7 @@ struct MealDetails: View {
             .background(.white)
         }
         .padding()
+        .background(.gray.opacity(0.2))
         .toolbar {
             NavigationLink(
                 destination: {
