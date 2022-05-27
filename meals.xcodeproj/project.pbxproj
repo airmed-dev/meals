@@ -17,6 +17,8 @@
 		DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B33828269A2A00C164AB /* MealEditor.swift */; };
 		DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF114AF1283223EC0089BF0B /* HealthKit.framework */; };
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
+		DF282F732838BC700044C1EF /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F722838BC700044C1EF /* PhotoStore.swift */; };
+		DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */; };
 		DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37D5E828354573007BEFE3 /* HealthKit.swift */; };
 		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
 		DF937573283012DA00CBE618 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937572283012DA00CBE618 /* Event.swift */; };
@@ -39,6 +41,8 @@
 		DF114AEF283223EC0089BF0B /* meals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meals.entitlements; sourceTree = "<group>"; };
 		DF114AF1283223EC0089BF0B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
+		DF282F722838BC700044C1EF /* PhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
+		DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerRadiusModifier.swift; sourceTree = "<group>"; };
 		DF37D5E828354573007BEFE3 /* HealthKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKit.swift; sourceTree = "<group>"; };
 		DF3D07C2282FFB8D003E36BD /* MealDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetails.swift; sourceTree = "<group>"; };
 		DF937572283012DA00CBE618 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -104,6 +108,7 @@
 		DF07B3312826942C00C164AB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF282F742838C26D0044C1EF /* Helpers */,
 				DF114AED283223610089BF0B /* Meals */,
 				DF114AEE283223750089BF0B /* Metrics */,
 			);
@@ -125,6 +130,7 @@
 			children = (
 				DF07B336282694FE00C164AB /* MealsStore.swift */,
 				DFEBBE332830C8F100369EEB /* EventStore.swift */,
+				DF282F722838BC700044C1EF /* PhotoStore.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -155,6 +161,14 @@
 				DF114AF1283223EC0089BF0B /* HealthKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DF282F742838C26D0044C1EF /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -236,11 +250,13 @@
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
 				DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */,
+				DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */,
 				DF07B32C2826939F00C164AB /* MealList.swift in Sources */,
 				DF9375772830137200CBE618 /* MetricView.swift in Sources */,
 				DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */,
 				DFEBBE342830C8F100369EEB /* EventStore.swift in Sources */,
 				DF07B31D2826933700C164AB /* ContentView.swift in Sources */,
+				DF282F732838BC700044C1EF /* PhotoStore.swift in Sources */,
 				DF9375792830156500CBE618 /* MetricGraph.swift in Sources */,
 				DF937575283012E100CBE618 /* Metric.swift in Sources */,
 				DF07B31B2826933700C164AB /* mealsApp.swift in Sources */,

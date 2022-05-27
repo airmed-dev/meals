@@ -28,6 +28,8 @@ struct MetricGraph: View {
     let rangeMin: Double = 70
     let rangeMax: Double = 180
     
+    let textPadding:CGFloat = -15
+    
     var body: some View {
         VStack {
             if debug {
@@ -87,19 +89,19 @@ struct MetricGraph: View {
                  
                 Text("250")
                     .font(.subheadline)
-                    .position(x: 0, y: yVeryHigh)
+                    .position(x: textPadding, y: yVeryHigh)
                 Text("180")
                     .font(.subheadline)
-                    .position(x: 0, y: yHigh)
+                    .position(x: textPadding, y: yHigh)
                 Text("70")
                    .font(.subheadline)
-                   .position(x: 0, y: yLow)
+                   .position(x: textPadding, y: yLow)
                 
                 // Time Axi
                 HStack{
                     Text(formatAsTime(date: event.date))
                         .font(.subheadline)
-                        .position(x: 50, y: geomtry.size.height)
+                        .position(x: 50, y: geomtry.size.height-textPadding)
                     Spacer()
                     Text(
                         formatAsTime(date:
@@ -107,7 +109,7 @@ struct MetricGraph: View {
                          )
                     )
                     .font(.subheadline)
-                    .position(x: geomtry.size.width-200, y: geomtry.size.height)
+                    .position(x: geomtry.size.width-200, y: geomtry.size.height-textPadding)
                 }
                 .frame(maxWidth: .infinity)
             }
