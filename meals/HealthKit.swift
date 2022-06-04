@@ -15,7 +15,7 @@ enum HealthKitUtilsErrors: Error {
 class HealthKitUtils {
     var healthKitStore = HKHealthStore()
     
-    func getSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
+    func getGlucoseSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
         if debug {
             completion(.success(getRandomSamples(for: event)))
         }
@@ -82,4 +82,43 @@ class HealthKitUtils {
         return metricSamples;
     }
     
+    func getInsulinSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
+        if debug {
+            completion(.success(getRandomSamples(for: event)))
+        }
+        
+        guard let insulinSampleType = HKSampleType.quantityType(forIdentifier: .insulinDelivery) else {
+            print("unable to get insulin sample type")
+            return completion(.failure(HealthKitUtilsErrors.HealthKitGeneralError))
+        }
+        
+        // Fetch insulin
+        let samplePredicate = HKQuery.predicateForSamples(
+            withStart: event.date,
+            end: event.date.advanced(by: hours))
+        
+        let sampleSort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        
+        let sampleQuery = HKSampleQuery(
+            sampleType: insulinSampleType,
+            predicate: samplePredicate,
+            limit: 100,
+            sortDescriptors: [sampleSort]
+        ) { (query, samples, error) in
+            guard let samples = samples,
+                  let glucoseSamples = samples as? [HKQuantitySample] else {
+                completion(.failure(HealthKitUtilsErrors.HealthKitGeneralError))
+                print("Empty or invalid samples")
+                return
+            }
+            let metricSamples = glucoseSamples.map {
+                return MetricSample($0.startDate, $0.quantity.doubleValue(for: HKUnit.init(from: "IU")))
+            }
+            completion(.success(metricSamples))
+        }
+        
+        
+        self.healthKitStore.execute(sampleQuery)
+    }
+        
 }

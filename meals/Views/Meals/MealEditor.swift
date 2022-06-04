@@ -19,6 +19,9 @@ struct MealEditor: View {
     
     @State var showPhotoPickerMenu = false
     @State var showPhotoPickerLibrary = false
+    @State var showPhotoPickerCamera = false
+    
+    @State var showDeleteMenu = false
     
     @State var imageDraft: UIImage = UIImage()
     @State var imageWasSelected = false
@@ -68,22 +71,44 @@ struct MealEditor: View {
                     save(meal: meal, photo: photo)
                     self.presentationMode.wrappedValue.dismiss()
                 }
+                Spacer()
+                Button(role: .destructive, action:  {
+                    showDeleteMenu = true
+                }, label: {
+                   Text("Delete")
+                })
             }
+            .padding()
         }
         .confirmationDialog("Select a source", isPresented: $showPhotoPickerMenu, titleVisibility: .visible) {
             Button("Photo library"){
-                print("Photo library selected")
                 showPhotoPickerLibrary = true
             }
             Button("Camera"){
-                print("Camera selected")
+                showPhotoPickerCamera = true
             }
+        }
+        .alert(isPresented: $showDeleteMenu) {
+            Alert(title: Text("Are you sure you want to delete this meal?"),
+                  primaryButton: .destructive(Text("Yes")){
+                       delete(meal: meal)
+                       presentationMode.wrappedValue.dismiss()
+                  },
+                  secondaryButton: .cancel()
+            )
         }
         .sheet(isPresented: $showPhotoPickerLibrary){
             ImagePicker(
                 selectedImage: $imageDraft,
                 wasSelected: $imageWasSelected,
                 sourceType: .photoLibrary
+            )
+        }
+        .sheet(isPresented: $showPhotoPickerCamera){
+            ImagePicker(
+                selectedImage: $imageDraft,
+                wasSelected: $imageWasSelected,
+                sourceType: .camera
             )
         }
     }
@@ -108,7 +133,25 @@ struct MealEditor: View {
                 print("ERROR: \(error.localizedDescription)")
             }
         }
-
+    }
+    
+    func delete(meal: Meal){
+        mealStore.load { result in
+            switch result {
+            case .success(let currentMeals):
+                let newMeals = currentMeals.filter { $0.id != meal.id }
+                mealStore.save(meals: newMeals) { result in
+                    switch result {
+                    case .success(let count):
+                        print("Save \(count) meals")
+                    case .failure(let error):
+                        print("Failed saving a new meal: \(error)")
+                    }
+                }
+            case .failure(let error):
+                print("ERROR: \(error.localizedDescription)")
+            }
+        }
     }
 }
 

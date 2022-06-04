@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MealDetails: View {
+    @Environment(\.presentationMode) var presentationMode
+
     var photoStore: PhotoStore = PhotoStore()
     var eventStore: EventStore = EventStore()
     var mealStore: MealStore = MealStore()
@@ -45,7 +47,7 @@ struct MealDetails: View {
                         ForEach(mealEvents, id: \.id) { mealEvent in
                             NavigationLink(
                                 destination: {
-                                    MetricView(event: mealEvent)
+                                    MetricView(meal: meal, event: mealEvent)
                                 },
                                 label: {
                                     MetricView(event: mealEvent)
@@ -85,6 +87,9 @@ struct MealDetails: View {
             NavigationLink(
                 destination: {
                     MealEditor(meal: meal)
+                        .onDisappear {
+                            presentationMode.wrappedValue.dismiss()
+                        }
                 },
                 label: {
                    Text("Edit")

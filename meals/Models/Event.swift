@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Event: Codable {
+struct Event: Codable, Identifiable {
     var meal_id: UUID
     var id: UUID = UUID()
     var date: Date = Date()

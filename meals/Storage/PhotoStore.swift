@@ -22,6 +22,10 @@ class PhotoStore {
         return Image(uiImage: image)
     }
     
+    func getImage(event: Event) -> Image {
+        return getImage(meal: Meal(id: event.meal_id, name: "", description: ""))
+    }
+    
     func saveImage(meal: Meal, image: UIImage) {
         save(fileName: "\(meal.id).jpg" , image: image)
     }

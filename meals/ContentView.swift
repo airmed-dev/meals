@@ -11,22 +11,17 @@ struct ContentView: View {
     @State private var newMealPresented = false
     
     var body: some View {
-        // Stores
-        let mealStore = MealStore()
-        
         // Meal list
-        MealList()
-            .environmentObject(mealStore)
-            .onAppear {
-                mealStore.load { result in
-                    switch result {
-                    case .success(let newMeals):
-                        mealStore.meals = newMeals
-                    case .failure(let error):
-                        print("Failed loading meals: \(error)")
-                    }
+        TabView {
+            MealList()
+                .tabItem {
+                    Label("Meals", systemImage: "list.dash")
                 }
-            }
+            EventList()
+                .tabItem {
+                    Label("Events", systemImage: "clock")
+                }
+        }
     }
 }
 

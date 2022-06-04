@@ -12,7 +12,8 @@ import HealthKit
 struct MetricGraph: View {
     @State var isAuthorized = false
     
-    @State var samples: [MetricSample] = []
+    @State var glucoseSamples: [MetricSample] = []
+    @State var insulinSamples: [MetricSample] = []
     @State var event: Event
     @State var start: Date
     @State var end: Date
@@ -20,6 +21,7 @@ struct MetricGraph: View {
     @State var debug = false
     @State var error: Error? = nil
     @State var hours = 3
+    @State var fetchInsulin = false
     
     var width: CGFloat = 7
     let glucoseMin = 40
@@ -34,7 +36,7 @@ struct MetricGraph: View {
         VStack {
             if debug {
                 Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
-                Text("Samples: \( samples.count )")
+                Text("Glucose Samples: \( glucoseSamples.count )")
             }
             if let error = error {
                 Text("ERROR: \(error.localizedDescription)")
@@ -43,11 +45,10 @@ struct MetricGraph: View {
             GeometryReader { geomtry in
                 // Glucose values
                 let normalizedGraph = normalizeGraph(
-                    samples: samples,
-                    width: geomtry.size.width,
-                    height: geomtry.size.height,
-                    dateMin: start,
-                    dateMax: end
+                    samples: glucoseSamples,
+                    width: geomtry.size.width, height: geomtry.size.height,
+                    dateMin: start, dateMax: end,
+                    valueMin: Double(glucoseMin), valueMax: Double(glucoseMax)
                 )
                 ForEach(normalizedGraph, id: \.id) { sample in
                     let color = sample.value > rangeMin && sample.value < rangeMax
@@ -113,6 +114,59 @@ struct MetricGraph: View {
                 }
                 .frame(maxWidth: .infinity)
             }
+                        
+            if fetchInsulin {
+                Divider()
+                Text("Insulin")
+                    .padding()
+                GeometryReader { geomtry in
+                    // Glucose values
+                    let normalizedGraph = normalizeGraph(
+                        samples: insulinSamples,
+                        width: geomtry.size.width, height: geomtry.size.height,
+                        dateMin: start, dateMax: end,
+                        valueMin: 0, valueMax: 5
+                    )
+                    ForEach(normalizedGraph, id: \.id) { sample in
+                        let color = sample.value > rangeMin && sample.value < rangeMax
+                        ? Color.green
+                        : Color.red
+                        Circle()
+                            .fill(color)
+                            .frame(width: width, height: width)
+                            .position(x: sample.x, y: sample.y)
+                    }
+
+                    // Range axises
+                    let insulinRange = CGFloat(50)
+                    let logBar = (geomtry.size.height / insulinRange)
+                    
+                    Text("1")
+                        .font(.subheadline)
+                        .position(x: textPadding, y: logBar * 0.5)
+                    Path { path in
+                        path.move(to: CGPoint(x: 0, y: logBar*0.5))
+                        path.addLine(to: CGPoint(x: geomtry.size.width, y: logBar*0.5 ))
+                    }
+                    .strokedPath(StrokeStyle.init(lineWidth: 1))
+                    
+                    // Time Axi
+                    HStack{
+                        Text(formatAsTime(date: event.date))
+                            .font(.subheadline)
+                            .position(x: 50, y: geomtry.size.height-textPadding)
+                        Spacer()
+                        Text(
+                            formatAsTime(date:
+                                event.date.advanced(by: 60*60*TimeInterval(hours))
+                             )
+                        )
+                        .font(.subheadline)
+                        .position(x: geomtry.size.width-200, y: geomtry.size.height-textPadding)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
             
            
 
@@ -168,24 +222,36 @@ struct MetricGraph: View {
     
     func loadSamples(){
         let hoursInSeconds = 60*60*TimeInterval(hours)
+        self.end = event.date.advanced(by: hoursInSeconds)
         
-        HealthKitUtils().getSamples(event: event, hours: hoursInSeconds) { result in
+        HealthKitUtils().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
             switch result {
             case .success(let samples):
-                self.samples = samples
-                self.end = event.date.advanced(by: hoursInSeconds)
+                self.glucoseSamples = samples
                 self.error = nil
             case .failure(let error):
                 self.error = error
             }
         }
+        
+        HealthKitUtils().getInsulinSamples(event: event, hours: hoursInSeconds) { result in
+            switch result {
+            case .success(let samples):
+                self.insulinSamples = samples
+                self.error = nil
+            case .failure(let error):
+                self.error = error
+            }
+        }
+       
     }
     
     func normalizeGraph(samples: [MetricSample],
                         width: Double, height: Double,
-                        dateMin: Date, dateMax: Date) -> [GraphPoint] {
+                        dateMin: Date, dateMax: Date,
+                        valueMin: Double, valueMax: Double) -> [GraphPoint] {
         let xScale = width / (dateMax.timeIntervalSince(dateMin) * 60.0)
-        let yScale = height / Double(glucoseMax - glucoseMin)
+        let yScale = height / Double(valueMax-valueMin)
         
         return samples.enumerated().map { _, samplePoint in
             
@@ -209,13 +275,15 @@ struct MetricGraph: View {
             
         guard
             let dateOfBirth = HKObjectType.characteristicType(forIdentifier: .dateOfBirth),
-            let glucose = HKSampleType.quantityType(forIdentifier: .bloodGlucose) else {
+            let glucose = HKSampleType.quantityType(forIdentifier: .bloodGlucose),
+            let insulin = HKSampleType.quantityType(forIdentifier: .insulinDelivery) else {
+            
             completion(false, HealthkitError.dataTypeNotAvailable)
             return
         }
         
         
-        let healthKitTypesToRead: Set<HKObjectType> = [dateOfBirth, glucose]
+        let healthKitTypesToRead: Set<HKObjectType> = [dateOfBirth, glucose, insulin]
         
         HKHealthStore().requestAuthorization(toShare: [], read: healthKitTypesToRead) { (success, error) in
            completion(success, error)
@@ -234,13 +302,21 @@ struct GraphPoint: Identifiable, Equatable {
 struct MetricGraph_Previews: PreviewProvider {
     static var previews: some View {
         MetricGraph(
-            samples: [
+            glucoseSamples: [
                 MetricSample(Date.init(timeIntervalSinceNow: 480), 100),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 100),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 150),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 200),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
+            ],
+            insulinSamples: [
+                MetricSample(Date.init(timeIntervalSinceNow: 480), 1),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 4.5),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 5),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 2.3),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 2.5),
+                MetricSample(Date.init(timeIntervalSinceNow: 240), 1)
             ],
             event: Event(meal_id: UUID()),
             start: Date.init(timeIntervalSinceNow: 90),

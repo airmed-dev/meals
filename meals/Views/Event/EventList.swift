@@ -1,0 +1,146 @@
+//
+//  EventList.swift
+//  meals
+//
+//  Created by aclowkey on 01/06/2022.
+//
+
+import Foundation
+
+import SwiftUI
+
+struct EventList: View {
+    let photoStore = PhotoStore()
+    let eventStore: EventStore = EventStore()
+    let mealStore: MealStore = MealStore()
+    
+    @State
+    var events: [Date: [Event]] = [:]
+    
+    @State
+    var meals: [Meal] = []
+    
+    @State
+    var preview = false
+    
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading){
+                Text("Event count: \(events.count)")
+                    .padding()
+                
+                let eventDates = events.map { $0.key }.sorted(by: >)
+                List(eventDates, id: \.self ){ key in
+                    let currentEvents = events[key]!
+                    
+                    Section(header: Text(formatDate(date: key))){
+                        ForEach(currentEvents){ event in
+                            if let meal = meals.first { $0.id == event.meal_id }{
+                                NavigationLink(destination: {
+                                    MetricView(meal: meal, event: event, fetchInsulin: true)
+                                } ){
+                                    HStack {
+                                            photoStore.getImage(meal: meal)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(height: 75)
+                                                .clipShape(Circle())
+                                            VStack(alignment: .leading) {
+                                                Text(meal.name)
+                                                    .font(.headline)
+                                                Text(formatDateAsTime(date: event.date))
+                                                    .font(.footnote)
+                                            }
+                                        
+                                    }
+                                }
+                            } else {
+                                Text(formatDate(date: event.date))
+                                Text("Meal is loading")
+                            }
+                        }
+                    }
+                }
+                .listStyle(GroupedListStyle())
+            }
+            .navigationTitle("Events")
+        }
+        .onAppear {
+            if preview {
+                return
+            }
+            
+            eventStore.load { result in
+                switch result {
+                case .success(let loadedEvents):
+                    events = Dictionary(grouping: loadedEvents, by: {
+                        Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: $0.date))!
+                    })
+                case .failure(let error):
+                    print("Error fetching events:\(error)")
+                }
+            }
+            mealStore.load { result in
+                switch result {
+                case .success(let loadedMeals):
+                    meals = loadedMeals
+                case .failure(let error):
+                    print("Error fetching events:\(error)")
+                }
+            }
+            
+        }
+    }
+    
+    func formatDate(date: Date) -> String {
+        if Calendar.current.isDateInToday(date) {
+           return "Today"
+        }
+        if Calendar.current.isDateInYesterday(date){
+            return "Yesterday"
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d, yyyy"
+        
+        return formatter.string(from: date)
+    }
+    
+    func formatDateAsTime(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = .none
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+}
+
+struct EventList_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        let mealUUID = UUID(uuidString: "A6D42717-7960-450A-8996-F4F3B6D040CC")!
+        let today = Date()
+        EventList(
+            events: [
+                today:[
+                    Event(meal_id: mealUUID),
+                    Event(meal_id: mealUUID),
+                    Event(meal_id: mealUUID),
+                ],
+                Calendar.current.date(byAdding: .day, value: -1, to: today)!: [
+                    Event(meal_id: mealUUID),
+                    Event(meal_id: mealUUID),
+                    Event(meal_id: mealUUID),
+                ],
+                Calendar.current.date(byAdding: .day, value: -2, to: today)!: [
+                    Event(meal_id: mealUUID),
+                    Event(meal_id: mealUUID),
+                    Event(meal_id: mealUUID),
+                ]
+            ],
+            meals: [
+                Meal(id: mealUUID, name: "Test", description: "Test")
+            ],
+            preview: true
+        )
+    }
+}
