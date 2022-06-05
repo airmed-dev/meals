@@ -18,6 +18,9 @@ struct MealCard: View {
                     .aspectRatio(contentMode: .fill)
             } else {
                Image(systemName: "photo.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .rotationEffect(Angle(degrees: 90))
             }
             
             Text(meal.name)
@@ -45,6 +48,6 @@ struct MealCard: View {
 struct MealCard_Previews: PreviewProvider {
     static var previews: some View {
         MealCard(meal: MealStore.exampleMeal)
-            .frame(height:50)
+            .frame(height:100)
     }
 }

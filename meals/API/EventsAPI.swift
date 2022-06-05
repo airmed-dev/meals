@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 
 class EventsAPI {
     
@@ -48,9 +49,45 @@ class EventsAPI {
         
     }
     
-    static func saveEvent(event: Event) {
+    static func createEvent(event:Event, completion: @escaping (Result<Bool, Error>) -> Void){
+        let encoder = JSONEncoder()
+        let formatter:DateFormatter = DateFormatter()
+        formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
+        
+        encoder.dateEncodingStrategy = .formatted(formatter)
+        
+        let parameters = CreateEventRequest(data: CreateEventData(date: event.date, meal: event.meal_id))
+        
+        AF.request("https://my-meals-api.herokuapp.com/api/meal-events",
+             method: .post,
+             parameters: parameters,
+             encoder: JSONParameterEncoder.json(encoder: encoder),
+             headers: [.authorization(bearerToken: TOKEN)]
+        ).response { result in
+            debugPrint(result)
+            guard let response = result.response else {
+                print("Error: no response")
+                completion(.failure(Errors.unexpectedError))
+                return
+            }
+            
+            guard response.statusCode == 200 else {
+                print("Error: unexpected status code: \(response.statusCode)")
+                completion(.failure(Errors.unexpectedError))
+                return
+            }
+            completion(.success(true))
+        }
     }
-    
+}
+
+struct CreateEventRequest: Codable {
+    let data: CreateEventData
+}
+
+struct CreateEventData: Codable {
+    let date: Date
+    let meal: Int
 }
 
 struct EventResponse: Codable {

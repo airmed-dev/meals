@@ -10,14 +10,18 @@ import SwiftUI
 struct MealDetails: View {
     @Environment(\.presentationMode) var presentationMode
     
+    @State var showLogMeal: Bool = false
     @State var meal: Meal
     @State var mealEvents: [Event] = []
     
+    @State var newMealEventDate:Date = Date()
+    
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .bottomTrailing) {
             ScrollView {
                 VStack(alignment: .leading) {
                     MealCard(meal: meal)
+                        .aspectRatio(contentMode: .fill)
                     VStack(alignment: .leading) {
                         Text("Description")
                             .font(.headline)
@@ -25,6 +29,7 @@ struct MealDetails: View {
                         Text(meal.description)
                     }
                     .padding()
+                    .background(Color(uiColor: UIColor.systemBackground))
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                     .cornerRadius(15)
                     
@@ -36,7 +41,7 @@ struct MealDetails: View {
                             Text("total: \(mealEvents.count)")
                                 .font(.subheadline)
                         }
-
+                        
                         
                         ForEach(mealEvents, id: \.id) { mealEvent in
                             NavigationLink(
@@ -52,17 +57,18 @@ struct MealDetails: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding()
-                    .background(.white)
+                    .background(Color(uiColor: UIColor.systemBackground))
                     .cornerRadius(15)
                 }
             }
             HStack(alignment: .lastTextBaseline) {
-                Button("Log Entry") {
-                    EventsAPI.saveEvent(event: Event(meal_id: meal.id, date: Date()))
+                Button(action: {showLogMeal.toggle() }) {
+                    Image(systemName: "plus")
+                        .frame(width: 50, height: 50)
+                        .background(Color( red: 27, green: 27, blue: 27))
+                        .clipShape(Circle())
                 }
             }
-            .frame(maxWidth: .infinity)
-            .background(.white)
         }
         .padding()
         .background(.gray.opacity(0.2))
@@ -75,26 +81,47 @@ struct MealDetails: View {
                         }
                 },
                 label: {
-                   Text("Edit")
+                    Text("Edit")
                 }
+            )
+        }
+        .alert(isPresented: $showLogMeal) {
+            let date = Date()
+            return Alert(title: Text("Enter meal event at: \(date.formatted())"),
+                         primaryButton: .default(Text("Yes")){
+                EventsAPI.createEvent(event: Event(meal_id: meal.id, id: 0, date: date)) { result in
+                        switch result {
+                        case .success(_):
+                            print("Success")
+                            loadEvents()
+                        case .failure(let error):
+                            print("Error creating meal event: \(error)")
+                        }
+                    }
+                },
+                         secondaryButton: .cancel()
             )
         }
         .onAppear {
             if mealEvents.isEmpty {
-                EventsAPI.getEvents { result in
-                    print("Appeared")
-                    switch result {
-                    case .success(let events):
-                        mealEvents = events.filter { $0.meal_id == meal.id }
-                        print("Loaded \(mealEvents.count) events")
-                    case .failure(let error):
-                        print("Failed saving events: \(error)")
-                    }
-                    
-                }
+                loadEvents()
             }
         }
         
+    }
+    
+    func loadEvents() {
+        EventsAPI.getEvents { result in
+            print("Appeared")
+            switch result {
+            case .success(let events):
+                mealEvents = events.filter { $0.meal_id == meal.id }
+                print("Loaded \(mealEvents.count) events")
+            case .failure(let error):
+                print("Failed saving events: \(error)")
+            }
+            
+        }
     }
 }
 

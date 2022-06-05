@@ -143,6 +143,7 @@ struct MetricGraph: View {
                     
                     Text("1")
                         .font(.subheadline)
+                        .foregroundColor(Color.primary)
                         .position(x: textPadding, y: logBar * 0.5)
                     Path { path in
                         path.move(to: CGPoint(x: 0, y: logBar*0.5))
@@ -167,11 +168,9 @@ struct MetricGraph: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            
-           
-
-            
         }
+        .background(Color(uiColor: UIColor.systemBackground))
+
         .toolbar {
             ToolbarItemGroup {
                  Menu {

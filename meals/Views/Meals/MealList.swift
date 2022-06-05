@@ -22,15 +22,17 @@ struct MealList: View {
                     ScrollView {
                         LazyVGrid (columns: twoColumns){
                             ForEach(meals, id: \.id) { meal in
-                                    HStack {
-                                        NavigationLink(destination: {
-                                            MealDetails(meal: meal)
-                                        }) {
-                                            MealCard(meal: meal)
-                                                .padding(10)
-                                        }
+                                HStack {
+                                    NavigationLink(destination: {
+                                        MealDetails(meal: meal)
+                                    }) {
+                                        MealCard(meal: meal)
+                                            .frame(width: 150,height: 150)
+                                            .padding()
                                     }
                                 }
+                            }
+                            
                         }
                     }
                 }
@@ -85,9 +87,9 @@ struct MealList_Previews: PreviewProvider {
         MealList(meals:[
             Meal(id: 0, name: "Blueberry pie", description: "My tasty blueberries"),
             Meal(id: 1, name: "Blueberry pie", description: "My tasty blueberries"),
-//            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-//            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-//            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+            //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+            //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+            //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
         ],
                  preview: true)
         .environmentObject(MealStore(
