@@ -16,11 +16,9 @@ enum HealthkitError: Error {
 let threeHours: Double = 3 * 60 * 60
 
 struct MetricView: View {
-    let mealStore: MealStore = MealStore()
-    let photoStore = PhotoStore()
-    
     @State var meal: Meal?
     @State var event: Event
+    @State var image: Image?
     
     @State var fetchInsulin: Bool = false
     var width: CGFloat = 5
@@ -30,11 +28,13 @@ struct MetricView: View {
             if let meal = meal {
                 VStack {
                     HStack {
-                        photoStore.getImage(meal: meal)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 150)
-                            .clipShape(Circle())
+                        if let image = image {
+                             image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 150)
+                                .clipShape(Circle())
+                        }
                         
                         VStack {
                             Text(meal.name)
@@ -61,6 +61,18 @@ struct MetricView: View {
                 Text(event.date.formatted())
             }
         }
+        .onAppear {
+            if let meal = meal {
+                PhotosAPI.getPhoto(meal: meal) { result in
+                    switch result {
+                    case .success(let loadedImage):
+                        image = loadedImage
+                    case .failure(let error):
+                        print("Failed loading image: \(error)")
+                    }
+                }
+            }
+        }
     }
     
     
@@ -70,10 +82,10 @@ struct MetricView: View {
 
 struct MetricView_Previews: PreviewProvider {
     static var previews: some View {
-        let mealID = UUID()
+        let mealID:Int = 0
         MetricView(
             meal: Meal(id: mealID, name: "Blueberries", description: "Yummy meal"),
-            event: Event(meal_id: mealID, id: UUID(), date: Date.now)
+            event: Event(meal_id: mealID, id: 3, date: Date.now)
         )
     }
 }

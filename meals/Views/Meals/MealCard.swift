@@ -9,24 +9,36 @@ import SwiftUI
 
 struct MealCard: View {
     @State var meal: Meal
-    let photoStore = PhotoStore()
+    @State var image: Image?
     
     var body: some View {
         ZStack(alignment: .bottomLeading){
-            photoStore.getImage(meal: meal)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            if let image = image {
+                image.resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+               Image(systemName: "photo.fill")
+            }
             
             Text(meal.name)
                 .font(.headline)
                 .fontWeight(.bold)
                 .foregroundColor(.black)
                 .padding(5)
-                .frame(maxWidth: .infinity)
                 .background(.white.opacity(0.9))
         }
         .cornerRadius(30, corners: [.topLeft, .topRight])
         .cornerRadius(10, corners: [.bottomLeft, .bottomRight])
+        .onAppear {
+            PhotosAPI.getPhoto(meal: meal) { result in
+                switch result {
+                case .success(let loadedImage):
+                   image = loadedImage
+                case .failure(let error):
+                    print("Error loading image: \(error)")
+                }
+            }
+        }
     }
 }
 

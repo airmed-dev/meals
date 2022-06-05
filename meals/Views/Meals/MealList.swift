@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct MealList: View {
-    let mealStore: MealStore = MealStore()
-    let photoStore: PhotoStore = PhotoStore()
-    
     @State var meals: [Meal] = []
     @State var showNewMeal: Bool = false
-    @State var selectedMeal: Meal = Meal(id: UUID(), name: "", description: "")
+    
+    @State var preview = false
     
     var body: some View {
         NavigationView {
@@ -35,44 +33,48 @@ struct MealList: View {
                                 }
                         }
                     }
-                    .navigationTitle("Meals")
                 }
+                .navigationTitle("Meals")
                 
                 Button(action: {showNewMeal.toggle() }) {
-                   Image(systemName: "plus")
-                       .frame(width: 50, height: 50)
+                    Image(systemName: "plus")
+                        .frame(width: 50, height: 50)
                         .background(Color( red: 27, green: 27, blue: 27))
-                       .clipShape(Circle())
+                        .clipShape(Circle())
                 }
                 .padding(30)
                 
             }
             .sheet(isPresented: $showNewMeal) {
                 // User creates a new meal
-                let mealDraft = Meal(id: UUID(),
-                                          name: "",
-                                          description: ""
+                let mealDraft = Meal(id: 0,
+                                     name: "",
+                                     description: ""
                 )
                 Text("Create a new meal")
                     .padding()
                 MealEditor(meal: mealDraft)
                     .onDisappear {
-                       loadMeals()
+                        loadMeals()
                     }
             }
         }
         .onAppear {
-           loadMeals()
+            if preview {
+                return
+            }
+            
+            loadMeals()
         }
     }
     
     func loadMeals() {
-        mealStore.load {  result in
+        MealsAPI.getMeals { result in
             switch result {
             case .success(let loadedMeals):
-               meals = loadedMeals
+                meals = loadedMeals
             case .failure(let error):
-                print("Failed saving a new meal: \(error)")
+                print("Error loading meals: \(error)")
             }
         }
     }
@@ -81,14 +83,14 @@ struct MealList: View {
 struct MealList_Previews: PreviewProvider {
     static var previews: some View {
         MealList(meals:[
-            MealStore.exampleMeal,
-            MealStore.exampleMeal,
-            MealStore.exampleMeal,
-            MealStore.exampleMeal,
-            MealStore.exampleMeal,
-            MealStore.exampleMeal
-        ])
-            .environmentObject(MealStore(
-            ))
+            Meal(id: 0, name: "Blueberry pie", description: "My tasty blueberries"),
+            Meal(id: 1, name: "Blueberry pie", description: "My tasty blueberries"),
+//            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+//            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+//            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+        ],
+                 preview: true)
+        .environmentObject(MealStore(
+        ))
     }
 }

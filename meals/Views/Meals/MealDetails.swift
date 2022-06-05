@@ -9,10 +9,6 @@ import SwiftUI
 
 struct MealDetails: View {
     @Environment(\.presentationMode) var presentationMode
-
-    var photoStore: PhotoStore = PhotoStore()
-    var eventStore: EventStore = EventStore()
-    var mealStore: MealStore = MealStore()
     
     @State var meal: Meal
     @State var mealEvents: [Event] = []
@@ -30,7 +26,6 @@ struct MealDetails: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .background(.white)
                     .cornerRadius(15)
                     
                     
@@ -40,7 +35,6 @@ struct MealDetails: View {
                                 .font(.headline)
                             Text("total: \(mealEvents.count)")
                                 .font(.subheadline)
-                                .foregroundColor(Color.black.opacity(0.95))
                         }
 
                         
@@ -54,7 +48,6 @@ struct MealDetails: View {
                                         .frame(height: 200)
                                 }
                             )
-                            .foregroundColor(.primary)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -65,17 +58,7 @@ struct MealDetails: View {
             }
             HStack(alignment: .lastTextBaseline) {
                 Button("Log Entry") {
-                    var newEvents = eventStore.events
-                    newEvents.append(Event(meal_id: meal.id))
-                    eventStore.save(events: newEvents) { result in
-                        switch result {
-                        case .success(let count):
-                            print("Saved \(count) events")
-                            mealEvents = newEvents
-                        case .failure(let error):
-                            print("Failed saving events: \(error)")
-                        }
-                    }
+                    EventsAPI.saveEvent(event: Event(meal_id: meal.id, date: Date()))
                 }
             }
             .frame(maxWidth: .infinity)
@@ -98,12 +81,12 @@ struct MealDetails: View {
         }
         .onAppear {
             if mealEvents.isEmpty {
-                eventStore.load { result in
+                EventsAPI.getEvents { result in
                     print("Appeared")
                     switch result {
                     case .success(let events):
                         mealEvents = events.filter { $0.meal_id == meal.id }
-                        print("Loaded \(eventStore.events.count) events")
+                        print("Loaded \(mealEvents.count) events")
                     case .failure(let error):
                         print("Failed saving events: \(error)")
                     }
@@ -117,7 +100,7 @@ struct MealDetails: View {
 
 struct MealDetails_Previews: PreviewProvider {
     static var previews: some View {
-        let mealID = UUID()
+        let mealID = 1
         MealDetails(
             meal: MealStore.exampleMeal,
             mealEvents: [

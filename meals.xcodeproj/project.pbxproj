@@ -16,6 +16,8 @@
 		DF07B337282694FE00C164AB /* MealsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B336282694FE00C164AB /* MealsStore.swift */; };
 		DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B33828269A2A00C164AB /* MealEditor.swift */; };
 		DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF114AF1283223EC0089BF0B /* HealthKit.framework */; };
+		DF19F56A284C8B5A00119226 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DF19F569284C8B5A00119226 /* Alamofire */; };
+		DF19F56C284C95D100119226 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF19F56B284C95D100119226 /* File.swift */; };
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
 		DF282F732838BC700044C1EF /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F722838BC700044C1EF /* PhotoStore.swift */; };
 		DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */; };
@@ -29,6 +31,9 @@
 		DFE8D35C2840CA5400937CAB /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */; };
 		DFEBBE342830C8F100369EEB /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEBBE332830C8F100369EEB /* EventStore.swift */; };
 		DFECDE3A284B1E8B00FCDF35 /* EventListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFECDE39284B1E8B00FCDF35 /* EventListItem.swift */; };
+		DFECDE3D284B479A00FCDF35 /* MealsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFECDE3C284B479A00FCDF35 /* MealsAPI.swift */; };
+		DFECDE3F284B582E00FCDF35 /* EventsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFECDE3E284B582E00FCDF35 /* EventsAPI.swift */; };
+		DFECDE41284B697E00FCDF35 /* PhotosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFECDE40284B697E00FCDF35 /* PhotosAPI.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +48,7 @@
 		DF07B33828269A2A00C164AB /* MealEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEditor.swift; sourceTree = "<group>"; };
 		DF114AEF283223EC0089BF0B /* meals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meals.entitlements; sourceTree = "<group>"; };
 		DF114AF1283223EC0089BF0B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		DF19F56B284C95D100119226 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
 		DF282F722838BC700044C1EF /* PhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
 		DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerRadiusModifier.swift; sourceTree = "<group>"; };
@@ -56,6 +62,9 @@
 		DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		DFEBBE332830C8F100369EEB /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
 		DFECDE39284B1E8B00FCDF35 /* EventListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListItem.swift; sourceTree = "<group>"; };
+		DFECDE3C284B479A00FCDF35 /* MealsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealsAPI.swift; sourceTree = "<group>"; };
+		DFECDE3E284B582E00FCDF35 /* EventsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsAPI.swift; sourceTree = "<group>"; };
+		DFECDE40284B697E00FCDF35 /* PhotosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosAPI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +73,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */,
+				DF19F56A284C8B5A00119226 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +100,7 @@
 		DF07B3192826933700C164AB /* meals */ = {
 			isa = PBXGroup;
 			children = (
+				DFECDE3B284B478900FCDF35 /* API */,
 				DF114AEF283223EC0089BF0B /* meals.entitlements */,
 				DF07B335282694F100C164AB /* Storage */,
 				DF07B3322826943B00C164AB /* Models */,
@@ -188,6 +199,17 @@
 			path = Event;
 			sourceTree = "<group>";
 		};
+		DFECDE3B284B478900FCDF35 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				DFECDE3C284B479A00FCDF35 /* MealsAPI.swift */,
+				DFECDE3E284B582E00FCDF35 /* EventsAPI.swift */,
+				DFECDE40284B697E00FCDF35 /* PhotosAPI.swift */,
+				DF19F56B284C95D100119226 /* File.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -205,6 +227,7 @@
 			);
 			name = meals;
 			packageProductDependencies = (
+				DF19F569284C8B5A00119226 /* Alamofire */,
 			);
 			productName = meals;
 			productReference = DF07B3172826933700C164AB /* meals.app */;
@@ -235,6 +258,7 @@
 			);
 			mainGroup = DF07B30E2826933700C164AB;
 			packageReferences = (
+				DF19F568284C8B5A00119226 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = DF07B3182826933700C164AB /* Products */;
 			projectDirPath = "";
@@ -267,6 +291,9 @@
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
+				DFECDE41284B697E00FCDF35 /* PhotosAPI.swift in Sources */,
+				DF19F56C284C95D100119226 /* File.swift in Sources */,
+				DFECDE3D284B479A00FCDF35 /* MealsAPI.swift in Sources */,
 				DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */,
 				DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */,
 				DFA0E56B2847DE1100323B35 /* EventList.swift in Sources */,
@@ -274,6 +301,7 @@
 				DF9375772830137200CBE618 /* MetricView.swift in Sources */,
 				DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */,
 				DFEBBE342830C8F100369EEB /* EventStore.swift in Sources */,
+				DFECDE3F284B582E00FCDF35 /* EventsAPI.swift in Sources */,
 				DF07B31D2826933700C164AB /* ContentView.swift in Sources */,
 				DF282F732838BC700044C1EF /* PhotoStore.swift in Sources */,
 				DFE8D35C2840CA5400937CAB /* PhotoPicker.swift in Sources */,
@@ -489,6 +517,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DF19F568284C8B5A00119226 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DF19F569284C8B5A00119226 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF19F568284C8B5A00119226 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DF07B30F2826933700C164AB /* Project object */;
 }

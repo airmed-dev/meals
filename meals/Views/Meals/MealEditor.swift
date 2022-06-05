@@ -9,11 +9,9 @@ import SwiftUI
 
 // MealEditor allows a user to edit a meal
 struct MealEditor: View {
-    let mealStore = MealStore()
-    let photoStore = PhotoStore()
-    
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
+    @State var image: Image = Image(systemName: "photo.fill")
     
     var newMeal: Bool = false
     
@@ -28,39 +26,41 @@ struct MealEditor: View {
     
     var body: some View {
         VStack {
-            Form {
-                ZStack(alignment: .bottomTrailing) {
-                    if imageWasSelected {
-                        Image(uiImage: imageDraft)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else {
-                        photoStore.getImage(meal: meal)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    }
-                    
-                    Button(action: {showPhotoPickerMenu.toggle() }) {
-                       Image(systemName: "plus")
-                           .frame(width: 50, height: 50)
-                            .background(Color( red: 27, green: 27, blue: 27))
-                           .clipShape(Circle())
-                    }
-                    .padding(10)
+            ZStack(alignment: .bottomTrailing) {
+                if imageWasSelected {
+                    Image(uiImage: imageDraft)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } else {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                 }
-                // Meal fields
+                
+                Button(action: {showPhotoPickerMenu.toggle() }) {
+                    Image(systemName: "plus")
+                        .frame(width: 50, height: 50)
+                        .background(.white.opacity(0.1))
+                        .clipShape(Circle())
+                }
+            }
+            Spacer()
+            // Meal fields
+            List {
                 HStack {
                     Text("Name")
                         .bold()
                     Spacer()
                     TextField("Meal name", text: $meal.name)
                 }
-                Text("Description")
-                    .bold()
-                TextEditor(text: $meal.description)
-                    .accessibilityHint("Enter meal description")
-
+                VStack(alignment: .leading) {
+                    Text("Description")
+                        .bold()
+                    TextEditor(text: $meal.description)
+                        .accessibilityHint("Enter meal description")
+                }
             }
+            
             Spacer()
             HStack(alignment: .firstTextBaseline){
                 Button("Save") {
@@ -69,16 +69,25 @@ struct MealEditor: View {
                         photo = imageDraft
                     }
                     save(meal: meal, photo: photo)
-                    self.presentationMode.wrappedValue.dismiss()
                 }
                 Spacer()
                 Button(role: .destructive, action:  {
                     showDeleteMenu = true
                 }, label: {
-                   Text("Delete")
+                    Text("Delete")
                 })
             }
             .padding()
+        }
+        .onAppear {
+            PhotosAPI.getPhoto(meal: meal) { result in
+                switch result {
+                case .success(let loadedImage):
+                    image = loadedImage
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            }
         }
         .confirmationDialog("Select a source", isPresented: $showPhotoPickerMenu, titleVisibility: .visible) {
             Button("Photo library"){
@@ -91,9 +100,8 @@ struct MealEditor: View {
         .alert(isPresented: $showDeleteMenu) {
             Alert(title: Text("Are you sure you want to delete this meal?"),
                   primaryButton: .destructive(Text("Yes")){
-                       delete(meal: meal)
-                       presentationMode.wrappedValue.dismiss()
-                  },
+                delete(meal: meal)
+            },
                   secondaryButton: .cancel()
             )
         }
@@ -113,43 +121,26 @@ struct MealEditor: View {
         }
     }
     
-    func save(meal: Meal, photo: UIImage?){
-        mealStore.load { result in
+    func save(meal: Meal, photo: UIImage?) {
+        MealsAPI.saveMeal(meal: meal, photo: photo) { result in
             switch result {
-            case .success(var meals):
-                meals.append(meal)
-                mealStore.save(meals: meals) { result in
-                    switch result {
-                    case .success(let count):
-                        print("Save \(count) meals")
-                    case .failure(let error):
-                        print("Failed saving a new meal: \(error)")
-                    }
-                }
-                if let photoSelected = photo {
-                    photoStore.saveImage(meal: meal, image: photoSelected)
-                }
+            case .success(_):
+                print("Success")
+                presentationMode.wrappedValue.dismiss()
             case .failure(let error):
-                print("ERROR: \(error.localizedDescription)")
+                print("Error saving meal: \(error)")
             }
         }
     }
     
     func delete(meal: Meal){
-        mealStore.load { result in
+        MealsAPI.deleteMeal(meal: meal) { result in
             switch result {
-            case .success(let currentMeals):
-                let newMeals = currentMeals.filter { $0.id != meal.id }
-                mealStore.save(meals: newMeals) { result in
-                    switch result {
-                    case .success(let count):
-                        print("Save \(count) meals")
-                    case .failure(let error):
-                        print("Failed saving a new meal: \(error)")
-                    }
-                }
+            case .success(_):
+                print("Success")
+                presentationMode.wrappedValue.dismiss()
             case .failure(let error):
-                print("ERROR: \(error.localizedDescription)")
+                print("Failed deleteing meal: \(error)")
             }
         }
     }
@@ -157,7 +148,7 @@ struct MealEditor: View {
 
 struct MealEditor_Previews: PreviewProvider {
     static var previews: some View {
-        let meal = Meal(id: UUID(), name: "", description: "")
+        let meal = Meal(id: 1, name: "", description: "")
         MealEditor(meal: meal)
     }
 }

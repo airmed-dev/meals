@@ -318,7 +318,7 @@ struct MetricGraph_Previews: PreviewProvider {
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 2.5),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 1)
             ],
-            event: Event(meal_id: UUID()),
+            event: Event(meal_id: 1, id: 1, date: Date()),
             start: Date.init(timeIntervalSinceNow: 90),
             end: Date.now,
             debug: true

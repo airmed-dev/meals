@@ -10,15 +10,22 @@ import SwiftUI
 class MealStore: ObservableObject {
     @Published var meals: [Meal] = []
     static let exampleMeal = Meal(
-           id: UUID(),
+           id: 14,
            name: "Pitaya Smoothie Bowl",
            description: "Add the frozen pitaya, banana, strawberries and coconut water into a high powered blender. Blend on high for one minute, until well combined. jour your pitaya smoothie into a bowl and add your toppings."
     )
     
+    static func newExampleMeal() -> Meal {
+        var newExampleMeal = exampleMeal
+        newExampleMeal.id = Int.random(in: 1...100)
+        return newExampleMeal
+    }
+    
     func save(meals: [Meal], completion: @escaping (Result<[Meal], Error>)->Void) {
         DispatchQueue.global(qos: .background).async {
             do {
-                let data = try JSONEncoder().encode(meals)
+                let deduplicatedMeals = Array(Dictionary(grouping: meals, by: {$0.id}).values)
+                let data = try JSONEncoder().encode(deduplicatedMeals)
                 let outFile = try self.fileURL()
                 try data.write(to: outFile)
                 DispatchQueue.main.async {

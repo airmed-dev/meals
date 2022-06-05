@@ -9,8 +9,14 @@ import Foundation
 
 
 struct Meal: Codable {
-    var id: UUID
+    var id: Int
     var name: String
     var description: String
+    var image: MealImage?
+}
+
+struct MealImage: Codable {
+    var imageURL: String
+    var imageID: Int
 }
 

@@ -10,10 +10,6 @@ import Foundation
 import SwiftUI
 
 struct EventList: View {
-    let photoStore = PhotoStore()
-    let eventStore: EventStore = EventStore()
-    let mealStore: MealStore = MealStore()
-    
     @State
     var events: [Date: [Event]] = [:]
     
@@ -38,21 +34,8 @@ struct EventList: View {
                             if let meal = meals.first { $0.id == event.meal_id }{
                                 NavigationLink(destination: {
                                     MetricView(meal: meal, event: event, fetchInsulin: true)
-                                } ){
-                                    HStack {
-                                            photoStore.getImage(meal: meal)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(height: 75)
-                                                .clipShape(Circle())
-                                            VStack(alignment: .leading) {
-                                                Text(meal.name)
-                                                    .font(.headline)
-                                                Text(formatDateAsTime(date: event.date))
-                                                    .font(.footnote)
-                                            }
-                                        
-                                    }
+                                }) {
+                                    EventListItem(event: event, meal: meal)
                                 }
                             } else {
                                 Text(formatDate(date: event.date))
@@ -70,7 +53,7 @@ struct EventList: View {
                 return
             }
             
-            eventStore.load { result in
+            EventsAPI.getEvents { result in
                 switch result {
                 case .success(let loadedEvents):
                     events = Dictionary(grouping: loadedEvents, by: {
@@ -80,7 +63,7 @@ struct EventList: View {
                     print("Error fetching events:\(error)")
                 }
             }
-            mealStore.load { result in
+            MealsAPI.getMeals { result in
                 switch result {
                 case .success(let loadedMeals):
                     meals = loadedMeals
@@ -106,18 +89,13 @@ struct EventList: View {
         return formatter.string(from: date)
     }
     
-    func formatDateAsTime(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = .none
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
+
 }
 
 struct EventList_Previews: PreviewProvider {
     
     static var previews: some View {
-        let mealUUID = UUID(uuidString: "A6D42717-7960-450A-8996-F4F3B6D040CC")!
+        let mealUUID = 1
         let today = Date()
         EventList(
             events: [
