@@ -13,6 +13,7 @@ struct EventList: View {
     @State
     var events: [Date: [Event]] = [:]
     
+    @State var selectedEvent: Event?
     @State
     var meals: [Meal] = []
     
@@ -25,6 +26,20 @@ struct EventList: View {
                 Text("Event count: \(events.count)")
                     .padding()
                 
+                if let se = selectedEvent {
+                    MetricGraph(event: se,
+                                start: se.date,
+                                end: se.date.addingTimeInterval(60*60*3)
+                    )
+                    .frame(height: 100)
+                }
+                
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Text("Events")
+                    .font(.headline)
                 let eventDates = events.map { $0.key }.sorted(by: >)
                 List(eventDates, id: \.self ){ key in
                     let currentEvents = events[key]!
@@ -32,11 +47,10 @@ struct EventList: View {
                     Section(header: Text(formatDate(date: key))){
                         ForEach(currentEvents){ event in
                             if let meal = meals.first { $0.id == event.meal_id }{
-                                NavigationLink(destination: {
-                                    MetricView(meal: meal, event: event, fetchInsulin: true)
-                                }) {
-                                    EventListItem(event: event, meal: meal)
-                                }
+                                EventListItem(event: event, meal: meal)
+                                    .onTapGesture {
+                                        selectedEvent = event
+                                    }
                             } else {
                                 Text(formatDate(date: event.date))
                                 Text("Meal is loading")
@@ -100,7 +114,7 @@ struct EventList_Previews: PreviewProvider {
         EventList(
             events: [
                 today:[
-                    Event(meal_id: mealUUID),
+                    Event(meal_id: mealUUID, id: 1),
                     Event(meal_id: mealUUID),
                     Event(meal_id: mealUUID),
                 ],
@@ -115,6 +129,7 @@ struct EventList_Previews: PreviewProvider {
                     Event(meal_id: mealUUID),
                 ]
             ],
+            selectedEvent: Event(meal_id: mealUUID, id: 1),
             meals: [
                 Meal(id: mealUUID, name: "Test", description: "Test")
             ],

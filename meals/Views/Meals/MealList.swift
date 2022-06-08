@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
+import Alamofire
 
 struct MealList: View {
     @State var meals: [Meal] = []
     @State var showNewMeal: Bool = false
     
+    @State var loading = true
     @State var preview = false
+    
+    @State var degrees: Double = 45.0
+    var animation: Animation {
+        Animation.linear(duration: 1)
+            .repeatForever()
+    }
     
     var body: some View {
         NavigationView {
@@ -19,20 +27,41 @@ struct MealList: View {
             ZStack(alignment: .bottomTrailing) {
                 ZStack {
                     Color.gray.opacity(0.1)
-                    ScrollView {
-                        LazyVGrid (columns: twoColumns){
-                            ForEach(meals, id: \.id) { meal in
-                                HStack {
-                                    NavigationLink(destination: {
-                                        MealDetails(meal: meal)
-                                    }) {
-                                        MealCard(meal: meal)
+                    if loading {
+                        Image(systemName: "arrow.clockwise")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .rotationEffect(.degrees(degrees))
+                            .onAppear {
+                                withAnimation(self.animation){
+                                    self.degrees += 180.0
+                                }
+                            }
+                        ScrollView {
+                            LazyVGrid (columns: twoColumns){
+                                ForEach(0...10, id: \.self) { _ in
+                                    RoundedRectangle(cornerSize: CGSize(width: 30, height: 30))
                                             .frame(width: 150,height: 150)
+                                            .background(Color.primary.opacity(0.1))
                                             .padding()
+                                }
+                            }
+                        }
+                    } else {
+                        ScrollView {
+                            LazyVGrid (columns: twoColumns){
+                                ForEach(meals, id: \.id) { meal in
+                                    HStack {
+                                        NavigationLink(destination: {
+                                            MealDetails(meal: meal)
+                                        }) {
+                                            MealCard(meal: meal)
+                                                .frame(width: 150,height: 150)
+                                                .padding()
+                                        }
                                     }
                                 }
                             }
-                            
                         }
                     }
                 }
@@ -71,6 +100,7 @@ struct MealList: View {
     }
     
     func loadMeals() {
+        loading = true
         MealsAPI.getMeals { result in
             switch result {
             case .success(let loadedMeals):
@@ -78,21 +108,30 @@ struct MealList: View {
             case .failure(let error):
                 print("Error loading meals: \(error)")
             }
+            loading = false
         }
     }
 }
 
 struct MealList_Previews: PreviewProvider {
     static var previews: some View {
-        MealList(meals:[
-            Meal(id: 0, name: "Blueberry pie", description: "My tasty blueberries"),
-            Meal(id: 1, name: "Blueberry pie", description: "My tasty blueberries"),
-            //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-            //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-            //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-        ],
-                 preview: true)
-        .environmentObject(MealStore(
-        ))
+        Group {
+            MealList(meals:[
+                Meal(id: 0, name: "Blueberry pie", description: "My tasty blueberries"),
+                Meal(id: 1, name: "Blueberry pie", description: "My tasty blueberries"),
+                //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+                //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+                //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
+            ],
+                     loading: false,
+                     preview: true
+            )
+            MealList(meals: [],
+                     loading: true,
+                     preview: true)
+            MealList(meals: [],
+                     loading: false,
+                     preview: true)
+        }
     }
 }
