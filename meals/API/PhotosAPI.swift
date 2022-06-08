@@ -17,13 +17,7 @@ class PhotosAPI {
             return
         }
         
-        var urlComponents = URLComponents()
-        urlComponents.scheme = "https"
-        urlComponents.host = "my-meals-api.herokuapp.com"
-        urlComponents.path = imageURL
-        
-        var request = URLRequest(url: urlComponents.url!)
-        request.setValue("Bearer \(TOKEN)", forHTTPHeaderField: "Authorization")
+        var request = URLRequest(url: URL(string: imageURL)!)
         
         let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
             guard let data = data else {
