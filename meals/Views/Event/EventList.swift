@@ -27,11 +27,8 @@ struct EventList: View {
                     .padding()
                 
                 if let se = selectedEvent {
-                    MetricGraph(event: se,
-                                start: se.date,
-                                end: se.date.addingTimeInterval(60*60*3)
-                    )
-                    .frame(height: 100)
+                    MetricGraph(event: se)
+                        .frame(height: 150)
                 }
                 
                 Spacer()

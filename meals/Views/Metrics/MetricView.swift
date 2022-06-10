@@ -29,7 +29,7 @@ struct MetricView: View {
                 VStack {
                     HStack {
                         if let image = image {
-                             image
+                            image
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: 150)
@@ -47,14 +47,9 @@ struct MetricView: View {
             }
             
             Spacer()
-            MetricGraph(
-                event: event,
-                start: event.date,
-                end: event.date,
-                fetchInsulin: fetchInsulin
-            )
-            .frame(width: 300)
-            .border(.black)
+            MetricGraph( event: event )
+                .frame(width: 300)
+                .border(.black)
             
             Spacer()
             HStack{
