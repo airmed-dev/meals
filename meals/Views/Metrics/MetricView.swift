@@ -47,13 +47,22 @@ struct MetricView: View {
             }
             
             Spacer()
-            MetricGraph( event: event )
-                .frame(width: 300)
-                .border(.black)
-            
-            Spacer()
-            HStack{
-                Text(event.date.formatted())
+            List {
+                Section {
+                    Text("Glucose")
+                    MetricGraph(event: event, dataType: .Glucose )
+                        .frame(height: 200)
+                        .border(.black)
+                }
+                Section {
+                    Text("Insulin")
+                    MetricGraph(event: event, dataType: .Insulin )
+                        .frame(height: 200)
+                        .border(.black)
+                }
+                HStack{
+                    Text(event.date.formatted())
+                }
             }
         }
         .onAppear {
@@ -69,8 +78,6 @@ struct MetricView: View {
             }
         }
     }
-    
-    
     
     
 }

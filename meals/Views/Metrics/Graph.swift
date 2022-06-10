@@ -11,15 +11,11 @@ import Foundation
 
 struct Graph: View {
     var samples: [MetricSample] = []
-    var start: Date
-    var end: Date
+    
+    let dateRange: (Date, Date)
+    let valueRange: (Double, Double)
     
     var width: CGFloat = 7
-    let glucoseMin = 40
-    let glucoseMax = 400
-    
-    let rangeMin: Double = 70
-    let rangeMax: Double = 180
     
     let textPadding:CGFloat = -15
     var debug = false
@@ -31,22 +27,19 @@ struct Graph: View {
                 let normalizedGraph = normalizeGraph(
                     samples: samples,
                     width: geomtry.size.width, height: geomtry.size.height,
-                    dateMin: start, dateMax: end,
-                    valueMin: Double(glucoseMin), valueMax: Double(glucoseMax)
+                    dateMin: dateRange.0, dateMax: dateRange.1,
+                    valueMin: Double(valueRange.0), valueMax: Double(valueRange.1)
                 )
                 ForEach(normalizedGraph, id: \.id) { sample in
-                    let color = sample.value > rangeMin && sample.value < rangeMax
-                    ? Color.green
-                    : Color.red
                     Circle()
-                        .fill(color)
+                        .fill(getPointColor(point: sample))
                         .frame(width: width, height: width)
                         .position(x: sample.x, y: sample.y)
                 }
-
+                
                 // Range axises
-                let glucoseRange = CGFloat(glucoseMax-glucoseMin)
-                let logBar = (geomtry.size.height / glucoseRange)
+                let valueScale = CGFloat(valueRange.1 - valueRange.0)
+                let logBar = geomtry.size.height / valueScale
                 let yLow = geomtry.size.height - (logBar*70)
                 
                 Path { path in
@@ -71,19 +64,25 @@ struct Graph: View {
                 }
                 .strokedPath(StrokeStyle.init(lineWidth: width/5))
                 .foregroundColor(.red)
-                 
-                Text("250")
-                    .font(.subheadline)
-                    .position(x: textPadding, y: yVeryHigh)
-                Text("180")
-                    .font(.subheadline)
-                    .position(x: textPadding, y: yHigh)
-                Text("70")
-                   .font(.subheadline)
-                   .position(x: textPadding, y: yLow)
+                
+            }.background(LinearGradient(colors: [
+                Color(hex: 0x360033),
+                Color(hex: 0x0b8793)
+            ],
+                                        startPoint: .top,
+                                        endPoint: .bottom))
+            HStack {
+                Text(dateRange.0.formatted())
+                Spacer()
+                Text(dateRange.1.formatted())
             }
         }
-        .background(Color(uiColor: UIColor.systemBackground))
+        
+        
+    }
+    
+    func getPointColor(point: GraphPoint) -> Color{
+        return Color.white
     }
     
     func formatAsTime(date:Date) -> String {
@@ -103,12 +102,12 @@ struct Graph: View {
             
             let y = height - samplePoint.value * yScale
             let x = (samplePoint.date.timeIntervalSince(dateMin) / 60.0)
-                    * xScale
+            * xScale
             return GraphPoint(
                 x: x,
                 y: y,
                 value: samplePoint.value,
-                id: "\(x)"
+                id: "\(Int(x))"
             )
         }
     }
@@ -126,15 +125,15 @@ struct Graph_Previews: PreviewProvider {
     static var previews: some View {
         Graph(
             samples: [
-                MetricSample(Date.init(timeIntervalSinceNow: 480), 100),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 100),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 150),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 200),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
+                MetricSample(Date.init(timeIntervalSinceNow: -500), 100),
+                MetricSample(Date.init(timeIntervalSinceNow: -400), 100),
+                MetricSample(Date.init(timeIntervalSinceNow: -300), 100),
+                MetricSample(Date.init(timeIntervalSinceNow: -200), 100),
+                MetricSample(Date.init(timeIntervalSinceNow: -100), 100),
+                MetricSample(Date.init(timeIntervalSinceNow: 0), 100),
             ],
-            start: Date.init(timeIntervalSinceNow: 90),
-            end: Date.now,
+            dateRange: (Date.init(timeIntervalSinceNow: -500), end: Date.now),
+            valueRange: ( 40,  400),
             debug: true
         )
         .frame(width: 300, height: 300)

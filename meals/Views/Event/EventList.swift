@@ -23,13 +23,25 @@ struct EventList: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading){
-                Text("Event count: \(events.count)")
-                    .padding()
+                HStack {
+                    Text("Event count: \(events.count)")
+                        .padding()
+                    Spacer()
+                    if let se = selectedEvent {
+                        NavigationLink(destination: {
+                            MetricView(meal:meals.first{$0.id == se.meal_id}!, event: se )
+                        } ){
+                            Text("See event")
+                        }
+                    }
+                    
+                }
                 
                 if let se = selectedEvent {
-                    MetricGraph(event: se)
-                        .frame(height: 150)
+                    MetricGraph(event: se, dataType: .Glucose)
+                        .frame(height: 200)
                 }
+                
                 
                 Spacer()
                 Spacer()

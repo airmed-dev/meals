@@ -8,15 +8,23 @@
 import SwiftUI
 import HealthKit
 
+enum DataType {
+    case Insulin
+    case Glucose
+}
+
+let ranges: [DataType: (Double, Double)] = [
+    .Insulin: (0,5),
+    .Glucose: (40, 400)
+]
 
 struct MetricGraph: View {
     @State var isAuthorized = false
     
     var event: Event
-    var fetchInsulin = false
-    @State var glucoseSamples: [MetricSample] = []
-    @State var insulinSamples: [MetricSample] = []
+    var dataType: DataType
     
+    @State var samples: [MetricSample] = []
     @State var debug = false
     @State var error: Error? = nil
     @State var hours = 3
@@ -25,15 +33,18 @@ struct MetricGraph: View {
         VStack {
             if debug {
                 Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
-                Text("Glucose Samples: \( glucoseSamples.count )")
+                Text("Glucose Samples: \( samples.count )")
             }
             if let error = error {
                 Text("ERROR: \(error.localizedDescription)")
             }
             
-            Graph(samples: glucoseSamples,
-                  start: event.date,
-                  end: event.date.advanced(by: TimeInterval(hours * 60 * 60))
+            Graph(samples: samples,
+                  dateRange:(
+                    event.date,
+                    event.date.advanced(by: TimeInterval(hours * 60 * 60))
+                  ),
+                  valueRange: ranges[dataType]!
             )
         }
         .toolbar {
@@ -81,24 +92,26 @@ struct MetricGraph: View {
     
     func loadSamples(for event:Event){
         let hoursInSeconds = 60*60*TimeInterval(hours)
-        
-        HealthKitUtils().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
-            switch result {
-            case .success(let samples):
-                self.glucoseSamples = samples
-                self.error = nil
-            case .failure(let error):
-                self.error = error
+        switch self.dataType {
+        case .Glucose:
+            HealthKitUtils().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
+                switch result {
+                case .success(let samples):
+                    self.samples = samples
+                    self.error = nil
+                case .failure(let error):
+                    self.error = error
+                }
             }
-        }
-        
-        HealthKitUtils().getInsulinSamples(event: event, hours: hoursInSeconds) { result in
-            switch result {
-            case .success(let samples):
-                self.insulinSamples = samples
-                self.error = nil
-            case .failure(let error):
-                self.error = error
+        case .Insulin:
+            HealthKitUtils().getInsulinSamples(event: event, hours: hoursInSeconds) { result in
+                switch result {
+                case .success(let samples):
+                    self.samples = samples
+                    self.error = nil
+                case .failure(let error):
+                    self.error = error
+                }
             }
         }
        
@@ -133,21 +146,14 @@ struct MetricGraph_Previews: PreviewProvider {
     static var previews: some View {
         MetricGraph(
             event: Event(meal_id: 1),
-            glucoseSamples: [
+            dataType: .Glucose,
+            samples: [
                 MetricSample(Date.init(timeIntervalSinceNow: 480), 100),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 100),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 150),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 200),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
                 MetricSample(Date.init(timeIntervalSinceNow: 240), 250),
-            ],
-            insulinSamples: [
-                MetricSample(Date.init(timeIntervalSinceNow: 480), 1),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 4.5),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 5),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 2.3),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 2.5),
-                MetricSample(Date.init(timeIntervalSinceNow: 240), 1)
             ],
             debug: true
         )

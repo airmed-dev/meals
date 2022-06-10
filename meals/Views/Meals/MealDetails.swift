@@ -49,8 +49,9 @@ struct MealDetails: View {
                                     MetricView(meal: meal, event: mealEvent)
                                 },
                                 label: {
-                                    MetricView(event: mealEvent)
+                                    MetricGraph(event: mealEvent, dataType: .Glucose )
                                         .frame(height: 200)
+                                        .border(.black)
                                 }
                             )
                         }
