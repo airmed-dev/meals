@@ -17,57 +17,61 @@ struct MealDetails: View {
     @State var newMealEventDate:Date = Date()
     
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    MealCard(meal: meal)
-                        .aspectRatio(contentMode: .fill)
-                    VStack(alignment: .leading) {
-                        Text("Description")
-                            .font(.headline)
-                            .padding(.bottom)
-                        Text(meal.description)
-                    }
-                    .padding()
-                    .background(Color(uiColor: UIColor.systemBackground))
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .cornerRadius(15)
-                    
-                    
-                    VStack(alignment: .leading) {
-                        HStack() {
-                            Text("Meal events")
-                                .font(.headline)
-                            Text("total: \(mealEvents.count)")
-                                .font(.subheadline)
-                        }
-                        
-                        
-                        ForEach(mealEvents, id: \.id) { mealEvent in
-                            NavigationLink(
-                                destination: {
-                                    MetricView(meal: meal, event: mealEvent)
-                                },
-                                label: {
-                                    MetricGraph(event: mealEvent, dataType: .Glucose )
-                                        .frame(height: 200)
-                                        .border(.black)
+        VStack {
+            ZStack(alignment: .bottomTrailing) {
+                GeometryReader { geo in
+                    ScrollView {
+                        MealCard(meal: meal)
+                            .frame(width: geo.size.width, height: geo.size.height/2)
+                        VStack(alignment: .leading) {
+                            VStack(alignment: .leading) {
+                                Text("Description")
+                                    .font(.headline)
+                                    .padding(.bottom)
+                                Text(meal.description)
+                            }
+                            .padding()
+                            .frame(width: geo.size.width, alignment: .leading)
+                            .background(Color(uiColor: UIColor.systemBackground))
+                            .cornerRadius(15)
+                            
+                            
+                            VStack(alignment: .leading) {
+                                HStack() {
+                                    Text("Meal events")
+                                        .font(.headline)
+                                    Text("total: \(mealEvents.count)")
+                                        .font(.subheadline)
                                 }
-                            )
+                                
+                                
+                                ForEach(mealEvents, id: \.id) { mealEvent in
+                                    NavigationLink(
+                                        destination: {
+                                            MetricView(meal: meal, event: mealEvent)
+                                        },
+                                        label: {
+                                            MetricGraph(event: mealEvent, dataType: .Glucose )
+                                                .frame(height: 200)
+                                                .border(.black)
+                                        }
+                                    )
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding()
+                            .background(Color(uiColor: UIColor.systemBackground))
+                            .cornerRadius(15)
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-                    .background(Color(uiColor: UIColor.systemBackground))
-                    .cornerRadius(15)
                 }
-            }
-            HStack(alignment: .lastTextBaseline) {
-                Button(action: {showLogMeal.toggle() }) {
-                    Image(systemName: "plus")
-                        .frame(width: 50, height: 50)
-                        .background(Color( red: 27, green: 27, blue: 27))
-                        .clipShape(Circle())
+                HStack(alignment: .lastTextBaseline) {
+                    Button(action: {showLogMeal.toggle() }) {
+                        Image(systemName: "plus")
+                            .frame(width: 50, height: 50)
+                            .background(Color( red: 27, green: 27, blue: 27))
+                            .clipShape(Circle())
+                    }
                 }
             }
         }
@@ -91,15 +95,15 @@ struct MealDetails: View {
             return Alert(title: Text("Enter meal event at: \(date.formatted())"),
                          primaryButton: .default(Text("Yes")){
                 EventsAPI.createEvent(event: Event(meal_id: meal.id, id: 0, date: date)) { result in
-                        switch result {
-                        case .success(_):
-                            print("Success")
-                            loadEvents()
-                        case .failure(let error):
-                            print("Error creating meal event: \(error)")
-                        }
+                    switch result {
+                    case .success(_):
+                        print("Success")
+                        loadEvents()
+                    case .failure(let error):
+                        print("Error creating meal event: \(error)")
                     }
-                },
+                }
+            },
                          secondaryButton: .cancel()
             )
         }

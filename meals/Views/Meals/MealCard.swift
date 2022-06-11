@@ -13,14 +13,16 @@ struct MealCard: View {
     
     var body: some View {
         ZStack(alignment: .bottomLeading){
-            if let image = image {
-                image.resizable()
-                    .aspectRatio(contentMode: .fill)
-            } else {
-               Image(systemName: "photo.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .rotationEffect(Angle(degrees: 90))
+            GeometryReader { geo in
+                if let image = image {
+                    image
+                        .resizable()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                } else {
+                   Image(systemName: "photo.fill")
+                        .resizable()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                }
             }
             
             Text(meal.name)
@@ -48,6 +50,7 @@ struct MealCard: View {
 struct MealCard_Previews: PreviewProvider {
     static var previews: some View {
         MealCard(meal: MealStore.exampleMeal)
-            .frame(height:100)
+            .frame(width:200,height:200)
+            .background(.red)
     }
 }

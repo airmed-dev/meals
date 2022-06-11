@@ -28,22 +28,15 @@ struct MealList: View {
                 ZStack {
                     Color.gray.opacity(0.1)
                     if loading {
-                        Image(systemName: "arrow.clockwise")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .rotationEffect(.degrees(degrees))
-                            .onAppear {
-                                withAnimation(self.animation){
-                                    self.degrees += 180.0
-                                }
-                            }
+                        ProgressView()
                         ScrollView {
                             LazyVGrid (columns: twoColumns){
                                 ForEach(0...10, id: \.self) { _ in
                                     RoundedRectangle(cornerSize: CGSize(width: 30, height: 30))
-                                            .frame(width: 150,height: 150)
-                                            .background(Color.primary.opacity(0.1))
-                                            .padding()
+                                        .frame(width: 150,height: 150)
+                                        .foregroundColor(Color.primary.opacity(0.1))
+                                        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 30, height: 30)))
+                                        .padding()
                                 }
                             }
                         }
@@ -52,12 +45,16 @@ struct MealList: View {
                             LazyVGrid (columns: twoColumns){
                                 ForEach(meals, id: \.id) { meal in
                                     HStack {
-                                        NavigationLink(destination: {
-                                            MealDetails(meal: meal)
-                                        }) {
-                                            MealCard(meal: meal)
-                                                .frame(width: 150,height: 150)
-                                                .padding()
+                                        withAnimation(.easeInOut(duration: 10.0)){
+                                            NavigationLink(destination: {
+                                                MealDetails(meal: meal)
+                                            }) {
+                                                MealCard(meal: meal)
+                                                    .frame(width: 150,height: 150)
+                                                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 30, height: 30)))
+                                                    .padding()
+                                            }
+                                            
                                         }
                                     }
                                 }
