@@ -10,66 +10,82 @@ import Foundation
 import SwiftUI
 
 struct EventList: View {
-    @State
-    var events: [Date: [Event]] = [:]
+    @State var events: [Date: [Event]] = [:]
     
     @State var selectedEvent: Event?
-    @State
-    var meals: [Meal] = []
+    @State var meals: [Meal] = []
     
-    @State
-    var preview = false
+    @State var preview = false
+    
+    @State var loadingEvents = true
+    @State var loadingMeals = true
     
     var body: some View {
         NavigationView {
-            VStack(alignment: .leading){
-                HStack {
-                    Text("Event count: \(events.count)")
-                        .padding()
-                    Spacer()
-                    if let se = selectedEvent {
-                        NavigationLink(destination: {
-                            MetricView(meal:meals.first{$0.id == se.meal_id}!, event: se )
-                        } ){
-                            Text("See event")
+            if loadingMeals || loadingEvents {
+                // Skeleton
+                ZStack {
+                   ProgressView()
+                }
+            } else {
+                // Actual view
+                VStack(alignment: .leading){
+                    HStack {
+                        Text("Event count: \(events.count)")
+                            .padding()
+                        Spacer()
+                        if let se = selectedEvent {
+                            NavigationLink(destination: {
+                                MetricView(meal:meals.first{$0.id == se.meal_id}!, event: se )
+                            } ){
+                                Text("See event")
+                            }
                         }
+                        
                     }
                     
-                }
-                
-                if let se = selectedEvent {
-                    MetricGraph(event: se, dataType: .Glucose)
-                        .frame(height: 200)
-                }
-                
-                
-                Spacer()
-                Spacer()
-                Spacer()
-                Spacer()
-                Text("Events")
-                    .font(.headline)
-                let eventDates = events.map { $0.key }.sorted(by: >)
-                List(eventDates, id: \.self ){ key in
-                    let currentEvents = events[key]!
-                    
-                    Section(header: Text(formatDate(date: key))){
-                        ForEach(currentEvents){ event in
-                            if let meal = meals.first { $0.id == event.meal_id }{
-                                EventListItem(event: event, meal: meal)
-                                    .onTapGesture {
-                                        selectedEvent = event
-                                    }
+                    GeometryReader{ geo in
+                        VStack(alignment: .center){
+                            if let se = selectedEvent {
+                                withAnimation(.easeIn) {
+                                    MetricGraph(event: se, dataType: .Glucose)
+                                }
                             } else {
-                                Text(formatDate(date: event.date))
-                                Text("Meal is loading")
+                                HStack(alignment: .center) {
+                                    Text("No event selected")
+                                }
+                                .frame(width: geo.size.width, height: geo.size.height)
+                                .background(Color(.systemGroupedBackground))
                             }
                         }
                     }
+                    .frame(height: 200)
+                    
+                    Text("Events")
+                        .font(.headline)
+                        .padding()
+                    let eventDates = events.map { $0.key }.sorted(by: >)
+                    List(eventDates, id: \.self ){ key in
+                        let currentEvents = events[key]!
+                        
+                        Section(header: Text(formatDate(date: key))){
+                            ForEach(currentEvents){ event in
+                                if let meal = meals.first { $0.id == event.meal_id }{
+                                    EventListItem(event: event, meal: meal)
+                                        .onTapGesture {
+                                            selectedEvent = event
+                                        }
+                                } else {
+                                    Text(formatDate(date: event.date))
+                                    Text("Meal is loading")
+                                }
+                            }
+                        }
+                    }
+                    .listStyle(GroupedListStyle())
                 }
-                .listStyle(GroupedListStyle())
+                .navigationTitle("Events")
             }
-            .navigationTitle("Events")
         }
         .onAppear {
             if preview {
@@ -85,6 +101,7 @@ struct EventList: View {
                 case .failure(let error):
                     print("Error fetching events:\(error)")
                 }
+                loadingEvents = false
             }
             MealsAPI.getMeals { result in
                 switch result {
@@ -93,6 +110,7 @@ struct EventList: View {
                 case .failure(let error):
                     print("Error fetching events:\(error)")
                 }
+                loadingMeals = false
             }
             
         }
@@ -100,7 +118,7 @@ struct EventList: View {
     
     func formatDate(date: Date) -> String {
         if Calendar.current.isDateInToday(date) {
-           return "Today"
+            return "Today"
         }
         if Calendar.current.isDateInYesterday(date){
             return "Yesterday"
@@ -112,7 +130,7 @@ struct EventList: View {
         return formatter.string(from: date)
     }
     
-
+    
 }
 
 struct EventList_Previews: PreviewProvider {
