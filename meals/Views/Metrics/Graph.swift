@@ -20,66 +20,74 @@ struct Graph: View {
     let textPadding:CGFloat = -15
     var debug = false
     
+    let colorFunction: (_ point: GraphPoint) -> Color = { point in Color.white }
+    
     var body: some View {
         VStack {
-            GeometryReader { geomtry in
-                // Glucose values
-                let normalizedGraph = normalizeGraph(
-                    samples: samples,
-                    width: geomtry.size.width, height: geomtry.size.height,
-                    dateMin: dateRange.0, dateMax: dateRange.1,
-                    valueMin: Double(valueRange.0), valueMax: Double(valueRange.1)
-                )
-                ForEach(normalizedGraph, id: \.id) { sample in
-                    Circle()
-                        .fill(getPointColor(point: sample))
-                        .frame(width: width, height: width)
-                        .position(x: sample.x, y: sample.y)
-                }
-                
-                // Range axises
-                let valueScale = CGFloat(valueRange.1 - valueRange.0)
-                let logBar = geomtry.size.height / valueScale
-                let yLow = geomtry.size.height - (logBar*70)
-                
-                Path { path in
-                    path.move(to: CGPoint(x: 0, y: yLow))
-                    path.addLine(to: CGPoint(x: geomtry.size.width, y: yLow ))
-                }
-                .strokedPath(StrokeStyle.init(lineWidth: width/5))
-                .foregroundColor(.gray)
-                
-                let yHigh = geomtry.size.height - (logBar*180)
-                Path { path in
-                    path.move(to: CGPoint(x: 0, y: yHigh))
-                    path.addLine(to: CGPoint(x: geomtry.size.width, y: yHigh ))
-                }
-                .strokedPath(StrokeStyle.init(lineWidth: width/5))
-                .foregroundColor(.red)
-                
-                let yVeryHigh = geomtry.size.height - (logBar*250)
-                Path { path in
-                    path.move(to: CGPoint(x: 0, y: yVeryHigh))
-                    path.addLine(to: CGPoint(x: geomtry.size.width, y: yVeryHigh ))
-                }
-                .strokedPath(StrokeStyle.init(lineWidth: width/5))
-                .foregroundColor(.red)
-                
-            }.background(LinearGradient(colors: [
-                Color(hex: 0x360033),
-                Color(hex: 0x0b8793)
-            ],
-                                        startPoint: .top,
+            HStack {
+//                GeometryReader { geometry in
+//                    // Value axis labels
+//                    let yPixels = geometry.size.width / (valueRange.1 - valueRange.0)
+//                    ForEach([100,200,300], id: \.self) { y in
+//                        Text(String(Int(y)))
+//                            .position(x: 30, y: geometry.size.height - CGFloat((CGFloat(y)*yPixels)))
+//                    }
+//                }
+                GeometryReader { geomtry in
+                    // Glucose values
+                    let normalizedGraph = normalizeGraph(
+                        samples: samples,
+                        width: geomtry.size.width, height: geomtry.size.height,
+                        dateMin: dateRange.0, dateMax: dateRange.1,
+                        valueMin: Double(valueRange.0), valueMax: Double(valueRange.1)
+                    )
+                    ForEach(normalizedGraph, id: \.id) { sample in
+                        Circle()
+                            .fill(getPointColor(point: sample))
+                            .frame(width: width, height: width)
+                            .position(x: sample.x, y: sample.y)
+                    }
+                    
+                    // Time axises
+                    let xPixels = geomtry.size.width / (dateRange.1.timeIntervalSince(dateRange.0) / 60)
+                    let xSteps = 30.0
+                    ForEach(Array(stride(from: 0, to: geomtry.size.width, by: xSteps * xPixels)), id: \.self) { x in
+                        Path { path in
+                            path.move(to: CGPoint(x: x, y: 0))
+                            path.addLine(to: CGPoint(x: x, y: geomtry.size.height ))
+                        }
+                        .strokedPath(StrokeStyle.init(lineWidth: width/5))
+                        .foregroundColor(.white.opacity(0.2))
+                    }
+                    
+                    // Value axies
+                    ForEach([50, 90, 180, 250, 300, 350], id: \.self) { y in
+                        Path { path in
+                            path.move(to: CGPoint(x: 0, y: y))
+                            path.addLine(to: CGPoint(x: geomtry.size.width, y: CGFloat(y)))
+                        }
+                        .strokedPath(StrokeStyle.init(lineWidth: width/5))
+                        .foregroundColor(.white.opacity(0.2))
+                    }
+                    
+                }.background(LinearGradient(colors: [
+                    Color(hex: 0x360033),
+                    Color(hex: 0x0b8793)
+                ],
+                                            startPoint: .top,
                                         endPoint: .bottom))
+            }
             HStack {
                 Text(dateRange.0.formatted())
                 Spacer()
                 Text(dateRange.1.formatted())
             }
+            
         }
         
         
     }
+    
     
     func getPointColor(point: GraphPoint) -> Color{
         return Color.white
@@ -90,6 +98,7 @@ struct Graph: View {
         hourlyFormatter.dateFormat = "HH:mm"
         return hourlyFormatter.string(from: date)
     }
+    
     
     func normalizeGraph(samples: [MetricSample],
                         width: Double, height: Double,
