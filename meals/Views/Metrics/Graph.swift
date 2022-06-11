@@ -20,7 +20,7 @@ struct Graph: View {
     let textPadding:CGFloat = -15
     var debug = false
     
-    let colorFunction: (_ point: GraphPoint) -> Color = { point in Color.white }
+    let colorFunction: (_ point: GraphPoint) -> Color
     
     var body: some View {
         VStack {
@@ -43,7 +43,7 @@ struct Graph: View {
                     )
                     ForEach(normalizedGraph, id: \.id) { sample in
                         Circle()
-                            .fill(getPointColor(point: sample))
+                            .fill(colorFunction(sample))
                             .frame(width: width, height: width)
                             .position(x: sample.x, y: sample.y)
                     }
@@ -88,10 +88,6 @@ struct Graph: View {
         
     }
     
-    
-    func getPointColor(point: GraphPoint) -> Color{
-        return Color.white
-    }
     
     func formatAsTime(date:Date) -> String {
         let hourlyFormatter = DateFormatter()
@@ -143,7 +139,8 @@ struct Graph_Previews: PreviewProvider {
             ],
             dateRange: (Date.init(timeIntervalSinceNow: -500), end: Date.now),
             valueRange: ( 40,  400),
-            debug: true
+            debug: true,
+            colorFunction: {point in Color.white}
         )
         .frame(width: 300, height: 300)
     }

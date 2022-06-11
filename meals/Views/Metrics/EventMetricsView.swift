@@ -44,12 +44,20 @@ struct MetricGraph: View {
                     event.date,
                     event.date.advanced(by: TimeInterval(hours * 60 * 60))
                   ),
-                  valueRange: ranges[dataType]!
+                  valueRange: ranges[dataType]!,
+                  colorFunction: { point in
+                    if dataType == .Glucose {
+                        if point.value > 180 || point.value < 70 {
+                            return Color.red
+                        }
+                    }
+                    return Color.white
+                  }
             )
         }
         .toolbar {
             ToolbarItemGroup {
-                 Menu {
+                Menu {
                     Button {
                         hours = 3
                     } label: {
@@ -69,18 +77,18 @@ struct MetricGraph: View {
             authorizeHealthKit { authorized, error in
                 guard authorized else {
                     let baseMessage = "HealthKit Authorization Failed"
-                        
+                    
                     if let error = error {
-                      print("\(baseMessage). Reason: \(error.localizedDescription)")
+                        print("\(baseMessage). Reason: \(error.localizedDescription)")
                     } else {
-                      print(baseMessage)
+                        print(baseMessage)
                     }
-                        
+                    
                     return
                 }
                 print("Authorized succesfully")
                 isAuthorized=true
-                    
+                
                 loadSamples(for: self.event)
             }
         }
@@ -114,15 +122,15 @@ struct MetricGraph: View {
                 }
             }
         }
-       
-    }
         
+    }
+    
     func authorizeHealthKit(completion: @escaping (Bool, Error?) -> Void ){
         guard HKHealthStore.isHealthDataAvailable() else {
             completion(false,  HealthkitError.notAvailableOnDevice)
             return
         }
-            
+        
         guard
             let dateOfBirth = HKObjectType.characteristicType(forIdentifier: .dateOfBirth),
             let glucose = HKSampleType.quantityType(forIdentifier: .bloodGlucose),
@@ -136,7 +144,7 @@ struct MetricGraph: View {
         let healthKitTypesToRead: Set<HKObjectType> = [dateOfBirth, glucose, insulin]
         
         HKHealthStore().requestAuthorization(toShare: [], read: healthKitTypesToRead) { (success, error) in
-           completion(success, error)
+            completion(success, error)
         }
     }
 }
