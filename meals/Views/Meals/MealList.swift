@@ -40,7 +40,7 @@ struct MealList: View {
                                 }
                             }
                         }
-                    } else {
+                    } else if meals.count > 0 {
                         ScrollView {
                             LazyVGrid (columns: twoColumns){
                                 ForEach(meals, id: \.id) { meal in
@@ -58,8 +58,18 @@ struct MealList: View {
                                         }
                                     }
                                 }
+
                             }
                         }
+                    } else {
+                        VStack(alignment: .center) {
+                            HStack {
+                                Text("No meals")
+                                    .font(.body)
+                                Image(systemName: "tray")
+                            }
+                        }
+
                     }
                 }
                 .navigationTitle("Meals")
