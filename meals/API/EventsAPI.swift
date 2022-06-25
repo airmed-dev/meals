@@ -23,7 +23,6 @@ class EventsAPI {
         
         let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
             guard let data = data else { return }
-            print(String(data: data, encoding: .utf8)!)
             
             do {
                 let decoder = JSONDecoder()

@@ -123,11 +123,11 @@ struct MealEditor: View {
     
     func save(meal: Meal, photo: UIImage?) {
         if meal.id != 0 {
-            MealsAPI.updateMeal(mealID: meal.id, meal: meal) { result in
+            MealsAPI.updateMealAndPhoto(mealID: meal.id, meal: meal, photo: photo) { result in
                 switch result {
                 case .success(_):
                     print("Success")
-//                    presentationMode.wrappedValue.dismiss()
+                    presentationMode.wrappedValue.dismiss()
                 case .failure(let error):
                     print("Error saving meal: \(error)")
                 }

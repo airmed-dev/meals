@@ -108,6 +108,7 @@ struct Graph: View {
             let y = height - samplePoint.value * yScale
             let x = (samplePoint.date.timeIntervalSince(dateMin) / 60.0)
             * xScale
+            
             return GraphPoint(
                 x: x,
                 y: y,

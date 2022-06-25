@@ -60,7 +60,7 @@ class MealsAPI {
         decoder.dateDecodingStrategy = .formatted(formatter)
         
         do {
-            let mealEncoded = try JSONEncoder().encode(CreateMealParams(name: meal.name , description: meal.description))
+            let mealEncoded = try JSONEncoder().encode(CreateMealParams(name: meal.name , description: meal.description, photo: nil))
             var multipartFormData: (MultipartFormData) -> Void
             if let photo = photo  {
                 guard let imageData = photo.jpegData(compressionQuality: 1.0) else {
@@ -98,8 +98,8 @@ class MealsAPI {
     
     static func deleteMeal(meal:Meal, completion: @escaping (Result<Bool, Error>) -> Void){
         AF.request("https://my-meals-api.herokuapp.com/api/meals/\(meal.id)",
-             method: .delete,
-            headers: [.authorization(bearerToken: TOKEN)]
+                   method: .delete,
+                   headers: [.authorization(bearerToken: TOKEN)]
         ).responseDecodable(of: CreateMealResponse.self) { result in
             debugPrint(result)
             guard let response = result.response else {
@@ -118,19 +118,88 @@ class MealsAPI {
         }
     }
     
-    static func updateMeal(mealID: Int, meal: Meal, completion: @escaping (Result<Bool, Error>) -> Void){
+    static func uploadPhoto(photo: UIImage,photoName: String, completion: @escaping (Result<Int, Error>) -> Void){
+        guard let imageData = photo.jpegData(compressionQuality: 1.0) else {
+            print("Unable to get image jpeg data")
+            completion(.failure(Errors.encodingError))
+            return
+        }
+        // Upload photo
+        AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(imageData, withName: "files", fileName: photoName+".jpeg", mimeType: "image/jpeg")
+        },
+                  to: "https://my-meals-api.herokuapp.com/api/upload",
+                  headers: [.authorization(bearerToken: TOKEN)]
+        ).responseDecodable(of: [UploadFileResponse].self ) { result in
+            //            guard let response = result.response else {
+            //                print("Error uploadng meal photo")
+            //                completion(.failure(Errors.unexpectedError))
+            //                return
+            //            }
+            //
+            //            guard response.statusCode == 200 else {
+            //                print("Error uploading photo: unexpected status code: \(response.statusCode)")
+            //                completion(.failure(Errors.unexpectedError))
+            //                return
+            //            }
+            //
+            switch result.result {
+            case .success(let uploads):
+                completion(.success(uploads[0].id))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+            
+            
+        }
+    }
+    
+    static func updateMealAndPhoto(mealID: Int, meal: Meal, photo: UIImage?, completion: @escaping (Result<Bool, Error>) -> Void){
+        if let photo = photo {
+            uploadPhoto(photo: photo, photoName: meal.id.formatted()) {  result in
+                switch result {
+                case .success(let photoID):
+                    updateMeal(mealID: mealID, meal: meal, photoID: photoID) { result in
+                        switch result {
+                        case .success(_):
+                            completion(.success(true))
+                        case .failure(let error):
+                            completion(.failure(error))
+                            return
+                        }
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                    return
+                }
+            }
+        } else {
+            updateMeal(mealID: mealID, meal: meal, photoID: nil) { result in
+                switch result {
+                case .success(_):
+                    completion(.success(true))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+        
+    }
+    static func updateMeal(mealID: Int, meal: Meal, photoID: Int?, completion: @escaping (Result<CreateMealResponse, Error>) -> Void) {
         let decoder = JSONDecoder()
         let formatter:DateFormatter = DateFormatter()
         formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
         decoder.dateDecodingStrategy = .formatted(formatter)
         
+        
         let createMealRequest = CreateMealRequest(
             data: CreateMealParams(
                 name: meal.name,
-                description: meal.description
+                description: meal.description,
+                photo: photoID
             )
         )
-            
+        
         AF.request("https://my-meals-api.herokuapp.com/api/meals/\(meal.id)",
                    method: .put,
                    parameters: createMealRequest,
@@ -149,11 +218,19 @@ class MealsAPI {
                 completion(.failure(Errors.unexpectedError))
                 return
             }
-            
-            // TODO: Upload a photo
+            switch result.result {
+            case .success(let createMealRequest):
+                completion(.success(createMealRequest))
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     
+}
+
+struct UploadFileResponse: Codable {
+    let id: Int
 }
 
 struct CreateMealResponse: Codable {
@@ -167,6 +244,7 @@ struct CreateMealRequest: Codable {
 struct CreateMealParams: Codable {
     let name: String
     let description: String
+    let photo: Int?
 }
 
 struct MealResponse: Codable {

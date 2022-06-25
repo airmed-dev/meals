@@ -27,7 +27,7 @@ class PhotoStore {
     }
     
     func saveImage(meal: Meal, image: UIImage) {
-        save(fileName: "\(meal.id).jpg" , image: image)
+        _ = save(fileName: "\(meal.id).jpg" , image: image)
     }
     
     private func save(fileName: String, image: UIImage) -> String? {
