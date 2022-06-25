@@ -11,13 +11,14 @@ import SwiftUI
 struct MealEditor: View {
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
-    @State var image: Image = Image(systemName: "photo.fill")
+    @State var image: UIImage? = nil
     
     var newMeal: Bool = false
     
     @State var showPhotoPickerMenu = false
     @State var showPhotoPickerLibrary = false
     @State var showPhotoPickerCamera = false
+    @State var deletePhotoSelected = false
     
     @State var showDeleteMenu = false
     
@@ -31,8 +32,12 @@ struct MealEditor: View {
                     Image(uiImage: imageDraft)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                } else if let image = image{
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                 } else {
-                    image
+                   Image(systemName: "photo.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 }
@@ -67,6 +72,8 @@ struct MealEditor: View {
                     var photo: UIImage? = nil
                     if imageWasSelected {
                         photo = imageDraft
+                    } else if let image = image {
+                        photo = image
                     }
                     save(meal: meal, photo: photo)
                 }
@@ -95,6 +102,11 @@ struct MealEditor: View {
             }
             Button("Camera"){
                 showPhotoPickerCamera = true
+            }
+            if image != nil {
+                Button("Delete", role: .destructive){
+                    image = nil
+                }
             }
         }
         .alert(isPresented: $showDeleteMenu) {

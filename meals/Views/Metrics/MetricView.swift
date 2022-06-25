@@ -18,7 +18,7 @@ let threeHours: Double = 3 * 60 * 60
 struct MetricView: View {
     @State var meal: Meal?
     @State var event: Event
-    @State var image: Image?
+    @State var image: UIImage?
     
     @State var fetchInsulin: Bool = false
     var width: CGFloat = 5
@@ -29,7 +29,7 @@ struct MetricView: View {
                 VStack {
                     HStack {
                         if let image = image {
-                            image
+                            Image(uiImage: image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: 150)

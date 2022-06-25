@@ -10,10 +10,9 @@ import Foundation
 import SwiftUI
 
 class PhotosAPI {
-    
-    static func getPhoto(meal: Meal, completion: @escaping (Result<Image, Error>) -> Void) {
+    static func getPhoto(meal: Meal, completion: @escaping (Result<UIImage?, Error>) -> Void) {
         guard let imageURL = meal.image?.imageURL else {
-            completion(.success(Image(systemName: "photo.fill")))
+            completion(.success(nil))
             return
         }
         
@@ -41,7 +40,7 @@ class PhotosAPI {
                 print("Unexpected: no image")
                 return
             }
-            completion(.success(Image(uiImage: image)))
+            completion(.success(image))
         }
         
         task.resume()

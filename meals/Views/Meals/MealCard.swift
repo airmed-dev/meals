@@ -9,13 +9,13 @@ import SwiftUI
 
 struct MealCard: View {
     @State var meal: Meal
-    @State var image: Image?
+    @State var image: UIImage?
     
     var body: some View {
         ZStack(alignment: .bottomLeading){
             GeometryReader { geo in
                 if let image = image {
-                    image
+                    Image(uiImage: image)
                         .resizable()
                         .frame(width: geo.size.width, height: geo.size.height)
                 } else {

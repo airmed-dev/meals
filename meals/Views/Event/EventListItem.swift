@@ -10,14 +10,20 @@ import SwiftUI
 struct EventListItem: View {
     @State var event: Event
     @State var meal: Meal
-    @State var image: Image = Image(systemName: "photo.fill")
+    @State var image: UIImage? = nil
     
     
     var body: some View {
         HStack {
-            image.resizable()
-                .clipShape(Circle())
-                .frame(width: 55, height: 55)
+            if let image = image {
+                Image(uiImage: image).resizable()
+                    .clipShape(Circle())
+                    .frame(width: 55, height: 55)
+            } else {
+                Image(systemName: "photo.fill").resizable()
+                    .clipShape(Circle())
+                    .frame(width: 55, height: 55)
+            }
         
             VStack(alignment: .leading) {
                 Text(meal.name)
@@ -32,7 +38,7 @@ struct EventListItem: View {
             PhotosAPI.getPhoto(meal: meal) { result in
                 switch result {
                 case .success(let loadedImage):
-                    image = loadedImage
+                   image = loadedImage
                 case .failure(let error):
                     print("Failed getting image: \(error)")
                 }
@@ -52,7 +58,8 @@ struct EventListItem_Previews: PreviewProvider {
     static var previews: some View {
         List {
             EventListItem(event: Event(meal_id: 1), meal: Meal(id: 1, name: "Blueberry", description: "Blueberry"))
-            EventListItem(event: Event(meal_id: 1), meal: Meal(id: 1, name: "Blueberry", description: "Blueberry"), image: Image(uiImage: UIImage(named:"Blueberry")!))
+            EventListItem(event: Event(meal_id: 1), meal: Meal(id: 1, name: "Blueberry", description: "Blueberry"),
+                          image: UIImage(named:"Blueberry")!)
         }
     }
 }

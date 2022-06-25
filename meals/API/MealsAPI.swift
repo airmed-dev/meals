@@ -245,6 +245,13 @@ struct CreateMealParams: Codable {
     let name: String
     let description: String
     let photo: Int?
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(description, forKey: .description)
+        try container.encode(photo, forKey: .photo)
+    }
 }
 
 struct MealResponse: Codable {
