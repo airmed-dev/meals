@@ -122,13 +122,25 @@ struct MealEditor: View {
     }
     
     func save(meal: Meal, photo: UIImage?) {
-        MealsAPI.saveMeal(meal: meal, photo: photo) { result in
-            switch result {
-            case .success(_):
-                print("Success")
-                presentationMode.wrappedValue.dismiss()
-            case .failure(let error):
-                print("Error saving meal: \(error)")
+        if meal.id != 0 {
+            MealsAPI.updateMeal(mealID: meal.id, meal: meal) { result in
+                switch result {
+                case .success(_):
+                    print("Success")
+//                    presentationMode.wrappedValue.dismiss()
+                case .failure(let error):
+                    print("Error saving meal: \(error)")
+                }
+            }
+        } else {
+            MealsAPI.createMeal(meal: meal, photo: photo) { result in
+                switch result {
+                case .success(_):
+                    print("Success")
+                    presentationMode.wrappedValue.dismiss()
+                case .failure(let error):
+                    print("Error saving meal: \(error)")
+                }
             }
         }
     }

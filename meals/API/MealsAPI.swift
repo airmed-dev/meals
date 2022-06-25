@@ -24,7 +24,6 @@ class MealsAPI {
         
         let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
             guard let data = data else { return }
-            print(String(data: data, encoding: .utf8)!)
             
             do {
                 let decoder = JSONDecoder()
@@ -54,35 +53,45 @@ class MealsAPI {
         
     }
     
-    static func saveMeal(meal: Meal, photo: UIImage?, _ completion: @escaping (Result<Bool, Error>) -> Void) {
+    static func createMeal(meal: Meal, photo: UIImage?, _ completion: @escaping (Result<Bool, Error>) -> Void) {
         let decoder = JSONDecoder()
         let formatter:DateFormatter = DateFormatter()
         formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
         decoder.dateDecodingStrategy = .formatted(formatter)
         
-        if let photo = photo  {
-            do {
-                let mealEncoded = try JSONEncoder().encode(CreateMealParams(name: meal.name , description: meal.description))
-                if let imageData = photo.jpegData(compressionQuality: 1.0) {
-                    AF.upload(
-                        multipartFormData: { multipartFormData in
-                            multipartFormData.append(imageData, withName: "files.photo", fileName: meal.id.formatted()+".jpeg", mimeType: "image/jpeg")
-                            multipartFormData.append(mealEncoded, withName: "data")
-                        },
-                        to: "https://my-meals-api.herokuapp.com/api/meals",
-                        headers: [.authorization(bearerToken: TOKEN)]
-                    )
-                    .responseDecodable(of: CreateMealResponse.self, decoder: decoder) { response in
-                        debugPrint("Response: \(response)")
-                    }
-                    
+        do {
+            let mealEncoded = try JSONEncoder().encode(CreateMealParams(name: meal.name , description: meal.description))
+            var multipartFormData: (MultipartFormData) -> Void
+            if let photo = photo  {
+                guard let imageData = photo.jpegData(compressionQuality: 1.0) else {
+                    print("Unable to get image jpeg data")
+                    completion(.failure(Errors.encodingError))
+                    return
+                }
+                multipartFormData = {multipartFormData in
+                    multipartFormData.append(imageData, withName: "files.photo", fileName: meal.id.formatted()+".jpeg", mimeType: "image/jpeg")
+                    multipartFormData.append(mealEncoded, withName: "data")
+                }
+            } else {
+                multipartFormData = {multipartFormData in
+                    multipartFormData.append(mealEncoded, withName: "data")
                 }
             }
-            catch {
-                completion(.failure(error))
-                return
+            
+            AF.upload(
+                multipartFormData: multipartFormData,
+                to: "https://my-meals-api.herokuapp.com/api/meals",
+                headers: [.authorization(bearerToken: TOKEN)]
+            )
+            .responseDecodable(of: CreateMealResponse.self, decoder: decoder) { response in
+                debugPrint("Response: \(response)")
             }
         }
+        catch {
+            completion(.failure(error))
+            return
+        }
+        
         
         completion(.success(true))
     }
@@ -104,7 +113,44 @@ class MealsAPI {
                 completion(.failure(Errors.unexpectedError))
                 return
             }
+            // TODO: Delete related events
             completion(.success(true))
+        }
+    }
+    
+    static func updateMeal(mealID: Int, meal: Meal, completion: @escaping (Result<Bool, Error>) -> Void){
+        let decoder = JSONDecoder()
+        let formatter:DateFormatter = DateFormatter()
+        formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
+        decoder.dateDecodingStrategy = .formatted(formatter)
+        
+        let createMealRequest = CreateMealRequest(
+            data: CreateMealParams(
+                name: meal.name,
+                description: meal.description
+            )
+        )
+            
+        AF.request("https://my-meals-api.herokuapp.com/api/meals/\(meal.id)",
+                   method: .put,
+                   parameters: createMealRequest,
+                   encoder: JSONParameterEncoder.default,
+                   headers: [.authorization(bearerToken: TOKEN),]
+        ).responseDecodable(of: CreateMealResponse.self, decoder: decoder) { result in
+            debugPrint(result)
+            guard let response = result.response else {
+                print("Error: no response")
+                completion(.failure(Errors.unexpectedError))
+                return
+            }
+            
+            guard response.statusCode == 200 else {
+                print("Error: unexpected status code: \(response.statusCode)")
+                completion(.failure(Errors.unexpectedError))
+                return
+            }
+            
+            // TODO: Upload a photo
         }
     }
     
