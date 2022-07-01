@@ -22,9 +22,12 @@ struct Graph: View {
     
     let colorFunction: (_ point: GraphPoint) -> Color
     
+    let gradientColors:[Color]
+    
     var body: some View {
         VStack {
             HStack {
+                // Y Axis
 //                GeometryReader { geometry in
 //                    // Value axis labels
 //                    let yPixels = geometry.size.width / (valueRange.1 - valueRange.0)
@@ -33,59 +36,60 @@ struct Graph: View {
 //                            .position(x: 30, y: geometry.size.height - CGFloat((CGFloat(y)*yPixels)))
 //                    }
 //                }
-                GeometryReader { geomtry in
-                    // Glucose values
-                    let normalizedGraph = normalizeGraph(
-                        samples: samples,
-                        width: geomtry.size.width, height: geomtry.size.height,
-                        dateMin: dateRange.0, dateMax: dateRange.1,
-                        valueMin: Double(valueRange.0), valueMax: Double(valueRange.1)
-                    )
-                    ForEach(normalizedGraph, id: \.id) { sample in
-                        Circle()
-                            .fill(colorFunction(sample))
-                            .frame(width: width, height: width)
-                            .position(x: sample.x, y: sample.y)
-                    }
-                    
-                    // Time axises
-                    let xPixels = geomtry.size.width / (dateRange.1.timeIntervalSince(dateRange.0) / 60)
-                    let xSteps = 30.0
-                    ForEach(Array(stride(from: 0, to: geomtry.size.width, by: xSteps * xPixels)), id: \.self) { x in
-                        Path { path in
-                            path.move(to: CGPoint(x: x, y: 0))
-                            path.addLine(to: CGPoint(x: x, y: geomtry.size.height ))
-                        }
-                        .strokedPath(StrokeStyle.init(lineWidth: width/5))
-                        .foregroundColor(.white.opacity(0.2))
-                    }
-                    
-                    // Value axies
-                    ForEach([50, 90, 180, 250, 300, 350], id: \.self) { y in
-                        Path { path in
-                            path.move(to: CGPoint(x: 0, y: y))
-                            path.addLine(to: CGPoint(x: geomtry.size.width, y: CGFloat(y)))
-                        }
-                        .strokedPath(StrokeStyle.init(lineWidth: width/5))
-                        .foregroundColor(.white.opacity(0.2))
-                    }
-                    
-                }.background(LinearGradient(colors: [
-                    Color(hex: 0x360033),
-                    Color(hex: 0x0b8793)
-                ],
-                                            startPoint: .top,
-                                        endPoint: .bottom))
-            }
-            HStack {
-                Text(dateRange.0.formatted())
                 Spacer()
-                Text(dateRange.1.formatted())
+                // Graph values
+                VStack {
+                    GeometryReader { geomtry in
+                        // Glucose values
+                        let normalizedGraph = normalizeGraph(
+                            samples: samples,
+                            width: geomtry.size.width, height: geomtry.size.height,
+                            dateMin: dateRange.0, dateMax: dateRange.1,
+                            valueMin: Double(valueRange.0), valueMax: Double(valueRange.1)
+                        )
+                        ForEach(normalizedGraph, id: \.id) { sample in
+                            Circle()
+                                .fill(colorFunction(sample))
+                                .frame(width: width, height: width)
+                                .position(x: sample.x, y: sample.y)
+                        }
+                        
+                        // Time axises
+                        let xPixels = geomtry.size.width / (dateRange.1.timeIntervalSince(dateRange.0) / 60)
+                        let xSteps = 30.0
+                        ForEach(Array(stride(from: 0, to: geomtry.size.width, by: xSteps * xPixels)), id: \.self) { x in
+                            Path { path in
+                                path.move(to: CGPoint(x: x, y: 0))
+                                path.addLine(to: CGPoint(x: x, y: geomtry.size.height ))
+                            }
+                            .strokedPath(StrokeStyle.init(lineWidth: width/5))
+                            .foregroundColor(.white.opacity(0.2))
+                        }
+                        
+                        // Value axies
+                        ForEach([50, 90, 180, 250, 300, 350], id: \.self) { y in
+                            Path { path in
+                                path.move(to: CGPoint(x: 0, y: y))
+                                path.addLine(to: CGPoint(x: geomtry.size.width, y: CGFloat(y)))
+                            }
+                            .strokedPath(StrokeStyle.init(lineWidth: width/5))
+                            .foregroundColor(.white.opacity(0.2))
+                        }
+                        
+                    }.background(LinearGradient(colors: gradientColors,
+                                                startPoint: .top,
+                                                endPoint: .bottom))
+                    
+                    // X Axis
+                    HStack {
+                        Text(dateRange.0.formatted())
+                        Spacer()
+                        Text(dateRange.1.formatted())
+                    }
+                }
+                
             }
-            
         }
-        
-        
     }
     
     
@@ -141,7 +145,7 @@ struct Graph_Previews: PreviewProvider {
             dateRange: (Date.init(timeIntervalSinceNow: -500), end: Date.now),
             valueRange: ( 40,  400),
             debug: true,
-            colorFunction: {point in Color.white}
+            colorFunction: {point in Color.white}, gradientColors: [Color.red, Color.blue]
         )
         .frame(width: 300, height: 300)
     }

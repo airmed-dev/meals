@@ -81,9 +81,6 @@ struct MealDetails: View {
             NavigationLink(
                 destination: {
                     MealEditor(meal: meal)
-                        .onDisappear {
-                            presentationMode.wrappedValue.dismiss()
-                        }
                 },
                 label: {
                     Text("Edit")

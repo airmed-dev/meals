@@ -50,7 +50,7 @@ struct MetricView: View {
             List {
                 Section {
                     Text("Glucose")
-                    MetricGraph(event: event, dataType: .Glucose )
+                    MetricGraph(event: event, dataType: .Glucose)
                         .frame(height: 200)
                         .border(.black)
                 }

@@ -82,11 +82,7 @@ class HealthKitUtils {
         return metricSamples;
     }
     
-    func getInsulinSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
-        if debug {
-            completion(.success(getRandomSamples(for: event)))
-        }
-        
+    func getInsulinSamples(start: Date , end:Date, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
         guard let insulinSampleType = HKSampleType.quantityType(forIdentifier: .insulinDelivery) else {
             print("unable to get insulin sample type")
             return completion(.failure(HealthKitUtilsErrors.HealthKitGeneralError))
@@ -94,8 +90,9 @@ class HealthKitUtils {
         
         // Fetch insulin
         let samplePredicate = HKQuery.predicateForSamples(
-            withStart: event.date,
-            end: event.date.advanced(by: hours))
+            withStart: start,
+            end: end
+        )
         
         let sampleSort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
         
