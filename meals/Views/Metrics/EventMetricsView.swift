@@ -62,9 +62,10 @@ struct MetricGraph: View {
                         event.date,
                         event.date.advanced(by: TimeInterval(hours * 60 * 60))
                       ),
-                      valueRange: ranges[.Insulin]!,
+                      valueRange: range(samples: computedSamples, min:0, max: 1),
                       colorFunction: { _ in return .white},
-                      gradientColors: insulinGradient
+                      gradientColors: insulinGradient,
+                      stepSize: 1
                 )
             case .Glucose:
                       Graph(samples: computedSamples,
@@ -74,7 +75,8 @@ struct MetricGraph: View {
                       ),
                       valueRange: ranges[.Glucose]!,
                       colorFunction: glucoseColors,
-                      gradientColors: glucoseGradientColors
+                      gradientColors: glucoseGradientColors,
+                      stepSize: 50
                   )
             }
             
@@ -261,8 +263,8 @@ struct MetricGraph: View {
         if samples.count == 0 {
             return (min, max)
         }
-        var samplesMin = samples.min(by: {$0.value < $1.value})!.value
-        var sampleMax = samples.max(by: {$0.value < $1.value})!.value
+        let samplesMin = round(samples.min(by: {$0.value < $1.value})!.value)
+        let sampleMax = round(samples.max(by: {$0.value < $1.value})!.value)
         
         if samplesMin == sampleMax {
             return (min, max)
