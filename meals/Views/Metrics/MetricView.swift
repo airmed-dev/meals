@@ -44,93 +44,111 @@ struct MetricView: View {
     @State var errorMessage: String = ""
     
     var body: some View {
-        VStack{
-            if let meal = meal {
-                VStack {
-                    HStack {
-                        if let image = image {
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 150)
-                                .clipShape(Circle())
-                        } else {
-                            Image(systemName: "photo.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .clipShape(Circle())
-                                .frame(height: 150)
-                        }
+        ScrollView{
+            VStack(alignment: .leading) {
+                if let meal = meal {
+                    // Image section
+                    if let image = image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Image(systemName: "photo.fill")
+                            .resizable()
+                            .scaledToFill()
+                    }
+                    
+                    // Overlapping card
+                    VStack(alignment: .leading) {
+                        // Meal properties
+                        Text(meal.name)
+                            .font(.system(size: 32))
+                            .minimumScaleFactor(1)
+                            .padding()
+                        Text("Consumed at: " + event.date.formatted())
+                            .font(.footnote)
+                            .foregroundColor(.black.opacity(1.00))
+                            .padding(EdgeInsets(top: -15, leading: 10, bottom: 15, trailing: 0))
+                        Text(meal.description)
+                            .padding()
                         
-                        VStack {
-                            Text(meal.name)
+                        // Metrics
+                        VStack() {
+                            Text("Glucose")
                                 .font(.headline)
-                            Text(event.date.ISO8601Format())
-                                .font(.footnote)
+                                .font(.system(size: 24))
+                            MetricGraph(event: event, dataType: .Glucose)
+                                .frame(height: 200)
+                                .padding()
                         }
-                    }
-                }
-            }
-            
-            Spacer()
-            List {
-                Section {
-                    Text("Glucose")
-                    MetricGraph(event: event, dataType: .Glucose)
-                        .frame(height: 200)
-                        .border(.black)
-                }
-                Section {
-                    Text("Insulin")
-                    MetricGraph(event: event, dataType: .Insulin )
-                        .frame(height: 200)
-                        .border(.black)
-                }
-                Section {
-                    HStack {
-                        Text("Edit").onTapGesture {
-                            showEditSheet = true
-                        }
-                        .foregroundColor(.accentColor)
+                        .padding(5)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
                         
-                        Spacer()
-                        Text("Delete") .onTapGesture {
-                            showDeleteConfirmation = true
+                        VStack() {
+                            Text("Insulin")
+                                .font(.system(size: 24))
+                            MetricGraph(event: event, dataType: .Insulin )
+                                .frame(height: 200)
                         }
-                        .foregroundColor(.red)
+                        .padding(5)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                        .padding()
+                    }
+                }
+                
+                // Menus
+                HStack {
+                    Text("Edit").onTapGesture {
+                        showEditSheet = true
+                    }
+                    .foregroundColor(.accentColor)
+                    
+                    Spacer()
+                    Text("Delete") .onTapGesture {
+                        showDeleteConfirmation = true
+                    }
+                    .foregroundColor(.red)
+                }
+                .padding()
+                .clipShape(RoundedRectangle(cornerRadius: CGFloat(10)))
+                .shadow(radius:2)
+                .padding()
+            }
+            .frame(width: .infinity)
+            .onAppear {
+                if let meal = meal {
+                    PhotosAPI.getPhoto(meal: meal) { result in
+                        switch result {
+                        case .success(let loadedImage):
+                            image = loadedImage
+                        case .failure(let error):
+                            showErrorAlert = true
+                            errorMessage = "Failed loading image: \(error)"
+                        }
                     }
                 }
             }
-        }
-        .onAppear {
-            if let meal = meal {
-                PhotosAPI.getPhoto(meal: meal) { result in
-                    switch result {
-                    case .success(let loadedImage):
-                        image = loadedImage
-                    case .failure(let error):
-                        showErrorAlert = true
-                        errorMessage = "Failed loading image: \(error)"
-                    }
+            .alert(isPresented: $showDeleteConfirmation) {
+                Alert(title: Text("Are you sure you want to delete this event?"),
+                      primaryButton: .destructive(Text("Yes")){
+                    deleteEvent()
+                }, secondaryButton: .cancel())
+            }
+            .alert(successMessage, isPresented: $showSucessAlert){
+                Button("OK", role: .cancel){
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
-        }
-        .alert(isPresented: $showDeleteConfirmation) {
-            Alert(title: Text("Are you sure you want to delete this event?"),
-                  primaryButton: .destructive(Text("Yes")){
-                deleteEvent()
-            }, secondaryButton: .cancel())
-        }
-        .alert(successMessage, isPresented: $showSucessAlert){
-            Button("OK", role: .cancel){
-                presentationMode.wrappedValue.dismiss()
+            .alert("Error: \(errorMessage)", isPresented: $showErrorAlert){
+                Button("OK", role: .cancel){ }
             }
-        }
-        .alert("Error: \(errorMessage)", isPresented: $showErrorAlert){
-            Button("OK", role: .cancel){ }
-        }
-        .bottomSheet(isPresented: $showEditSheet ){
-            UpdateEventView(event: $event, newDate: newDate)
+            .bottomSheet(isPresented: $showEditSheet ){
+                UpdateEventView(event: $event, newDate: newDate)
+            }
         }
     }
     
@@ -158,7 +176,7 @@ struct MetricView_Previews: PreviewProvider {
                 event: Event(meal_id: mealID, id: 3, date: Date.now)
             )
             MetricView(
-                meal: Meal(id: mealID, name: "Blueberries", description: "Yummy meal"),
+                meal: Meal(id: mealID, name: "Blueberries and a lot of delicious", description: "Yummy meal"),
                 event: Event(meal_id: mealID, id: 3, date: Date.now),
                 showDeleteConfirmation: true,
                 showEditSheet: false
@@ -184,7 +202,7 @@ struct UpdateEventView: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var event: Event
     @State var newDate: Date
-   
+    
     
     @State var showSuccessAlert: Bool = false
     @State var successMessage: String = "Updated event"
@@ -223,7 +241,6 @@ struct UpdateEventView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
-        .padding()
     }
     
     func saveEvent(event: Event){
