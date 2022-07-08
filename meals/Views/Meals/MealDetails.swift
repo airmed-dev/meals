@@ -49,6 +49,9 @@ struct MealDetails: View {
                                     NavigationLink(
                                         destination: {
                                             MetricView(meal: meal, event: mealEvent)
+                                                .onDisappear {
+                                                    loadEvents()
+                                                }
                                         },
                                         label: {
                                             MetricGraph(event: mealEvent, dataType: .Glucose )

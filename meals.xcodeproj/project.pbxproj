@@ -16,6 +16,8 @@
 		DF07B337282694FE00C164AB /* MealsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B336282694FE00C164AB /* MealsStore.swift */; };
 		DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B33828269A2A00C164AB /* MealEditor.swift */; };
 		DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF114AF1283223EC0089BF0B /* HealthKit.framework */; };
+		DF12302C28784216007156DD /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF12302B28784216007156DD /* BottomSheet */; };
+		DF12302E28784417007156DD /* CustomSheetParentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12302D28784417007156DD /* CustomSheetParentView.swift */; };
 		DF19F56C284C95D100119226 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF19F56B284C95D100119226 /* File.swift */; };
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
 		DF282F732838BC700044C1EF /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F722838BC700044C1EF /* PhotoStore.swift */; };
@@ -23,6 +25,7 @@
 		DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37D5E828354573007BEFE3 /* HealthKit.swift */; };
 		DF38A93F286EE71B0041F304 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DF38A93E286EE71B0041F304 /* Alamofire */; };
 		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
+		DF91C1C828709CF200B5313D /* SimpleGlucose.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF91C1C728709CF200B5313D /* SimpleGlucose.swift */; };
 		DF937573283012DA00CBE618 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937572283012DA00CBE618 /* Event.swift */; };
 		DF937575283012E100CBE618 /* Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937574283012E100CBE618 /* Metric.swift */; };
 		DF9375772830137200CBE618 /* MetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375762830137200CBE618 /* MetricView.swift */; };
@@ -52,12 +55,14 @@
 		DF07B33828269A2A00C164AB /* MealEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEditor.swift; sourceTree = "<group>"; };
 		DF114AEF283223EC0089BF0B /* meals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meals.entitlements; sourceTree = "<group>"; };
 		DF114AF1283223EC0089BF0B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		DF12302D28784417007156DD /* CustomSheetParentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSheetParentView.swift; sourceTree = "<group>"; };
 		DF19F56B284C95D100119226 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
 		DF282F722838BC700044C1EF /* PhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
 		DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerRadiusModifier.swift; sourceTree = "<group>"; };
 		DF37D5E828354573007BEFE3 /* HealthKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKit.swift; sourceTree = "<group>"; };
 		DF3D07C2282FFB8D003E36BD /* MealDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetails.swift; sourceTree = "<group>"; };
+		DF91C1C728709CF200B5313D /* SimpleGlucose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleGlucose.swift; sourceTree = "<group>"; };
 		DF937572283012DA00CBE618 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		DF937574283012E100CBE618 /* Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metric.swift; sourceTree = "<group>"; };
 		DF9375762830137200CBE618 /* MetricView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricView.swift; sourceTree = "<group>"; };
@@ -81,6 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */,
+				DF12302C28784216007156DD /* BottomSheet in Frameworks */,
 				DF38A93F286EE71B0041F304 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,6 +187,7 @@
 				DF9375762830137200CBE618 /* MetricView.swift */,
 				DF9375782830156500CBE618 /* EventMetricsView.swift */,
 				DFE324B1286EF41A00C536C9 /* Axis.swift */,
+				DF91C1C728709CF200B5313D /* SimpleGlucose.swift */,
 			);
 			path = Metrics;
 			sourceTree = "<group>";
@@ -198,6 +205,7 @@
 			children = (
 				DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */,
 				DFA4A413285346BC00D67202 /* ColorFromHex.swift */,
+				DF12302D28784417007156DD /* CustomSheetParentView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -240,6 +248,7 @@
 			name = meals;
 			packageProductDependencies = (
 				DF38A93E286EE71B0041F304 /* Alamofire */,
+				DF12302B28784216007156DD /* BottomSheet */,
 			);
 			productName = meals;
 			productReference = DF07B3172826933700C164AB /* meals.app */;
@@ -271,6 +280,7 @@
 			mainGroup = DF07B30E2826933700C164AB;
 			packageReferences = (
 				DF38A93D286EE71B0041F304 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */,
 			);
 			productRefGroup = DF07B3182826933700C164AB /* Products */;
 			projectDirPath = "";
@@ -302,6 +312,7 @@
 				DF937573283012DA00CBE618 /* Event.swift in Sources */,
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
+				DF12302E28784417007156DD /* CustomSheetParentView.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
 				DFECDE41284B697E00FCDF35 /* PhotosAPI.swift in Sources */,
 				DF19F56C284C95D100119226 /* File.swift in Sources */,
@@ -312,6 +323,7 @@
 				DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */,
 				DFA0E56B2847DE1100323B35 /* EventList.swift in Sources */,
 				DF07B32C2826939F00C164AB /* MealList.swift in Sources */,
+				DF91C1C828709CF200B5313D /* SimpleGlucose.swift in Sources */,
 				DF9375772830137200CBE618 /* MetricView.swift in Sources */,
 				DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */,
 				DFEBBE342830C8F100369EEB /* EventStore.swift in Sources */,
@@ -535,6 +547,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adamfootdev/BottomSheet.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.4;
+			};
+		};
 		DF38A93D286EE71B0041F304 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -546,6 +566,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DF12302B28784216007156DD /* BottomSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */;
+			productName = BottomSheet;
+		};
 		DF38A93E286EE71B0041F304 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF38A93D286EE71B0041F304 /* XCRemoteSwiftPackageReference "Alamofire" */;

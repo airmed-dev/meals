@@ -37,6 +37,9 @@ struct EventList: View {
                         if let se = selectedEvent {
                             NavigationLink(destination: {
                                 MetricView(meal:meals.first{$0.id == se.meal_id}!, event: se )
+                                    .onDisappear {
+                                        loadData()
+                                    }
                             } ){
                                 Text("See event")
                             }
@@ -91,28 +94,30 @@ struct EventList: View {
             if preview {
                 return
             }
-            
-            EventsAPI.getEvents(mealID: nil) { result in
-                switch result {
-                case .success(let loadedEvents):
-                    events = Dictionary(grouping: loadedEvents, by: {
-                        Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: $0.date))!
-                    })
-                case .failure(let error):
-                    print("Error fetching events:\(error)")
-                }
-                loadingEvents = false
+            loadData()
+        }
+    }
+    
+    func loadData(){
+        EventsAPI.getEvents(mealID: nil) { result in
+            switch result {
+            case .success(let loadedEvents):
+                events = Dictionary(grouping: loadedEvents, by: {
+                    Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: $0.date))!
+                })
+            case .failure(let error):
+                print("Error fetching events:\(error)")
             }
-            MealsAPI.getMeals { result in
-                switch result {
-                case .success(let loadedMeals):
-                    meals = loadedMeals
-                case .failure(let error):
-                    print("Error fetching events:\(error)")
-                }
-                loadingMeals = false
+            loadingEvents = false
+        }
+        MealsAPI.getMeals { result in
+            switch result {
+            case .success(let loadedMeals):
+                meals = loadedMeals
+            case .failure(let error):
+                print("Error fetching events:\(error)")
             }
-            
+            loadingMeals = false
         }
     }
     
