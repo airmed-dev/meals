@@ -92,7 +92,7 @@ struct EventList: View {
                 return
             }
             
-            EventsAPI.getEvents { result in
+            EventsAPI.getEvents(mealID: nil) { result in
                 switch result {
                 case .success(let loadedEvents):
                     events = Dictionary(grouping: loadedEvents, by: {

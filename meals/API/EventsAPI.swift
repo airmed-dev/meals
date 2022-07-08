@@ -10,12 +10,20 @@ import Alamofire
 
 class EventsAPI {
     
-    static func getEvents(_ completion: @escaping (Result<[Event],Error>) -> Void) {
+    static func getEvents(mealID: Int?, _ completion: @escaping (Result<[Event],Error>) -> Void) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "my-meals-api.herokuapp.com"
         urlComponents.path = "/api/meal-events"
-        urlComponents.queryItems = [URLQueryItem(name: "populate", value: "*")]
+        urlComponents.queryItems = [
+            URLQueryItem(name: "populate", value: "*")
+        ]
+        
+        if let mealID = mealID {
+            urlComponents.queryItems?.append(
+                URLQueryItem( name: "filters[meal][id][$eq]", value: String(mealID))
+            )
+        }
         
         
         var request = URLRequest(url: urlComponents.url!)

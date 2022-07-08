@@ -64,7 +64,7 @@ struct Graph: View {
                             }
                             
                             // Value axies
-                            ForEach([50, 90, 180, 250, 300, 350], id: \.self) { y in
+                            ForEach(getValueAxis(), id: \.self) { y in
                                 Path { path in
                                     path.move(to: CGPoint(x: 0, y: y))
                                     path.addLine(to: CGPoint(x: geomtry.size.width, y: CGFloat(y)))
@@ -90,6 +90,10 @@ struct Graph: View {
         }
     }
     
+    func getValueAxis() -> [Double]{
+        return Array(stride(from: valueRange.0, to: valueRange.1, by: stepSize))
+    }
+    
     
     func formatAsTime(date:Date) -> String {
         let hourlyFormatter = DateFormatter()
@@ -107,7 +111,7 @@ struct Graph: View {
         
         return samples.enumerated().map { _, samplePoint in
             
-            let y = height - samplePoint.value * yScale
+            let y = height - (samplePoint.value - valueMin) * yScale
             let x = (samplePoint.date.timeIntervalSince(dateMin) / 60.0)
             * xScale
             

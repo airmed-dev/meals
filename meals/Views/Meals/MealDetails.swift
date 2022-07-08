@@ -113,11 +113,10 @@ struct MealDetails: View {
     }
     
     func loadEvents() {
-        EventsAPI.getEvents { result in
-            print("Appeared")
+        EventsAPI.getEvents(mealID: meal.id) { result in
             switch result {
             case .success(let events):
-                mealEvents = events.filter { $0.meal_id == meal.id }
+                mealEvents = events
                 print("Loaded \(mealEvents.count) events")
             case .failure(let error):
                 print("Failed saving events: \(error)")
