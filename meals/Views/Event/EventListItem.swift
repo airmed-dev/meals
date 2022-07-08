@@ -11,6 +11,7 @@ struct EventListItem: View {
     @State var event: Event
     @State var meal: Meal
     @State var image: UIImage? = nil
+    @State var selected: Bool = false
     
     
     var body: some View {
@@ -31,7 +32,13 @@ struct EventListItem: View {
                 Text(formatDateAsTime(date: event.date))
                     .font(.footnote)
             }
-            Spacer()
+            if selected {
+                Spacer()
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.accentColor)
+            }else {
+                Spacer()
+            }
             
         }
         .onAppear {
@@ -59,7 +66,7 @@ struct EventListItem_Previews: PreviewProvider {
         List {
             EventListItem(event: Event(meal_id: 1), meal: Meal(id: 1, name: "Blueberry", description: "Blueberry"))
             EventListItem(event: Event(meal_id: 1), meal: Meal(id: 1, name: "Blueberry", description: "Blueberry"),
-                          image: UIImage(named:"Blueberry")!)
+                          image: UIImage(named:"Blueberry")!, selected: true)
         }
     }
 }

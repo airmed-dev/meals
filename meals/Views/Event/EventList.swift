@@ -74,10 +74,19 @@ struct EventList: View {
                         Section(header: Text(formatDate(date: key))){
                             ForEach(currentEvents){ event in
                                 if let meal = meals.first { $0.id == event.meal_id }{
-                                    EventListItem(event: event, meal: meal)
+                                    if let se = selectedEvent {
+                                        EventListItem(event: event, meal: meal, selected: se.id == event.id)
                                         .onTapGesture {
                                             selectedEvent = event
                                         }
+                                    } else {
+                                     EventListItem(event: event, meal: meal, selected: false)
+                                        .onTapGesture {
+                                            selectedEvent = event
+                                        }
+                                    }
+
+
                                 } else {
                                     Text(formatDate(date: event.date))
                                     Text("Meal is loading")
