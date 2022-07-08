@@ -44,6 +44,18 @@ struct Graph: View {
                                 dateMin: dateRange.0, dateMax: dateRange.1,
                                 valueMin: Double(valueRange.0), valueMax: Double(valueRange.1)
                             )
+                            if normalizedGraph.count == 0 {
+                                RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))
+                                    .fill(.background)
+                                    .frame(width: geomtry.size.width / 2, height: geomtry.size.height / 3)
+                                    .position(x: geomtry.size.width / 2, y: geomtry.size.height / 2)
+                                    .opacity(0.75)
+                                    .shadow(radius: 5)
+                                    .overlay {
+                                       Text("No data")
+                                    }
+                            }
+                            
                             ForEach(normalizedGraph, id: \.id) { sample in
                                 Circle()
                                     .fill(colorFunction(sample))
@@ -73,7 +85,7 @@ struct Graph: View {
                                 .foregroundColor(.white.opacity(0.2))
                             }
                             
-                        }.background(LinearGradient(colors: gradientColors,
+                        }.background(LinearGradient(colors: getBackground(),
                                                     startPoint: .top,
                                                     endPoint: .bottom))
                     }
@@ -101,6 +113,9 @@ struct Graph: View {
         return hourlyFormatter.string(from: date)
     }
     
+    func getBackground() -> [Color] {
+       return gradientColors
+    }
     
     func normalizeGraph(samples: [MetricSample],
                         width: Double, height: Double,
@@ -144,6 +159,15 @@ struct Graph_Previews: PreviewProvider {
                 MetricSample(Date.init(timeIntervalSinceNow: -100), 100),
                 MetricSample(Date.init(timeIntervalSinceNow: 0), 100),
             ],
+            dateRange: (Date.init(timeIntervalSinceNow: -500), end: Date.now),
+            valueRange: ( 40,  400),
+            debug: true,
+            colorFunction: {point in Color.white}, gradientColors: [Color.red, Color.blue],
+            stepSize: 50
+        )
+        .frame(width: 300, height: 300)
+        Graph(
+            samples: [],
             dateRange: (Date.init(timeIntervalSinceNow: -500), end: Date.now),
             valueRange: ( 40,  400),
             debug: true,
