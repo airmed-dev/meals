@@ -81,14 +81,15 @@ struct MealDetails: View {
         .padding()
         .background(.gray.opacity(0.2))
         .toolbar {
-            NavigationLink(
-                destination: {
-                    MealEditor(meal: meal)
-                },
-                label: {
-                    Text("Edit")
-                }
-            )
+            Button("Edit"){
+               showMealEditor = true
+            }
+        }
+        .sheet(isPresented: $showMealEditor ){
+            MealEditor(meal: meal, onCompletion: {
+                showMealEditor = false
+                presentationMode.wrappedValue.dismiss()
+            })
         }
         .alert(isPresented: $showLogMeal) {
             let date = Date()

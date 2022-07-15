@@ -17,7 +17,8 @@
 		DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B33828269A2A00C164AB /* MealEditor.swift */; };
 		DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF114AF1283223EC0089BF0B /* HealthKit.framework */; };
 		DF12302C28784216007156DD /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF12302B28784216007156DD /* BottomSheet */; };
-		DF12302E28784417007156DD /* CustomSheetParentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12302D28784417007156DD /* CustomSheetParentView.swift */; };
+		DF123030287955F1007156DD /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12302F287955F1007156DD /* Nightscout.swift */; };
+		DF12303328795D6F007156DD /* GlucoseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12303228795D6F007156DD /* GlucoseAPI.swift */; };
 		DF19F56C284C95D100119226 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF19F56B284C95D100119226 /* File.swift */; };
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
 		DF282F732838BC700044C1EF /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F722838BC700044C1EF /* PhotoStore.swift */; };
@@ -41,6 +42,7 @@
 		DFECDE3F284B582E00FCDF35 /* EventsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFECDE3E284B582E00FCDF35 /* EventsAPI.swift */; };
 		DFECDE41284B697E00FCDF35 /* PhotosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFECDE40284B697E00FCDF35 /* PhotosAPI.swift */; };
 		DFEFD43B286EC77600200B24 /* Insulin.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEFD43A286EC77600200B24 /* Insulin.swift */; };
+		DFF2DFCE28813E88008251DC /* LoadingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF2DFCD28813E88008251DC /* LoadingButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,7 +57,8 @@
 		DF07B33828269A2A00C164AB /* MealEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEditor.swift; sourceTree = "<group>"; };
 		DF114AEF283223EC0089BF0B /* meals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meals.entitlements; sourceTree = "<group>"; };
 		DF114AF1283223EC0089BF0B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
-		DF12302D28784417007156DD /* CustomSheetParentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSheetParentView.swift; sourceTree = "<group>"; };
+		DF12302F287955F1007156DD /* Nightscout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
+		DF12303228795D6F007156DD /* GlucoseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseAPI.swift; sourceTree = "<group>"; };
 		DF19F56B284C95D100119226 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
 		DF282F722838BC700044C1EF /* PhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
@@ -78,6 +81,7 @@
 		DFECDE3E284B582E00FCDF35 /* EventsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsAPI.swift; sourceTree = "<group>"; };
 		DFECDE40284B697E00FCDF35 /* PhotosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosAPI.swift; sourceTree = "<group>"; };
 		DFEFD43A286EC77600200B24 /* Insulin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insulin.swift; sourceTree = "<group>"; };
+		DFF2DFCD28813E88008251DC /* LoadingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +118,7 @@
 		DF07B3192826933700C164AB /* meals */ = {
 			isa = PBXGroup;
 			children = (
+				DF123031287955F9007156DD /* Integrations */,
 				DFECDE3B284B478900FCDF35 /* API */,
 				DF114AEF283223EC0089BF0B /* meals.entitlements */,
 				DF07B335282694F100C164AB /* Storage */,
@@ -123,7 +128,6 @@
 				DF07B31C2826933700C164AB /* ContentView.swift */,
 				DF07B31E2826933800C164AB /* Assets.xcassets */,
 				DF07B3202826933800C164AB /* Preview Content */,
-				DF37D5E828354573007BEFE3 /* HealthKit.swift */,
 				DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */,
 				DFEFD43A286EC77600200B24 /* Insulin.swift */,
 			);
@@ -200,12 +204,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		DF123031287955F9007156DD /* Integrations */ = {
+			isa = PBXGroup;
+			children = (
+				DF37D5E828354573007BEFE3 /* HealthKit.swift */,
+				DF12302F287955F1007156DD /* Nightscout.swift */,
+				DF12303228795D6F007156DD /* GlucoseAPI.swift */,
+			);
+			path = Integrations;
+			sourceTree = "<group>";
+		};
 		DF282F742838C26D0044C1EF /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
 				DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */,
 				DFA4A413285346BC00D67202 /* ColorFromHex.swift */,
-				DF12302D28784417007156DD /* CustomSheetParentView.swift */,
+				DFF2DFCD28813E88008251DC /* LoadingButton.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -312,7 +326,6 @@
 				DF937573283012DA00CBE618 /* Event.swift in Sources */,
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
-				DF12302E28784417007156DD /* CustomSheetParentView.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
 				DFECDE41284B697E00FCDF35 /* PhotosAPI.swift in Sources */,
 				DF19F56C284C95D100119226 /* File.swift in Sources */,
@@ -324,6 +337,7 @@
 				DFA0E56B2847DE1100323B35 /* EventList.swift in Sources */,
 				DF07B32C2826939F00C164AB /* MealList.swift in Sources */,
 				DF91C1C828709CF200B5313D /* SimpleGlucose.swift in Sources */,
+				DF12303328795D6F007156DD /* GlucoseAPI.swift in Sources */,
 				DF9375772830137200CBE618 /* MetricView.swift in Sources */,
 				DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */,
 				DFEBBE342830C8F100369EEB /* EventStore.swift in Sources */,
@@ -334,7 +348,9 @@
 				DFE8D35C2840CA5400937CAB /* PhotoPicker.swift in Sources */,
 				DF9375792830156500CBE618 /* EventMetricsView.swift in Sources */,
 				DF937575283012E100CBE618 /* Metric.swift in Sources */,
+				DF123030287955F1007156DD /* Nightscout.swift in Sources */,
 				DF07B31B2826933700C164AB /* mealsApp.swift in Sources */,
+				DFF2DFCE28813E88008251DC /* LoadingButton.swift in Sources */,
 				DF07B337282694FE00C164AB /* MealsStore.swift in Sources */,
 				DFA4A414285346BC00D67202 /* ColorFromHex.swift in Sources */,
 			);

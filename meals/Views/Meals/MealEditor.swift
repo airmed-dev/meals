@@ -25,6 +25,9 @@ struct MealEditor: View {
     @State var imageDraft: UIImage = UIImage()
     @State var imageWasSelected = false
     
+    // Callbacks
+    var onCompletion: () -> Void = {}
+    
     // Buttons
     @State var saveButtonStatus: ButtonStatus = .Initial
     @State var deleteButtonStatus: ButtonStatus = .Initial
@@ -149,11 +152,13 @@ struct MealEditor: View {
             )
         }
         .alert(errorMessage, isPresented: $showErrorAlert){
-            Button("Ok", role: .cancel){}
+            Button("Ok", role: .cancel){
+                presentationMode.wrappedValue.dismiss()
+            }
         }
         .alert(successMessage, isPresented: $showSuccessAlert) {
             Button("Ok", role: .cancel){
-                presentationMode.wrappedValue.dismiss()
+                onCompletion()
             }
         }
     }
