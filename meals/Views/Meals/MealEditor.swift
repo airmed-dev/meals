@@ -25,6 +25,13 @@ struct MealEditor: View {
     @State var imageDraft: UIImage = UIImage()
     @State var imageWasSelected = false
     
+    // Alerts
+    @State var showSuccessAlert: Bool = false
+    @State var successMessage: String = ""
+    
+    @State var showErrorAlert: Bool = false
+    @State var errorMessage: String = ""
+    
     var body: some View {
         VStack {
             ZStack(alignment: .bottomTrailing) {
@@ -109,14 +116,6 @@ struct MealEditor: View {
                 }
             }
         }
-        .alert(isPresented: $showDeleteMenu) {
-            Alert(title: Text("Are you sure you want to delete this meal?"),
-                  primaryButton: .destructive(Text("Yes")){
-                delete(meal: meal)
-            },
-                  secondaryButton: .cancel()
-            )
-        }
         .sheet(isPresented: $showPhotoPickerLibrary){
             ImagePicker(
                 selectedImage: $imageDraft,
@@ -131,6 +130,23 @@ struct MealEditor: View {
                 sourceType: .camera
             )
         }
+        .alert(isPresented: $showDeleteMenu) {
+            Alert(title: Text("Are you sure you want to delete this meal?"),
+                  primaryButton:
+                    .destructive(Text("Yes")){
+                        delete(meal: meal)
+                    },
+                  secondaryButton: .cancel()
+            )
+        }
+        .alert(errorMessage, isPresented: $showErrorAlert){
+            Button("Ok", role: .cancel){}
+        }
+        .alert(successMessage, isPresented: $showSuccessAlert) {
+            Button("Ok", role: .cancel){
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
     }
     
     func save(meal: Meal, photo: UIImage?) {
@@ -138,20 +154,22 @@ struct MealEditor: View {
             MealsAPI.updateMealAndPhoto(mealID: meal.id, meal: meal, photo: photo) { result in
                 switch result {
                 case .success(_):
-                    print("Success")
-                    presentationMode.wrappedValue.dismiss()
+                    showSuccessAlert = true
+                    successMessage = "Updated meal"
                 case .failure(let error):
-                    print("Error saving meal: \(error)")
+                    showErrorAlert = true
+                    errorMessage = "Error saving meal: \(error)"
                 }
             }
         } else {
             MealsAPI.createMeal(meal: meal, photo: photo) { result in
                 switch result {
                 case .success(_):
-                    print("Success")
-                    presentationMode.wrappedValue.dismiss()
+                    showSuccessAlert = true
+                    successMessage = "Created a meal"
                 case .failure(let error):
-                    print("Error saving meal: \(error)")
+                    showErrorAlert = true
+                    errorMessage = "Error creating meal: \(error)"
                 }
             }
         }
@@ -161,10 +179,11 @@ struct MealEditor: View {
         MealsAPI.deleteMeal(meal: meal) { result in
             switch result {
             case .success(_):
-                print("Success")
-                presentationMode.wrappedValue.dismiss()
+                showSuccessAlert = true
+                successMessage = "Deleted meal"
             case .failure(let error):
-                print("Failed deleteing meal: \(error)")
+                showErrorAlert = true
+                errorMessage = "Error deleting meal: \(error)"
             }
         }
     }

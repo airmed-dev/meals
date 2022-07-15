@@ -84,7 +84,12 @@ class MealsAPI {
                 headers: [.authorization(bearerToken: TOKEN)]
             )
             .responseDecodable(of: CreateMealResponse.self, decoder: decoder) { response in
-                debugPrint("Response: \(response)")
+                switch response.result {
+                case .success(_):
+                    completion(.success(true))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
         }
         catch {
@@ -131,26 +136,12 @@ class MealsAPI {
                   to: "https://my-meals-api.herokuapp.com/api/upload",
                   headers: [.authorization(bearerToken: TOKEN)]
         ).responseDecodable(of: [UploadFileResponse].self ) { result in
-            //            guard let response = result.response else {
-            //                print("Error uploadng meal photo")
-            //                completion(.failure(Errors.unexpectedError))
-            //                return
-            //            }
-            //
-            //            guard response.statusCode == 200 else {
-            //                print("Error uploading photo: unexpected status code: \(response.statusCode)")
-            //                completion(.failure(Errors.unexpectedError))
-            //                return
-            //            }
-            //
             switch result.result {
             case .success(let uploads):
                 completion(.success(uploads[0].id))
             case .failure(let error):
                 completion(.failure(error))
             }
-            
-            
         }
     }
     
