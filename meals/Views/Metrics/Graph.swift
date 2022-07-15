@@ -91,9 +91,10 @@ struct Graph: View {
                     }
                     // X Axis
                     HStack {
-                        Text(dateRange.0.formatted())
+                        Text(formatAsTime(dateRange.0))
+                            .offset(x: 60)
                         Spacer()
-                        Text(dateRange.1.formatted())
+                        Text(formatAsTime(dateRange.1))
                     }
                 }
             
@@ -107,7 +108,7 @@ struct Graph: View {
     }
     
     
-    func formatAsTime(date:Date) -> String {
+    func formatAsTime(_ date:Date) -> String {
         let hourlyFormatter = DateFormatter()
         hourlyFormatter.dateFormat = "HH:mm"
         return hourlyFormatter.string(from: date)

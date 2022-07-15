@@ -48,9 +48,6 @@ struct MealList: View {
                                         withAnimation(.easeInOut(duration: 10.0)){
                                             NavigationLink(destination: {
                                                 MealDetails(meal: meal)
-                                                    .onDisappear {
-                                                        loadMeals()
-                                                    }
                                             }) {
                                                 MealCard(meal: meal)
                                                     .frame(width: 150,height: 150)

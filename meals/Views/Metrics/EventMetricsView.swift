@@ -27,7 +27,6 @@ let insulinGradient =  [
     Color(hex: 0xf1f2b5)
 ]
 
-
 struct MetricGraph: View {
     @State var isAuthorized = false
     
@@ -37,7 +36,7 @@ struct MetricGraph: View {
     @State var samples: [MetricSample] = []
     @State var debug = false
     @State var error: Error? = nil
-    @State var hours = 3
+    @State var hours: Int
     
     var body: some View {
         VStack {
@@ -54,6 +53,7 @@ struct MetricGraph: View {
             if let error = error {
                 Text("ERROR: \(error.localizedDescription)")
             }
+
             
             switch dataType {
             case .Insulin:
@@ -73,7 +73,7 @@ struct MetricGraph: View {
                         event.date,
                         event.date.advanced(by: TimeInterval(hours * 60 * 60))
                       ),
-                      valueRange: ranges[.Glucose]!,
+                      valueRange: range(samples: computedSamples, min: 50, max: 200),
                       colorFunction: glucoseColors,
                       gradientColors: glucoseGradientColors,
                       stepSize: 50
@@ -86,24 +86,6 @@ struct MetricGraph: View {
                         Text(sample.date.formatted())
                         Text(String(sample.value))
                     }
-                }
-            }
-        }
-        .toolbar {
-            ToolbarItemGroup {
-                Menu {
-                    Button {
-                        hours = 3
-                    } label: {
-                        Text("3 hours")
-                    }
-                    Button {
-                        hours = 6
-                    } label: {
-                        Text("6 hours")
-                    }
-                } label: {
-                    Text("\(hours) hours")
                 }
             }
         }
@@ -120,13 +102,12 @@ struct MetricGraph: View {
                     
                     return
                 }
-                print("Authorized succesfully")
                 isAuthorized=true
-                loadSamples(for: self.event)
+                loadSamples()
             }
         }
-        .onChange(of: self.event) { newEvent in
-            loadSamples(for: newEvent)
+        .onChange(of: self.hours) { _ in
+            loadSamples()
         }
     }
     
@@ -143,14 +124,14 @@ struct MetricGraph: View {
         
     }
     
-    func loadSamples(for event:Event){
+    func loadSamples(){
         if debug {
             return
         }
         let hoursInSeconds = 60*60*TimeInterval(hours)
         switch self.dataType {
         case .Glucose:
-            HealthKitUtils().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
+            Nightscout().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
                 switch result {
                 case .success(let samples):
                     self.samples = samples
@@ -284,8 +265,8 @@ struct MetricGraph_Previews: PreviewProvider {
     ]
     
     static var glucoseSamples = [
-        MetricSample(Date.init(timeIntervalSinceNow: 0), 100),
-        MetricSample(Date.init(timeIntervalSinceNow: 30 * 60), 200),
+        MetricSample(Date.init(timeIntervalSinceNow: 0), 300),
+        MetricSample(Date.init(timeIntervalSinceNow: 50 * 60), 200),
     ]
 
     static var previews: some View {
@@ -294,7 +275,8 @@ struct MetricGraph_Previews: PreviewProvider {
                 event: Event(meal_id: 1),
                 dataType: .Glucose,
                 samples: glucoseSamples,
-                debug: true
+                debug: true,
+                hours: 3
             )
             .frame(width: 300, height: 300)
             
@@ -302,7 +284,8 @@ struct MetricGraph_Previews: PreviewProvider {
                 event: Event(meal_id: 1),
                 dataType: .Insulin,
                 samples: insulinSamples,
-                debug: true
+                debug: true,
+                hours: 3
             )
             .frame(width: 300, height: 300)
         }

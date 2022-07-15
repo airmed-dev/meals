@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import HealthKit
 import Alamofire
 import BottomSheet
 
@@ -26,6 +25,7 @@ struct MetricView: View {
     @State var image: UIImage?
     
     @State var fetchInsulin: Bool = false
+    @State var hours: Int = 3
     var width: CGFloat = 5
     
     // Notification state
@@ -61,43 +61,54 @@ struct MetricView: View {
                     // Overlapping card
                     VStack(alignment: .leading) {
                         // Meal properties
-                        Text(meal.name)
-                            .font(.system(size: 32))
-                            .minimumScaleFactor(1)
-                            .padding()
-                        Text("Consumed at: " + event.date.formatted())
-                            .font(.footnote)
-                            .foregroundColor(.black.opacity(1.00))
-                            .padding(EdgeInsets(top: -15, leading: 10, bottom: 15, trailing: 0))
-                        Text(meal.description)
-                            .padding()
-                        
-                        // Metrics
-                        VStack() {
-                            Text("Glucose")
-                                .font(.headline)
-                                .font(.system(size: 24))
-                            MetricGraph(event: event, dataType: .Glucose)
-                                .frame(height: 200)
+                        VStack(alignment: .leading) {
+                            Text(meal.name)
+                                .font(.system(size: 32))
+                                .minimumScaleFactor(1)
                                 .padding()
+                            Text("Consumed at: " + event.date.formatted())
+                                .font(.footnote)
+                                .foregroundColor(.black.opacity(1.00))
+                                .padding(EdgeInsets(top: -15, leading: 10, bottom: 15, trailing: 0))
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(meal.description)
+                            }
+                            Divider()
+                            HStack(alignment: .firstTextBaseline) {
+                                Text("Metrics")
+                                    .font(.system(size: 32))
+                                    .minimumScaleFactor(1)
+                                    .padding(3)
+                            }
                         }
-                        .padding(5)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
                         
-                        VStack() {
-                            Text("Insulin")
-                                .font(.system(size: 24))
-                            MetricGraph(event: event, dataType: .Insulin )
-                                .frame(height: 200)
+                        VStack {
+                            
+                        // Metrics
+                            VStack() {
+                                Text("Glucose")
+                                    .font(.system(size: 18))
+                                MetricGraph(event: event, dataType: .Glucose, hours: hours)
+                                    .frame(height: 200)
+                            }
+                            .padding(5)
+                            .cornerRadius(20)
+                        
+                            VStack() {
+                                Text("Insulin")
+                                    .font(.system(size: 18))
+                                MetricGraph(event: event, dataType: .Insulin, hours: hours)
+                                    .frame(height: 200)
+                            }
+                            .padding(5)
+                            .cornerRadius(10)
                         }
-                        .padding(5)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
-                        .padding()
+                        .cornerRadius(15)
+                        .offset(y: -10)
                     }
+                    .background(.background)
+                    .cornerRadius(30)
+                    .offset(y: -30)
                 }
                 
                 // Menus
@@ -115,9 +126,9 @@ struct MetricView: View {
                 }
                 .padding()
                 .clipShape(RoundedRectangle(cornerRadius: CGFloat(10)))
-                .shadow(radius:2)
                 .padding()
             }
+            .background(Color(.systemGray6))
             .frame(width: .infinity)
             .onAppear {
                 if let meal = meal {

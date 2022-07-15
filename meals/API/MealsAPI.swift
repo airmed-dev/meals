@@ -17,7 +17,11 @@ class MealsAPI {
         urlComponents.scheme = "https"
         urlComponents.host = "my-meals-api.herokuapp.com"
         urlComponents.path = "/api/meals"
-        urlComponents.queryItems = [URLQueryItem(name: "populate", value: "photo")]
+        urlComponents.queryItems = [
+            URLQueryItem(name: "populate", value: "photo"),
+            // TODO: Handling pagination properly
+            URLQueryItem(name: "pagination[pageSize]", value: "50")
+        ]
         
         var request = URLRequest(url: urlComponents.url!)
         request.setValue("Bearer \(TOKEN)", forHTTPHeaderField: "Authorization")

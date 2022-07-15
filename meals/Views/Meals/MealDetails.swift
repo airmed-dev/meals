@@ -11,8 +11,10 @@ struct MealDetails: View {
     @Environment(\.presentationMode) var presentationMode
     
     @State var showLogMeal: Bool = false
+    @State var showMealEditor: Bool = false
     @State var meal: Meal
     @State var mealEvents: [Event] = []
+    @State var hours: Int = 3
     
     @State var newMealEventDate:Date = Date()
     
@@ -54,7 +56,7 @@ struct MealDetails: View {
                                                 }
                                         },
                                         label: {
-                                            MetricGraph(event: mealEvent, dataType: .Glucose )
+                                            MetricGraph(event: mealEvent, dataType: .Glucose, hours: hours )
                                                 .frame(height: 200)
                                                 .border(.black)
                                         }

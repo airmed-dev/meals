@@ -12,11 +12,11 @@ enum HealthKitUtilsErrors: Error {
     case HealthKitGeneralError
 }
 
-class HealthKitUtils {
+class HealthKitUtils: GlucoseAPI {
     var healthKitStore = HKHealthStore()
     
     func getGlucoseSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
-        if debug {
+        if true {
             completion(.success(getRandomSamples(for: event)))
         }
         
