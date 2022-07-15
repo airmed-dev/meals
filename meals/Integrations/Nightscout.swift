@@ -28,7 +28,7 @@ class Nightscout: GlucoseAPI {
         let parameters = [
             "find[dateString][$gte]": paramFormatter.string(from: event.date),
             "find[dateString][$lte]": paramFormatter.string(from: event.date.addingTimeInterval(hours)),
-            "count": 1000
+            "count": 2000
         ] as [String : Any]
         
         

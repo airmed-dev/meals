@@ -26,6 +26,7 @@ struct MetricView: View {
     
     @State var fetchInsulin: Bool = false
     @State var hours: Int = 3
+    let hourOptions = [3,6]
     var width: CGFloat = 5
     
     // Notification state
@@ -74,19 +75,27 @@ struct MetricView: View {
                                 Text(meal.description)
                             }
                             Divider()
-                            HStack(alignment: .firstTextBaseline) {
+                            HStack(alignment: .center) {
                                 Text("Metrics")
                                     .font(.system(size: 32))
                                     .minimumScaleFactor(1)
                                     .padding(3)
+                                
+                                Spacer()
+                                
+                                Picker("Hours", selection: $hours ){
+                                    ForEach(hourOptions, id: \.self){ hour in
+                                        Text("\(hour) hours")
+                                    }
+                                }
                             }
+                            .padding(3)
                         }
                         
                         VStack {
-                            
-                        // Metrics
+                            // Metrics
                             VStack() {
-                                Text("Glucose")
+                                Text("Glucose - \(hours)")
                                     .font(.system(size: 18))
                                 MetricGraph(event: event, dataType: .Glucose, hours: hours)
                                     .frame(height: 200)
