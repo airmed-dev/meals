@@ -25,6 +25,10 @@ struct MealEditor: View {
     @State var imageDraft: UIImage = UIImage()
     @State var imageWasSelected = false
     
+    // Buttons
+    @State var saveButtonStatus: ButtonStatus = .Initial
+    @State var deleteButtonStatus: ButtonStatus = .Initial
+    
     // Alerts
     @State var showSuccessAlert: Bool = false
     @State var successMessage: String = ""
@@ -75,7 +79,10 @@ struct MealEditor: View {
             
             Spacer()
             HStack(alignment: .firstTextBaseline){
-                Button("Save") {
+                LoadingButton(status: saveButtonStatus,
+                              label: "Save",
+                              loadingLabel: "Saving..",
+                              doneLabel: "Saved"){
                     var photo: UIImage? = nil
                     if imageWasSelected {
                         photo = imageDraft
@@ -85,11 +92,13 @@ struct MealEditor: View {
                     save(meal: meal, photo: photo)
                 }
                 Spacer()
-                Button(role: .destructive, action:  {
+                LoadingButton(status: deleteButtonStatus,
+                              role: .destructive,
+                              label: "Delete",
+                              loadingLabel: "Deleting..",
+                              doneLabel: "Deleted"){
                     showDeleteMenu = true
-                }, label: {
-                    Text("Delete")
-                })
+                }
             }
             .padding()
         }
@@ -150,13 +159,16 @@ struct MealEditor: View {
     }
     
     func save(meal: Meal, photo: UIImage?) {
+        saveButtonStatus = .Clicked
         if meal.id != 0 {
             MealsAPI.updateMealAndPhoto(mealID: meal.id, meal: meal, photo: photo) { result in
                 switch result {
                 case .success(_):
+                    saveButtonStatus = .Saved
                     showSuccessAlert = true
                     successMessage = "Updated meal"
                 case .failure(let error):
+                    saveButtonStatus = .Initial
                     showErrorAlert = true
                     errorMessage = "Error saving meal: \(error)"
                 }
@@ -165,9 +177,11 @@ struct MealEditor: View {
             MealsAPI.createMeal(meal: meal, photo: photo) { result in
                 switch result {
                 case .success(_):
+                    saveButtonStatus = .Saved
                     showSuccessAlert = true
                     successMessage = "Created a meal"
                 case .failure(let error):
+                    saveButtonStatus = .Initial
                     showErrorAlert = true
                     errorMessage = "Error creating meal: \(error)"
                 }
@@ -176,12 +190,15 @@ struct MealEditor: View {
     }
     
     func delete(meal: Meal){
+        deleteButtonStatus = .Clicked
         MealsAPI.deleteMeal(meal: meal) { result in
             switch result {
             case .success(_):
+                deleteButtonStatus = .Saved
                 showSuccessAlert = true
                 successMessage = "Deleted meal"
             case .failure(let error):
+                deleteButtonStatus = .Initial
                 showErrorAlert = true
                 errorMessage = "Error deleting meal: \(error)"
             }

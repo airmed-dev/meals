@@ -19,6 +19,8 @@ struct EventList: View {
     
     @State var loadingEvents = true
     @State var loadingMeals = true
+    @State var hours = 3
+    @State var selectedMealPhoto: UIImage?
     
     var body: some View {
         NavigationView {
@@ -31,27 +33,33 @@ struct EventList: View {
                 // Actual view
                 VStack(alignment: .leading){
                     HStack {
-                        Text("Event count: \(events.count)")
-                            .padding()
                         Spacer()
-                        if let se = selectedEvent {
-                            NavigationLink(destination: {
-                                MetricView(meal:meals.first{$0.id == se.meal_id}!, event: se )
-                                    .onDisappear {
-                                        loadData()
-                                    }
-                            } ){
-                                Text("See event")
+                        HStack(alignment: .firstTextBaseline) {
+                            Menu {
+                                Button {
+                                    hours = 3
+                                } label: {
+                                    Text("3 hours")
+                                }
+                                Button {
+                                    hours = 6
+                                } label: {
+                                    Text("6 hours")
+                                }
+                            }
+                            label: {
+                                Text("\(hours) hours")
                             }
                         }
                         
                     }
                     
+                    
                     GeometryReader{ geo in
                         VStack(alignment: .center){
                             if let se = selectedEvent {
                                 withAnimation(.easeIn) {
-                                    MetricGraph(event: se, dataType: .Glucose)
+                                    MetricGraph(event: se, dataType: .Glucose, hours: hours)
                                 }
                             } else {
                                 HStack(alignment: .center) {
@@ -75,14 +83,30 @@ struct EventList: View {
                             ForEach(currentEvents){ event in
                                 if let meal = meals.first { $0.id == event.meal_id }{
                                     if let se = selectedEvent {
-                                        EventListItem(event: event, meal: meal, selected: se.id == event.id)
+                                       EventListItem(event: event, meal: meal, selected: se.id == event.id)
                                         .onTapGesture {
                                             selectedEvent = event
+                                            PhotosAPI.getPhoto(meal: meal) { result in
+                                                switch result {
+                                                case .success(let image):
+                                                    self.selectedMealPhoto = image
+                                                case .failure(let error):
+                                                    print("Todo handle error image load \(error.localizedDescription)")
+                                                }
+                                            }
                                         }
                                     } else {
                                      EventListItem(event: event, meal: meal, selected: false)
                                         .onTapGesture {
                                             selectedEvent = event
+                                            PhotosAPI.getPhoto(meal: meal) { result in
+                                                switch result {
+                                                case .success(let image):
+                                                    self.selectedMealPhoto = image
+                                                case .failure(let error):
+                                                    print("Todo handle error image load \(error.localizedDescription)")
+                                                }
+                                            }
                                         }
                                     }
 
@@ -174,7 +198,9 @@ struct EventList_Previews: PreviewProvider {
             meals: [
                 Meal(id: mealUUID, name: "Test", description: "Test")
             ],
-            preview: true
+            preview: true,
+            loadingEvents: false,
+            loadingMeals:  false
         )
     }
 }
