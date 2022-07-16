@@ -11,16 +11,16 @@ struct ContentView: View {
     @State private var newMealPresented = false
     
     var body: some View {
-        // Meal list
         TabView {
-            MealList()
-                .tabItem {
-                    Label("Meals", systemImage: "list.dash")
-                }
             EventList()
                 .tabItem {
                     Label("Events", systemImage: "clock")
                 }
+            MealList()
+                .tabItem {
+                    Label("Meals", systemImage: "list.dash")
+                }
+
         }
     }
 }
