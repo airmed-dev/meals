@@ -13,7 +13,7 @@ struct EventList: View {
     @State var events: [Date: [Event]] = [:]
     
     @State var selectedEvent: Event?
-    @State var meals: [Meal] = []
+    @State var meals: [Int: Meal] = [:]
     
     @State var preview = false
     
@@ -33,6 +33,14 @@ struct EventList: View {
                 // Actual view
                 VStack(alignment: .leading){
                     HStack {
+                        if let se = selectedEvent {
+                            VStack {
+                                Text(meals[se.meal_id]!.name)
+                                    .font(.headline)
+                                Text("\(se.date)")
+                                    .font(.subheadline)
+                            }
+                        }
                         Spacer()
                         HStack(alignment: .firstTextBaseline) {
                             Menu {
@@ -58,9 +66,7 @@ struct EventList: View {
                     GeometryReader{ geo in
                         VStack(alignment: .center){
                             if let se = selectedEvent {
-                                withAnimation(.easeIn) {
-                                    MetricGraph(event: se, dataType: .Glucose, hours: hours)
-                                }
+                                MetricGraph(event: se, dataType: .Glucose, hours: hours)
                             } else {
                                 HStack(alignment: .center) {
                                     Text("No event selected")
@@ -70,55 +76,36 @@ struct EventList: View {
                             }
                         }
                     }
-                    .frame(height: 200)
                     
+                    Spacer()
                     Text("Events")
                         .font(.headline)
                         .padding()
                     let eventDates = events.map { $0.key }.sorted(by: >)
-                    List(eventDates, id: \.self ){ key in
-                        let currentEvents = events[key]!
-                        
-                        Section(header: Text(formatDate(date: key))){
-                            ForEach(currentEvents){ event in
-                                if let meal = meals.first { $0.id == event.meal_id }{
-                                    if let se = selectedEvent {
-                                       EventListItem(event: event, meal: meal, selected: se.id == event.id)
-                                        .onTapGesture {
-                                            selectedEvent = event
-                                            PhotosAPI.getPhoto(meal: meal) { result in
-                                                switch result {
-                                                case .success(let image):
-                                                    self.selectedMealPhoto = image
-                                                case .failure(let error):
-                                                    print("Todo handle error image load \(error.localizedDescription)")
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(eventDates, id: \.self ){ key in
+                                let currentEvents = events[key]!
+                                
+                                ForEach(currentEvents){ event in
+                                    VStack {
+                                        if let meal = meals[event.meal_id]{
+                                            EventTimelineCard(meal: meal, event: event)
+                                                .onTapGesture {
+                                                   selectedEvent = event
                                                 }
-                                            }
-                                        }
-                                    } else {
-                                     EventListItem(event: event, meal: meal, selected: false)
-                                        .onTapGesture {
-                                            selectedEvent = event
-                                            PhotosAPI.getPhoto(meal: meal) { result in
-                                                switch result {
-                                                case .success(let image):
-                                                    self.selectedMealPhoto = image
-                                                case .failure(let error):
-                                                    print("Todo handle error image load \(error.localizedDescription)")
-                                                }
-                                            }
+                                        } else {
+                                            Text("Error: No meal")
                                         }
                                     }
-
-
-                                } else {
-                                    Text(formatDate(date: event.date))
-                                    Text("Meal is loading")
+                                    .frame(width: 200, height: 200)
                                 }
                             }
                         }
+                        .padding()
                     }
-                    .listStyle(GroupedListStyle())
+                    .frame(height: 200)
+                    
                 }
                 .navigationTitle("Events")
             }
@@ -146,12 +133,19 @@ struct EventList: View {
         MealsAPI.getMeals { result in
             switch result {
             case .success(let loadedMeals):
-                meals = loadedMeals
+                meals = Dictionary(grouping: loadedMeals, by: {$0.id} )
+                    .mapValues { value in value.first! }
             case .failure(let error):
                 print("Error fetching events:\(error)")
             }
             loadingMeals = false
         }
+    }
+    
+    func formatAsTime(_ date:Date) -> String {
+        let hourlyFormatter = DateFormatter()
+        hourlyFormatter.dateFormat = "HH:mm"
+        return hourlyFormatter.string(from: date)
     }
     
     func formatDate(date: Date) -> String {
@@ -196,7 +190,7 @@ struct EventList_Previews: PreviewProvider {
             ],
             selectedEvent: Event(meal_id: mealUUID, id: 1),
             meals: [
-                Meal(id: mealUUID, name: "Test", description: "Test")
+                mealUUID: Meal(id: mealUUID, name: "Test", description: "Test")
             ],
             preview: true,
             loadingEvents: false,

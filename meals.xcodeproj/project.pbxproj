@@ -32,6 +32,7 @@
 		DF9375772830137200CBE618 /* MetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375762830137200CBE618 /* MetricView.swift */; };
 		DF9375792830156500CBE618 /* EventMetricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375782830156500CBE618 /* EventMetricsView.swift */; };
 		DFA0E56B2847DE1100323B35 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0E56A2847DE1100323B35 /* EventList.swift */; };
+		DFA32F142881B688006BB916 /* EventTimelineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA32F132881B688006BB916 /* EventTimelineCard.swift */; };
 		DFA4A41228532E9600D67202 /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA4A41128532E9600D67202 /* Graph.swift */; };
 		DFA4A414285346BC00D67202 /* ColorFromHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA4A413285346BC00D67202 /* ColorFromHex.swift */; };
 		DFE324B2286EF41A00C536C9 /* Axis.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE324B1286EF41A00C536C9 /* Axis.swift */; };
@@ -71,6 +72,7 @@
 		DF9375762830137200CBE618 /* MetricView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricView.swift; sourceTree = "<group>"; };
 		DF9375782830156500CBE618 /* EventMetricsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMetricsView.swift; sourceTree = "<group>"; };
 		DFA0E56A2847DE1100323B35 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
+		DFA32F132881B688006BB916 /* EventTimelineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTimelineCard.swift; sourceTree = "<group>"; };
 		DFA4A41128532E9600D67202 /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
 		DFA4A413285346BC00D67202 /* ColorFromHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorFromHex.swift; sourceTree = "<group>"; };
 		DFE324B1286EF41A00C536C9 /* Axis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Axis.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 			children = (
 				DFA0E56A2847DE1100323B35 /* EventList.swift */,
 				DFECDE39284B1E8B00FCDF35 /* EventListItem.swift */,
+				DFA32F132881B688006BB916 /* EventTimelineCard.swift */,
 			);
 			path = Event;
 			sourceTree = "<group>";
@@ -327,6 +330,7 @@
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
+				DFA32F142881B688006BB916 /* EventTimelineCard.swift in Sources */,
 				DFECDE41284B697E00FCDF35 /* PhotosAPI.swift in Sources */,
 				DF19F56C284C95D100119226 /* File.swift in Sources */,
 				DFE324B2286EF41A00C536C9 /* Axis.swift in Sources */,

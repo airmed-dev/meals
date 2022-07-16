@@ -25,7 +25,7 @@ struct MetricView: View {
     @State var image: UIImage?
     
     @State var fetchInsulin: Bool = false
-    @State var hours: Int = 3
+    @State var hours: Int = 6
     let hourOptions = [3,6]
     var width: CGFloat = 5
     
