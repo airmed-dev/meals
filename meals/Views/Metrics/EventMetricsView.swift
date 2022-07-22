@@ -27,15 +27,25 @@ let insulinGradient =  [
     Color(hex: 0xf1f2b5)
 ]
 
+struct SamplesAndRange {
+    var samples: [MetricSample] = []
+    var start: Date
+    var end: Date
+}
+
 struct MetricGraph: View {
+    @State var sampleAndRange: SamplesAndRange = SamplesAndRange(
+        samples: [],
+        start: Date.now.advanced(by: -1 * threeHours),
+        end: Date.now
+    )
     @State var isAuthorized = false
+    @State var debug = false
+    @State var error: Error? = nil
+    @State var loading = false
     
     var event: Event
     var dataType: DataType
-    
-    @State var samples: [MetricSample] = []
-    @State var debug = false
-    @State var error: Error? = nil
     var hours: Int
     
     var body: some View {
@@ -54,30 +64,14 @@ struct MetricGraph: View {
                 Text("ERROR: \(error.localizedDescription)")
             }
 
-            
-            switch dataType {
-            case .Insulin:
-                Graph(samples: computedSamples,
-                      dateRange:(
-                        event.date,
-                        event.date.advanced(by: TimeInterval(hours * 60 * 60))
-                      ),
-                      valueRange: range(samples: computedSamples, min:0, max: 1),
-                      colorFunction: { _ in return .white},
-                      gradientColors: insulinGradient,
-                      stepSize: 1
-                )
-            case .Glucose:
-                      Graph(samples: computedSamples,
-                      dateRange:(
-                        event.date,
-                        event.date.advanced(by: TimeInterval(hours * 60 * 60))
-                      ),
-                      valueRange: range(samples: computedSamples, min: 50, max: 200),
-                      colorFunction: glucoseColors,
-                      gradientColors: glucoseGradientColors,
-                      stepSize: 50
-                  )
+            if loading {
+               ProgressView()
+            } else {
+                switch dataType {
+                    case .Insulin:
+                        Text("no insulin support")
+                    case .Glucose:
+                        SimpleGlucose(samplesAndRange: sampleAndRange)}
             }
             
             if debug {
@@ -106,20 +100,24 @@ struct MetricGraph: View {
                 loadSamples()
             }
         }
+        .onChange(of: event) { _ in
+            loadSamples()
+        }
+        .onChange(of: hours) { _ in
+            loadSamples()
+        }
     }
     
     func getSamples() -> [MetricSample] {
         switch dataType {
-        case .Insulin:
-            let hoursInSeconds = 60*60*TimeInterval(hours)
-            let insulinActiveTime: TimeInterval = 3 * hoursInSeconds
-            let end = event.date.advanced(by: insulinActiveTime)
-            return calculateIOB(insulinDelivery: samples, start: event.date, end: end)
         case .Glucose:
-            return self.samples
+            return self.sampleAndRange.samples
+        case .Insulin:
+            return []
         }
         
     }
+ 
     
     func loadSamples(){
         if debug {
@@ -128,14 +126,19 @@ struct MetricGraph: View {
         let hoursInSeconds = 60*60*TimeInterval(hours)
         switch self.dataType {
         case .Glucose:
-            HealthKitUtils().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
+            Nightscout().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
                 switch result {
                 case .success(let samples):
-                    self.samples = samples
+                    self.sampleAndRange = SamplesAndRange(
+                        samples: samples,
+                        start: event.date,
+                        end: event.date.advanced(by: hoursInSeconds)
+                    )
                     self.error = nil
                 case .failure(let error):
                     self.error = error
                 }
+                loading = false
             }
         case .Insulin:
             // We would like to fetch all insulin delivery which might be still
@@ -147,11 +150,16 @@ struct MetricGraph: View {
             HealthKitUtils().getInsulinSamples(start: start, end: end) { result in
                 switch result {
                 case .success(let samples):
-                    self.samples = samples
+                    self.sampleAndRange = SamplesAndRange(
+                        samples: samples,
+                        start: event.date,
+                        end: event.date.advanced(by: hoursInSeconds)
+                    )
                     self.error = nil
                 case .failure(let error):
                     self.error = error
                 }
+                loading = false
             }
         }
         
@@ -265,26 +273,32 @@ struct MetricGraph_Previews: PreviewProvider {
         MetricSample(Date.init(timeIntervalSinceNow: 0), 300),
         MetricSample(Date.init(timeIntervalSinceNow: 50 * 60), 200),
     ]
-
     static var previews: some View {
         Group {
             MetricGraph(
+                sampleAndRange: SamplesAndRange(samples: glucoseSamples,
+                                                start: Date.now.advanced(by: -1 * threeHours),
+                                                end: Date.now
+                                               ),
+                debug: true,
                 event: Event(meal_id: 1),
                 dataType: .Glucose,
-                samples: glucoseSamples,
-                debug: true,
                 hours: 3
             )
             .frame(width: 300, height: 300)
-            
-            MetricGraph(
-                event: Event(meal_id: 1),
-                dataType: .Insulin,
-                samples: insulinSamples,
-                debug: true,
-                hours: 3
-            )
-            .frame(width: 300, height: 300)
+//            TODO: Insulinc
+//            MetricGraph(
+//                event: Event(meal_id: 1),
+//                dataType: .Insulin,
+//                samples: insulinSamples,
+//                samplesAndRange: SamplesAndRange(samples: glucoseSamples, start: glucoseSamples[0]!.date!),
+//                samplesAndRange: SamplesAndRange(samples: glucoseSamples,
+//                                                 start: Date.now),
+//                debug: true,
+//                debug: true,
+//                hours: 3
+//            )
+//            .frame(width: 300, height: 300)
         }
     }
 }

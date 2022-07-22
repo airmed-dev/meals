@@ -110,7 +110,7 @@ class MealsAPI {
                    method: .delete,
                    headers: [.authorization(bearerToken: TOKEN)]
         ).responseDecodable(of: CreateMealResponse.self) { result in
-            debugPrint(result)
+//            debugPrint(result)
             guard let response = result.response else {
                 print("Error: no response")
                 completion(.failure(Errors.unexpectedError))
@@ -201,7 +201,7 @@ class MealsAPI {
                    encoder: JSONParameterEncoder.default,
                    headers: [.authorization(bearerToken: TOKEN),]
         ).responseDecodable(of: CreateMealResponse.self, decoder: decoder) { result in
-            debugPrint(result)
+//            debugPrint(result)
             guard let response = result.response else {
                 print("Error: no response")
                 completion(.failure(Errors.unexpectedError))

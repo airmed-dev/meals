@@ -81,7 +81,7 @@ class EventsAPI {
              encoder: JSONParameterEncoder.json(encoder: encoder),
              headers: [.authorization(bearerToken: TOKEN)]
         ).response { result in
-            debugPrint(result)
+//            debugPrint(result)
             guard let response = result.response else {
                 print("Error: no response")
                 completion(.failure(DeleteError(msg: "No response")))
@@ -115,7 +115,7 @@ class EventsAPI {
                    encoder: JSONParameterEncoder(encoder: encoder),
                    headers: [.authorization(bearerToken: TOKEN),]
         ).responseDecodable(of: CreateEventResponse.self, decoder: decoder) { result in
-            debugPrint(result)
+//            debugPrint(result)
             guard let response = result.response else {
                 completion(.failure(DeleteError(msg: "No response")))
                 return
@@ -139,7 +139,7 @@ class EventsAPI {
                    method: .delete,
                    headers: [.authorization(bearerToken: TOKEN)]
         ).responseDecodable(of: CreateEventResponse.self) { result in
-            debugPrint(result)
+//            debugPrint(result)
             guard let response = result.response else {
                 print("Error: no response")
                 completion(.failure(DeleteError(msg: "Error: no response")))

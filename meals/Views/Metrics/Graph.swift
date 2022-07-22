@@ -139,6 +139,7 @@ struct Graph: View {
             )
         }
     }
+    
 }
 
 

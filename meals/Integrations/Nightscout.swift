@@ -38,7 +38,7 @@ class Nightscout: GlucoseAPI {
                    encoding: URLEncoding(destination: .queryString),
                    headers: [ HTTPHeader(name: "api-secret", value: nightscoutSecret )]
         ).responseDecodable(of: [Entry].self, decoder: decoder) { result in
-            debugPrint(result)
+//            debugPrint(result)
             guard let response = result.response else {
                 print("Error: no response")
                 completion(.failure(Errors.unexpectedError))

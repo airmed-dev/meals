@@ -29,8 +29,7 @@ struct EventTimelineCard: View {
                 }
             Text(meal.name)
                 .font(.headline)
-            Text(formatAsTime(event.date))
-                .font(.subheadline)
+
             }
         }.onAppear {
             PhotosAPI.getPhoto(meal: meal) { result in

@@ -34,12 +34,18 @@ struct EventList: View {
                 VStack(alignment: .leading){
                     HStack {
                         if let se = selectedEvent {
-                            VStack {
+                            HStack {
+                                if let sm = selectedMealPhoto {
+                                    Image(uiImage: sm)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: 60)
+                                        .clipShape(Circle())
+                                }
                                 Text(meals[se.meal_id]!.name)
                                     .font(.headline)
-                                Text("\(se.date)")
-                                    .font(.subheadline)
                             }
+                            .padding()
                         }
                         Spacer()
                         HStack(alignment: .firstTextBaseline) {
@@ -85,20 +91,35 @@ struct EventList: View {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(eventDates, id: \.self ){ key in
-                                let currentEvents = events[key]!
-                                
-                                ForEach(currentEvents){ event in
-                                    VStack {
-                                        if let meal = meals[event.meal_id]{
-                                            EventTimelineCard(meal: meal, event: event)
-                                                .onTapGesture {
-                                                   selectedEvent = event
+                                VStack(alignment: .leading) {
+                                    Text(formatAsDay(key))
+                                        .font(.subheadline)
+                                    
+                                    let currentEvents = events[key]!
+                                    HStack {
+                                        ForEach(currentEvents){ event in
+                                            VStack(alignment: .leading) {
+                                                if let meal = meals[event.meal_id]{
+                                                    EventTimelineCard(meal: meal, event: event)
+                                                        .onTapGesture {
+                                                            selectedEvent = event
+                                                            PhotosAPI.getPhoto(meal: meals[event.meal_id]!){ result in
+                                                                switch result {
+                                                                case .success(let photo):
+                                                                    selectedMealPhoto = photo
+                                                                    break
+                                                                case .failure(let error):
+                                                                    break
+                                                                }
+                                                            }
+                                                        }
+                                                } else {
+                                                    Text("Error: No meal")
                                                 }
-                                        } else {
-                                            Text("Error: No meal")
+                                            }
+                                            .frame(width: 200, height: 200)
                                         }
                                     }
-                                    .frame(width: 200, height: 200)
                                 }
                             }
                         }
@@ -116,6 +137,15 @@ struct EventList: View {
             }
             loadData()
         }
+    }
+    
+    func formatAsDay(_ date:Date) -> String {
+        if(Calendar.current.isDateInToday(date)){
+            return "Today"
+        }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        return formatter.string(from: date)
     }
     
     func loadData(){
