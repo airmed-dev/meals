@@ -18,12 +18,46 @@ struct MealDetails: View {
     
     @State var newMealEventDate:Date = Date()
     
-    @State var eventSamples: [Int: (Date,[MetricSample])] = [:]
+    @State var eventGlucoseSamples: [Int: (Date,[MetricSample])] = [:]
+    @State var eventInsulinSamples: [Int: (Date,[MetricSample])] = [:]
+    @State var mealEventsRange: (Date,Date)?
     
     
-    func drawAggs() -> some View {
-        GlucoseStats(eventSamples: eventSamples)
+    func drawGlucoseAggs() -> some View {
+        // Calculate ranges and step sizes
+        HStack {
+            ValueStats(eventSamples: eventGlucoseSamples,
+                       valueMin: 75 ,
+                       valueStepSize: 25,
+                       valueMax: 300,
+                       valueColor: { value in
+                if value < 70 {
+                    return .black
+                } else if value  <  180 {
+                    return  .green
+                } else if value < 250 {
+                    return  .red
+                } else {
+                    return  .black
+                }
+            }
+            )
             .frame(height: 360)
+        }
+    }
+    
+    func drawInsulinAggs() -> some View {
+        // Calculate ranges and step sizes
+        HStack {
+            ValueStats(eventSamples: eventInsulinSamples,
+                       valueAxisEvery: 2,
+                       valueMin: 0 ,
+                       valueStepSize: 0.5,
+                       valueMax: 3,
+                       valueColor: { _ in Color.accentColor }
+            )
+                .frame(height: 160)
+        }
     }
     
     var body: some View {
@@ -53,11 +87,27 @@ struct MealDetails: View {
                                     Text("total: \(mealEvents.count)")
                                         .font(.subheadline)
                                 }
-                                if eventSamples.count == mealEvents.count {
-                                    drawAggs()
+                                if eventGlucoseSamples.count == mealEvents.count {
+                                    drawGlucoseAggs()
                                         .padding()
                                 } else if mealEvents.count > 0 {
-                                    Text("Loading..\(eventSamples.count / mealEvents.count)")
+                                    Text("Loading..")
+                                    ProgressView()
+                                } else {
+                                    Text("No events")
+                                }
+                                
+                                HStack() {
+                                    Text("Insulin statistics")
+                                        .font(.headline)
+                                    Text("total: \(mealEvents.count)")
+                                        .font(.subheadline)
+                                }
+                                if eventInsulinSamples.count == mealEvents.count {
+                                    drawInsulinAggs()
+                                        .padding()
+                                } else if mealEvents.count > 0 {
+                                    ProgressView()
                                 } else {
                                     Text("No events")
                                 }
@@ -144,18 +194,36 @@ struct MealDetails: View {
             switch result {
             case .success(let events):
                 mealEvents = events
-                eventSamples = [:]
+                if !mealEvents.isEmpty{
+                    let dates = events.map { $0.date}
+                    mealEventsRange = (dates.min()!, dates.max()!)
+                }
+                eventGlucoseSamples = [:]
+                eventInsulinSamples = [:]
                 print("Loaded \(mealEvents.count) events")
+                // TODO: Overlaps?
                 mealEvents.forEach{ event in
                     Nightscout().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
                         switch result {
                             case .success(let samples):
-                                eventSamples[event.id] = (event.date, samples)
+                                eventGlucoseSamples[event.id] = (event.date, samples)
+                            case .failure(let error):
+                                print("Error \(error)")
+                        }
+                    }
+                    HealthKitUtils().getInsulinSamples(
+                        start: event.date,
+                        end: event.date.advanced(by: TimeInterval(hours*60*60))
+                    ) { result in
+                        switch result {
+                             case .success(let samples):
+                                eventInsulinSamples[event.id] = (event.date, samples)
                             case .failure(let error):
                                 print("Error \(error)")
                         }
                     }
                 }
+                
             case .failure(let error):
                 print("Failed saving events: \(error)")
             }

@@ -127,7 +127,7 @@ struct SimpleGlucose: View {
             let min = values.min()!
             let max = values.max()!
             return GlucoseCapsule(valueMin: min, valueMax: max, index: index)
-        }.sorted(by: { $0.index > $1.index})
+        }.sorted(by: { $0.index < $1.index})
         
     }
     
@@ -229,14 +229,12 @@ struct SimpleGlucose_Previews: PreviewProvider {
             Text("Single value")
             SimpleGlucose(
                 samplesAndRange: SamplesAndRange(samples:[
-                    MetricSample(Date.now.advanced(by: -60 * 60), 100),
-                    MetricSample(Date.now.advanced(by: -55 * 60), 100),
-                    MetricSample(Date.now.advanced(by: -50 * 60), 145),
-                    MetricSample(Date.now.advanced(by: -50 * 60), 145),
-                    MetricSample(Date.now.advanced(by: -2 * 60 * 60), 200),
-                    MetricSample(Date.now.advanced(by: -3 * 60 * 60), 200)
+                    MetricSample(Date.now.advanced(by: 0), 100),
+                    MetricSample(Date.now.advanced(by: -30 * 60), 100),
+                    MetricSample(Date.now.advanced(by: -60 * 60), 120),
+                    MetricSample(Date.now.advanced(by: -180), 100),
                 ],
-                                                 start: Date.now.advanced(by: -3 * 60*60),
+                                                 start: Date.now.advanced(by: -180 * 60),
                                                  end: Date.now)
             )
             .frame(maxWidth: .infinity, maxHeight: 350)
