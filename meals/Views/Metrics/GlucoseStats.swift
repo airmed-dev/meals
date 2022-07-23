@@ -7,9 +7,13 @@
 
 import SwiftUI
 
-struct SimpleGlucose: View {
-    var aggregatedCapsules: [GlucoseCapsule]?
-    var samplesAndRange: SamplesAndRange
+
+struct GlucoseStats: View {
+    // Event samples contains data about events
+    // the data is: EventID -> (Event Start, Event Samples)
+// it used to aggregate by the time differnce between the sample, the event start
+    // thus giving a relative aggregating to the meal time
+    var eventSamples: [Int: (Date, [MetricSample])]
     var dateAxisEvery = 2
     
     var glucoseMin = 75
@@ -76,12 +80,12 @@ struct SimpleGlucose: View {
     
     
     var body: some View {
-        let glucoseRanges = aggregate(samples: samplesAndRange.samples)
+        let glucoseRanges = aggregate(samples: eventSamples)
         HStack {
             VStack {
                 // Glucose Axis
                 GeometryReader { geo in
-                    if samplesAndRange.samples.count == 0 {
+                    if glucoseRanges.count == 0 {
                         Text("No data")
                     } else {
                         // Date axis and labels
@@ -92,23 +96,19 @@ struct SimpleGlucose: View {
                         valueAxisLabels(size: geo.size)
                         valueAxisGrid(size: geo.size)
 
-                        if let ac = aggregatedCapsules {
-                           Text("Aggregated capsules")
-                        } else {
                         // Capsules
-                            ForEach(Array(glucoseRanges.enumerated()), id: \.offset) { index, capsule  in
-                                let glucoseDiff = glucoseDiffToPixels(glucose: Int(capsule.valueMax - capsule.valueMin), height: geo.size.height)
-                                let capsuleWidth = geo.size.height / CGFloat(glucoseRanges.count) * 0.3
-                                Capsule()
-                                    .fill(glucoseRangeGradient(capsule: capsule))
-                                    .frame(
-                                        width: capsuleWidth,
-                                        height: glucoseDiff )
-                                    .position(
-                                        x: minutesToPixels(minutes: index * 30, width: geo.size.width),
-                                        y: glucoseToPixels(glucose: Int(capsule.valueMax), height: geo.size.height) + glucoseDiff / 2
-                                    )
-                            }
+                        ForEach(Array(glucoseRanges.enumerated()), id: \.offset) { index, capsule  in
+                            let glucoseDiff = glucoseDiffToPixels(glucose: Int(capsule.valueMax - capsule.valueMin), height: geo.size.height)
+                            let capsuleWidth = geo.size.height / CGFloat(glucoseRanges.count) * 0.3
+                            Capsule()
+                                .fill(glucoseRangeGradient(capsule: capsule))
+                                .frame(
+                                    width: capsuleWidth,
+                                    height: glucoseDiff )
+                                .position(
+                                    x: minutesToPixels(minutes: index * 30, width: geo.size.width),
+                                    y: glucoseToPixels(glucose: Int(capsule.valueMax), height: geo.size.height) + glucoseDiff / 2
+                                )
                         }
                     }
                 }
@@ -116,14 +116,24 @@ struct SimpleGlucose: View {
         }
     }
     
-    func aggregate(samples: [MetricSample]) -> [GlucoseCapsule] {
+    func aggregate(samples: [Int:(Date,[MetricSample])]) -> [GlucoseCapsule] {
         let hourInSeconds:Double = 30*60
-        let groupedByClosestHour = Dictionary(grouping: samples, by: { sample in
-            Int(sample.date.timeIntervalSince(samplesAndRange.start) / hourInSeconds)
-        })
+        // Map from [EventID : (EventDate, [Samples])
+        // to (offset, samples)
+        let sampleValues: [(Int, Double)] = samples.values.flatMap { entry -> [(Int, Double)] in
+            let offsets = entry.1.map { sample in
+                (
+                    Int(sample.date.timeIntervalSince(entry.0) / hourInSeconds),
+                    sample.value
+                )
+            }
+            return offsets
+        }
         
-        return groupedByClosestHour.map { index, samples in
-            let values = samples.map { v in v.value }
+        let groupedByHour = Dictionary(grouping: sampleValues, by: { $0.0} )
+        
+        return groupedByHour.map { index, samples in
+            let values = samples.map { $0.1 }
             let min = values.min()!
             let max = values.max()!
             return GlucoseCapsule(valueMin: min, valueMax: max, index: index)
@@ -139,16 +149,7 @@ struct SimpleGlucose: View {
     }
     
     func getDateAxisValues() -> [Int]{
-        let diffMinutes = Int(getDateMax().timeIntervalSince(getDateMin())) / 60
-        return Array(stride(from: 0, to: diffMinutes, by: getStepSizeMinutes()))
-    }
-    
-    func getDateMax() -> Date {
-        return samplesAndRange.end
-    }
-    
-    func getDateMin() -> Date {
-        return samplesAndRange.start
+        return Array(stride(from: 0, to: getNumberOfHours()*60, by: getStepSizeMinutes()))
     }
     
     func getStepSizeMinutes() -> Int {
@@ -169,8 +170,12 @@ struct SimpleGlucose: View {
     
     func minutesToPixels(minutes: Int, width: CGFloat) -> CGFloat {
         let offset: CGFloat = width * 0.2
-        let scale = (width-offset) / (getDateMax().timeIntervalSince(getDateMin()) / 60)
+        let scale = (width-offset) / CGFloat(getNumberOfHours()*60)
         return offset + CGFloat(minutes) * CGFloat(scale)
+    }
+    
+    func getNumberOfHours() -> Int {
+       return 3
     }
     
     func glucoseRangeGradient(capsule: GlucoseCapsule) -> LinearGradient{
@@ -209,13 +214,7 @@ struct SimpleGlucose: View {
     
 }
 
-struct GlucoseCapsule:Hashable {
-    var valueMin: Double
-    var valueMax: Double
-    var index: Int
-}
-
-struct SimpleGlucose_Previews: PreviewProvider {
+struct GlucoseStats_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             Text("No values")

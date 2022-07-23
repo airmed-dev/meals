@@ -18,6 +18,14 @@ struct MealDetails: View {
     
     @State var newMealEventDate:Date = Date()
     
+    @State var eventSamples: [Int: (Date,[MetricSample])] = [:]
+    
+    
+    func drawAggs() -> some View {
+        GlucoseStats(eventSamples: eventSamples)
+            .frame(height: 300)
+    }
+    
     var body: some View {
         VStack {
             ZStack(alignment: .bottomTrailing) {
@@ -45,23 +53,29 @@ struct MealDetails: View {
                                     Text("total: \(mealEvents.count)")
                                         .font(.subheadline)
                                 }
-                                
-                                
-                                ForEach(mealEvents, id: \.id) { mealEvent in
-                                    NavigationLink(
-                                        destination: {
-                                            MetricView(meal: meal, event: mealEvent)
-                                                .onDisappear {
-                                                    loadEvents()
-                                                }
-                                        },
-                                        label: {
-                                            MetricGraph(event: mealEvent, dataType: .Glucose, hours: hours )
-                                                .frame(height: 200)
-                                                .border(.black)
-                                        }
-                                    )
+                                Text("Aggregated event count: \(eventSamples.count)")
+                                if eventSamples.count == mealEvents.count {
+                                    drawAggs()
+                                } else if mealEvents.count > 0 {
+                                    Text("Loading..\(eventSamples.count / mealEvents.count)")
+                                } else {
+                                    Text("No events")
                                 }
+                                
+//
+//                                ForEach(mealEvents, id: \.id) { mealEvent in
+//                                    NavigationLink(
+//                                        destination: {
+//                                            MetricView(meal: meal, event: mealEvent)
+//                                                .onDisappear {
+//                                                    loadEvents()
+//                                                }
+//                                        },
+//                                        label: {
+//                                            Text(mealEvent.date.formatted())
+//                                        }
+//                                    )
+//                                }
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding()
@@ -123,11 +137,21 @@ struct MealDetails: View {
             switch result {
             case .success(let events):
                 mealEvents = events
+                eventSamples = [:]
                 print("Loaded \(mealEvents.count) events")
+                mealEvents.forEach{ event in
+                    Nightscout().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
+                        switch result {
+                            case .success(let samples):
+                                eventSamples[event.id] = (event.date, samples)
+                            case .failure(let error):
+                                print("Error \(error)")
+                        }
+                    }
+                }
             case .failure(let error):
                 print("Failed saving events: \(error)")
             }
-            
         }
     }
 }
