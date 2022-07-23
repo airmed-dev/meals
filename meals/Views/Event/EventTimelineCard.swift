@@ -17,8 +17,8 @@ struct EventTimelineCard: View {
             VStack(alignment: .leading){
                 if let image = image {
                     Image(uiImage: image).resizable()
-                        .scaledToFill()
                         .frame(height: geo.size.height * 0.75)
+                        .scaledToFit()
                         .cornerRadius(15)
                 } else {
                     renderNoimage()

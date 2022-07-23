@@ -27,6 +27,7 @@ struct MealDetails: View {
         // Calculate ranges and step sizes
         HStack {
             ValueStats(eventSamples: eventGlucoseSamples,
+                       hoursAhead: hours,
                        valueMin: 75 ,
                        valueStepSize: 25,
                        valueMax: 300,
@@ -50,6 +51,7 @@ struct MealDetails: View {
         // Calculate ranges and step sizes
         HStack {
             ValueStats(eventSamples: eventInsulinSamples,
+                       hoursAhead: hours,
                        valueAxisEvery: 2,
                        valueMin: 0 ,
                        valueStepSize: 0.5,

@@ -19,6 +19,7 @@ struct ValueStats: View {
     // it used to aggregate by the time differnce between the sample, the event start
     // thus giving a relative aggregating to the meal time
     var eventSamples: [Int: (Date, [MetricSample])]
+    var hoursAhead: Int
     var dateAxisEvery = 2
     var valueAxisEvery = 2
     
@@ -101,16 +102,20 @@ struct ValueStats: View {
                     } else {
                         // Date axis and labels
                         dateAxisLabels(size: geo.size)
+                                .animation(.spring())
                         dateAxisGrid(size: geo.size)
+                                .animation(.spring())
                        
                         // Value axis and labels
                         valueAxisLabels(size: geo.size,  valueBuckets: valueBuckets, every: valueAxisEvery)
+                                .animation(.spring())
                         valueAxisGrid(size: geo.size, valueBuckets: valueBuckets)
+                                .animation(.spring())
 
                         // Capsules
                         ForEach(Array(valueBuckets.enumerated()), id: \.offset) { index, valueBucket  in
                             let valueRange = valuePixelRange(value: Double(Int(valueBucket.max - valueBucket.min)), height: geo.size.height, buckets: valueBuckets)
-                            let capsuleWidth = geo.size.width / CGFloat(valueBuckets.count) * 0.3
+                            let capsuleWidth = minutesToPixels(minutes: Double(getStepSizeMinutes()), width: geo.size.width) * 0.2
                             let minutePixels = minutesToPixels(minutes: Double(index * 30), width: geo.size.width)
                             let valuePixels = valueToPixels(value: valueBucket.max, height: geo.size.height, buckets: valueBuckets)
                             let padding:CGFloat = 15
@@ -134,6 +139,8 @@ struct ValueStats: View {
                                        selectedIdx = nil
                                     }
                                 }
+                                .animation(.spring())
+                                
                         
                             
                             // Range labels
@@ -254,32 +261,3 @@ struct ValueStats: View {
     
 }
 
-struct GlucoseStats_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            Text("No values")
-            SimpleGlucose(
-                samplesAndRange: SamplesAndRange(samples:[],
-                                                 start: Date.now.advanced(by: -1 * threeHours),
-                                                 end: Date.now)
-            )
-            .frame(maxWidth: .infinity, maxHeight: 350)
-            
-            Text("Single value")
-            SimpleGlucose(
-                samplesAndRange: SamplesAndRange(samples:[
-                    MetricSample(Date.now.advanced(by: -60 * 60), 100),
-                    MetricSample(Date.now.advanced(by: -55 * 60), 100),
-                    MetricSample(Date.now.advanced(by: -50 * 60), 145),
-                    MetricSample(Date.now.advanced(by: -50 * 60), 145),
-                    MetricSample(Date.now.advanced(by: -2 * 60 * 60), 200),
-                    MetricSample(Date.now.advanced(by: -3 * 60 * 60), 200)
-                ],
-                                                 start: Date.now.advanced(by: -3 * 60*60),
-                                                 end: Date.now)
-            )
-            .frame(maxWidth: .infinity, maxHeight: 350)
-        }
-        //        .background(.blue.opacity(0.04))
-    }
-}

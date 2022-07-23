@@ -27,18 +27,8 @@ let insulinGradient =  [
     Color(hex: 0xf1f2b5)
 ]
 
-struct SamplesAndRange {
-    var samples: [MetricSample] = []
-    var start: Date
-    var end: Date
-}
-
 struct MetricGraph: View {
-    @State var sampleAndRange: SamplesAndRange = SamplesAndRange(
-        samples: [],
-        start: Date.now.advanced(by: -1 * threeHours),
-        end: Date.now
-    )
+    @State var samples: [MetricSample] = []
     @State var isAuthorized = false
     @State var debug = false
     @State var error: Error? = nil
@@ -50,14 +40,13 @@ struct MetricGraph: View {
     
     var body: some View {
         VStack {
-            let computedSamples = getSamples()
             if debug {
                 Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
                 switch dataType {
                 case .Insulin:
-                    Text("Insulin Samples: \( computedSamples.count )")
+                    Text("Insulin Samples: \( samples.count )")
                 case .Glucose:
-                    Text("Glucose Samples: \( computedSamples.count )")
+                    Text("Glucose Samples: \( samples.count )")
                 }
             }
             if let error = error {
@@ -69,19 +58,45 @@ struct MetricGraph: View {
             } else {
                 switch dataType {
                     case .Insulin:
-                        Text("no insulin support")
+                        HStack {
+                            ValueStats(eventSamples: [event.id: (event.date, samples)],
+                                       hoursAhead: hours,
+                                       valueAxisEvery: 2,
+                                       valueMin: 0 ,
+                                       valueStepSize: 0.5,
+                                       valueMax: 3,
+                                       valueColor: { _ in Color.accentColor }
+                            )
+                                .frame(height: 160)
+                        }
                     case .Glucose:
-                        SimpleGlucose(samplesAndRange: sampleAndRange)}
-            }
-            
-            if debug {
-                List(computedSamples) { sample in
-                    HStack {
-                        Text(sample.date.formatted())
-                        Text(String(sample.value))
-                    }
+                    ValueStats(eventSamples: [event.id: (event.date,samples)],
+                               hoursAhead: hours,
+                               valueMin: 75 ,
+                               valueStepSize: 25,
+                               valueMax: 300,
+                               valueColor: { value in
+                        if value < 70 {
+                            return .black
+                        } else if value  <  180 {
+                            return  .green
+                        } else if value < 250 {
+                            return  .red
+                        } else {
+                            return  .black
+                        }
+                    })
                 }
             }
+            
+//            if debug {
+//                List(computedSamples) { sample in
+//                    HStack {
+//                        Text(sample.date.formatted(e)
+//                        Text(String(sample.value))
+//                    }
+//                }
+//            }
         }
         .onAppear {
             authorizeHealthKit { authorized, error in
@@ -97,29 +112,18 @@ struct MetricGraph: View {
                     return
                 }
                 isAuthorized=true
-                loadSamples()
+                loadSamples(event: event, hours: hours)
             }
         }
-        .onChange(of: event) { _ in
-            loadSamples()
+        .onChange(of: event) { newEvent in
+            loadSamples(event: newEvent, hours: hours)
         }
-        .onChange(of: hours) { _ in
-            loadSamples()
+        .onChange(of: hours) { newHours in
+            loadSamples(event: event, hours: newHours)
         }
     }
     
-    func getSamples() -> [MetricSample] {
-        switch dataType {
-        case .Glucose:
-            return self.sampleAndRange.samples
-        case .Insulin:
-            return []
-        }
-        
-    }
- 
-    
-    func loadSamples(){
+    func loadSamples(event: Event, hours: Int){
         if debug {
             return
         }
@@ -129,11 +133,7 @@ struct MetricGraph: View {
             Nightscout().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
                 switch result {
                 case .success(let samples):
-                    self.sampleAndRange = SamplesAndRange(
-                        samples: samples,
-                        start: event.date,
-                        end: event.date.advanced(by: hoursInSeconds)
-                    )
+                    self.samples =  samples
                     self.error = nil
                 case .failure(let error):
                     self.error = error
@@ -143,18 +143,16 @@ struct MetricGraph: View {
         case .Insulin:
             // We would like to fetch all insulin delivery which might be still
             // active
-            let insulinActiveTime: TimeInterval = 3 * hoursInSeconds
+            let insulinActiveTime: TimeInterval = hoursInSeconds
             let start = event.date.advanced(by: -1 * insulinActiveTime)
             let end = event.date.advanced(by: insulinActiveTime)
             
             HealthKitUtils().getInsulinSamples(start: start, end: end) { result in
                 switch result {
                 case .success(let samples):
-                    self.sampleAndRange = SamplesAndRange(
-                        samples: samples,
-                        start: event.date,
-                        end: event.date.advanced(by: hoursInSeconds)
-                    )
+                    self.samples = calculateIOB(insulinDelivery: samples,
+                                                start:event.date,
+                                                end:end)
                     self.error = nil
                 case .failure(let error):
                     self.error = error
@@ -165,53 +163,6 @@ struct MetricGraph: View {
         
     }
     
-    func calculateIOB(insulinDelivery: [MetricSample], start: Date, end: Date) -> [MetricSample] {
-        // Calculate iob for every 5 minute sample between start and end
-        
-        // Prepare insulin model. right now just for humalog
-        // values are copied from LoopKit
-        let activeDuration: TimeInterval = 360 * 60
-        let peakActivityTime: TimeInterval = 75 * 60
-        let delay: TimeInterval = 10 * 60
-        
-        let insulinModel =
-            ExponentialInsulinModel(
-                actionDuration: activeDuration,
-                peakActivityTime: peakActivityTime,
-                delay: delay
-            )
-        
-        // Calculate cummulative insulin on board
-        // Calculate this by iterating over every 5 minute point in the result range
-        // for each point, find all the insulin delivery that are relevant
-        // calculate for each the active percentage and sum them
-        let samplePeriod: TimeInterval = 5 * 60
-        var currentPoint: Date = start
-        var iobSamples: [MetricSample] = []
-        while currentPoint <= end {
-            // Find all insulin delivery that is relevent
-            // We could probably optimize it by using time window function
-            // Also the insulin delivery is sorted by date, so it could also be optimized
-            let relevantInsulinDosage = insulinDelivery.filter { dose in
-                return dose.date < currentPoint &&
-                dose.date.advanced(by: activeDuration) >= currentPoint
-            }
-            
-            // Calculate the active percentage of each sample
-            let dosagesPercentages = relevantInsulinDosage.map { dose in
-                dose.value *  insulinModel.percentEffectRemaining(at: dose.date.distance(to: currentPoint))
-            }
-            
-            // Sum the samples
-            let iob = dosagesPercentages.reduce(0, +)
-            iobSamples.append(MetricSample(currentPoint, iob))
-            
-            // Proceed to the next point
-            currentPoint = currentPoint.advanced(by: samplePeriod)
-        }
-        
-        return iobSamples
-    }
     
     func authorizeHealthKit(completion: @escaping (Bool, Error?) -> Void ){
         guard HKHealthStore.isHealthDataAvailable() else {
@@ -276,10 +227,7 @@ struct MetricGraph_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MetricGraph(
-                sampleAndRange: SamplesAndRange(samples: glucoseSamples,
-                                                start: Date.now.advanced(by: -1 * threeHours),
-                                                end: Date.now
-                                               ),
+                samples: glucoseSamples,
                 debug: true,
                 event: Event(meal_id: 1),
                 dataType: .Glucose,

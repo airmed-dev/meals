@@ -42,9 +42,14 @@ struct EventList: View {
                                         .frame(height: 60)
                                         .clipShape(Circle())
                                 }
-                                Text(meals[se.meal_id]!.name)
-                                    .font(.headline)
+                                NavigationLink(destination: {
+                                    MetricView(meal: meals[se.meal_id], event: se)
+                                }) {
+                                    Text(meals[se.meal_id]!.name)
+                                        .font(.headline)
+                                }
                             }
+                            .animation(.spring())
                             .padding()
                         }
                         Spacer()
@@ -64,25 +69,32 @@ struct EventList: View {
                             label: {
                                 Text("\(hours) hours")
                             }
-                        }
+                        }.padding()
                         
                     }
                     
                     
-                    GeometryReader{ geo in
-                        VStack(alignment: .center){
-                            if let se = selectedEvent {
-                                MetricGraph(event: se, dataType: .Glucose, hours: hours)
-                            } else {
-                                HStack(alignment: .center) {
-                                    Text("No event selected")
-                                }
-                                .frame(width: geo.size.width, height: geo.size.height)
-                                .background(Color(.systemGroupedBackground))
+                    VStack(alignment: .center){
+                        if let se = selectedEvent {
+                            MetricGraph(event: se, dataType: .Glucose, hours: hours)
+//                            MetricGraph(event: se, dataType: .Insulin, hours: hours)
+//                                .frame(height: 50)
+//                                .padding()
+                        } else {
+                            HStack(alignment: .center) {
+                                Text("No event selected")
                             }
                         }
                     }
-                    
+                    .padding(.top, 30)
+                    .padding(.bottom, 30)
+                    .padding(.leading, 10)
+                    .background(LinearGradient(colors:[
+                        Color(hex: 0x8693AB),
+                        Color(hex: 0xBDD4E7)
+                    ], startPoint: .top, endPoint: .bottom))
+//                    .background(Color(.systemGroupedBackground).opacity(0.3))
+                                        
                     Spacer()
                     Text("Events")
                         .font(.headline)
@@ -125,12 +137,17 @@ struct EventList: View {
                         }
                         .padding()
                     }
+
                     .frame(height: 200)
+
                     
                 }
+
                 .navigationTitle("Events")
             }
+
         }
+
         .onAppear {
             if preview {
                 return

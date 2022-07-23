@@ -20,7 +20,10 @@ extension DeleteError: LocalizedError {
 
 class EventsAPI {
     
-    static func getEvents(mealID: Int?, _ completion: @escaping (Result<[Event],Error>) -> Void) {
+    static func getEvents(mealID: Int?,
+                          dateStart:Date? = nil,
+                          dateEnd:Date? = nil,
+                          _ completion: @escaping (Result<[Event],Error>) -> Void) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "my-meals-api.herokuapp.com"
@@ -34,6 +37,17 @@ class EventsAPI {
                 URLQueryItem( name: "filters[meal][id][$eq]", value: String(mealID))
             )
         }
+        if let dateStart = dateStart {
+            urlComponents.queryItems?.append(
+                URLQueryItem(name: "filters[date][$gte]", value: dateStart.ISO8601Format())
+            )
+        }
+        if let dateEnd = dateEnd {
+            urlComponents.queryItems?.append(
+                URLQueryItem(name: "filters[date][$lte]", value: dateEnd.ISO8601Format())
+            )
+        }
+        
         
         
         var request = URLRequest(url: urlComponents.url!)
