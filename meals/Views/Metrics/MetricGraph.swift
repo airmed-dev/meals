@@ -52,51 +52,54 @@ struct MetricGraph: View {
             if let error = error {
                 Text("ERROR: \(error.localizedDescription)")
             }
-
+            
             if loading {
-               ProgressView()
+                ProgressView()
             } else {
                 switch dataType {
-                    case .Insulin:
-                        HStack {
-                            ValueStats(eventSamples: [event.id: (event.date, samples)],
-                                       hoursAhead: hours,
-                                       valueAxisEvery: 2,
-                                       valueMin: 0 ,
-                                       valueStepSize: 0.5,
-                                       valueMax: 3,
-                                       valueColor: { _ in Color.accentColor }
-                            )
-                                .frame(height: 160)
-                        }
-                    case .Glucose:
+                case .Insulin:
+                    HStack {
+                        ValueStats(eventSamples: [event.id: (event.date, samples)],
+                                   hoursAhead: hours,
+                                   dateAxisEvery: 2,
+                                   dateStepSizeMinutes: hours < 5 ? 30: 60,
+                                   valueMin: 0 ,
+                                   valueStepSize: 0.5,
+                                   valueMax: 3,
+                                   valueColor: { _ in Color.accentColor }
+                        )
+                        .frame(height: 160)
+                    }
+                case .Glucose:
                     ValueStats(eventSamples: [event.id: (event.date,samples)],
                                hoursAhead: hours,
+                               dateAxisEvery: 2,
+                               dateStepSizeMinutes: hours < 5 ? 30 : 60,
                                valueMin: 75 ,
                                valueStepSize: 25,
                                valueMax: 300,
                                valueColor: { value in
                         if value < 70 {
-                            return .black
+                            return .red
                         } else if value  <  180 {
                             return  .green
                         } else if value < 250 {
                             return  .red
                         } else {
-                            return  .black
+                            return  Color(hex: 0x600000)
                         }
                     })
                 }
             }
             
-//            if debug {
-//                List(computedSamples) { sample in
-//                    HStack {
-//                        Text(sample.date.formatted(e)
-//                        Text(String(sample.value))
-//                    }
-//                }
-//            }
+            //            if debug {
+            //                List(computedSamples) { sample in
+            //                    HStack {
+            //                        Text(sample.date.formatted(e)
+            //                        Text(String(sample.value))
+            //                    }
+            //                }
+            //            }
         }
         .onAppear {
             authorizeHealthKit { authorized, error in
@@ -234,19 +237,19 @@ struct MetricGraph_Previews: PreviewProvider {
                 hours: 3
             )
             .frame(width: 300, height: 300)
-//            TODO: Insulinc
-//            MetricGraph(
-//                event: Event(meal_id: 1),
-//                dataType: .Insulin,
-//                samples: insulinSamples,
-//                samplesAndRange: SamplesAndRange(samples: glucoseSamples, start: glucoseSamples[0]!.date!),
-//                samplesAndRange: SamplesAndRange(samples: glucoseSamples,
-//                                                 start: Date.now),
-//                debug: true,
-//                debug: true,
-//                hours: 3
-//            )
-//            .frame(width: 300, height: 300)
+            //            TODO: Insulinc
+            //            MetricGraph(
+            //                event: Event(meal_id: 1),
+            //                dataType: .Insulin,
+            //                samples: insulinSamples,
+            //                samplesAndRange: SamplesAndRange(samples: glucoseSamples, start: glucoseSamples[0]!.date!),
+            //                samplesAndRange: SamplesAndRange(samples: glucoseSamples,
+            //                                                 start: Date.now),
+            //                debug: true,
+            //                debug: true,
+            //                hours: 3
+            //            )
+            //            .frame(width: 300, height: 300)
         }
     }
 }

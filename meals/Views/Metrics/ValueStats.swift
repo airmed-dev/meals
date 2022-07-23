@@ -22,6 +22,7 @@ struct ValueStats: View {
     var hoursAhead: Int
     var dateAxisEvery = 2
     var valueAxisEvery = 2
+    var dateStepSizeMinutes:Double
     
     var valueMin: Double
     var valueStepSize: Double
@@ -36,7 +37,7 @@ struct ValueStats: View {
             Text(formatTime(interval: TimeInterval(axisValue*60)))
                 .position(
                     x: minutesToPixels(
-                        minutes: Double(idx*getStepSizeMinutes()),
+                        minutes: Double(idx)*dateStepSizeMinutes,
                         width: size.width
                     ),
                     y: size.height
@@ -77,7 +78,7 @@ struct ValueStats: View {
         ForEach(Array(getDateAxisValues().enumerated()), id: \.element.self){ idx, _ in
             Path { line in
                 let minutePixels = minutesToPixels(
-                    minutes: Double(idx * getStepSizeMinutes()),
+                    minutes: Double(idx) * dateStepSizeMinutes,
                     width: size.width
                 )
                 line.move(to: CGPoint(x: minutePixels, y: 0))
@@ -114,9 +115,9 @@ struct ValueStats: View {
 
                         // Capsules
                         ForEach(Array(valueBuckets.enumerated()), id: \.offset) { index, valueBucket  in
-                            let valueRange = valuePixelRange(value: Double(Int(valueBucket.max - valueBucket.min)), height: geo.size.height, buckets: valueBuckets)
-                            let capsuleWidth = minutesToPixels(minutes: Double(getStepSizeMinutes()), width: geo.size.width) * 0.2
-                            let minutePixels = minutesToPixels(minutes: Double(index * 30), width: geo.size.width)
+                            let valueRange = valuePixelRange(value: valueBucket.max - valueBucket.min, height: geo.size.height, buckets: valueBuckets)
+                            let capsuleWidth = minutesToPixels(minutes: Double(dateStepSizeMinutes), width: geo.size.width) * 0.2
+                            let minutePixels = minutesToPixels(minutes: Double(index) * dateStepSizeMinutes, width: geo.size.width)
                             let valuePixels = valueToPixels(value: valueBucket.max, height: geo.size.height, buckets: valueBuckets)
                             let padding:CGFloat = 15
                             let centerPoint = valuePixels + valueRange / 2
@@ -165,13 +166,13 @@ struct ValueStats: View {
     }
     
     func aggregate(samples: [Int:(Date,[MetricSample])]) -> [ValueBucket] {
-        let hourInSeconds:Double = 30*60
         // Map from [EventID : (EventDate, [Samples])
         // to (offset, samples)
         let sampleValues: [(Int, Double)] = samples.values.flatMap { entry -> [(Int, Double)] in
+
             let offsets = entry.1.map { sample in
                 (
-                    Int(sample.date.timeIntervalSince(entry.0) / hourInSeconds),
+                    Int(sample.date.timeIntervalSince(entry.0) / (dateStepSizeMinutes*60)),
                     sample.value
                 )
             }
@@ -190,6 +191,9 @@ struct ValueStats: View {
     }
     
     func formatTime(interval: TimeInterval) -> String{
+        if interval == 0 {
+            return "0:00"
+        }
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .positional
@@ -197,12 +201,9 @@ struct ValueStats: View {
     }
     
     func getDateAxisValues() -> [Int]{
-        return Array(stride(from: 0, to: getNumberOfHours()*60, by: getStepSizeMinutes()))
+        return Array(stride(from: 0, to: hoursAhead*60, by: Int(dateStepSizeMinutes)))
     }
     
-    func getStepSizeMinutes() -> Int {
-        return 30
-    }
     
     func valueToPixels(value: Double, height: CGFloat, buckets: [ValueBucket]) -> CGFloat {
         let offset:CGFloat = -0
@@ -218,7 +219,7 @@ struct ValueStats: View {
     
     func minutesToPixels(minutes: Double, width: CGFloat) -> CGFloat {
         let offset: CGFloat = width * 0.2
-        let scale = (width-offset) / CGFloat(getNumberOfHours()*60)
+        let scale = (width-offset) / CGFloat(hoursAhead*60)
         return offset + CGFloat(minutes) * CGFloat(scale)
     }
     
@@ -241,16 +242,13 @@ struct ValueStats: View {
         return stepDifference * valueStepSize
     }
     
-    func getNumberOfHours() -> Int {
-       return 3
-    }
     
     func valueRangeGradient(valueBucket: ValueBucket) -> LinearGradient{
         // 0 -> 70: Black to Red.
         // 70 -> 150 -> green
         // 150 -> 300 -> Red to black
-        var firstColor: Color = valueColor(valueBucket.max)
-        var secondColor: Color = valueColor(valueBucket.min)
+        let firstColor: Color = valueColor(valueBucket.max)
+        let secondColor: Color = valueColor(valueBucket.min)
         
         
         return LinearGradient(

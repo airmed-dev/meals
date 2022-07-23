@@ -21,98 +21,109 @@ struct EventList: View {
     @State var loadingMeals = true
     @State var hours = 3
     @State var selectedMealPhoto: UIImage?
+    @State var dateInView: Date?
     
     var body: some View {
         NavigationView {
             if loadingMeals || loadingEvents {
                 // Skeleton
                 ZStack {
-                   ProgressView()
+                    ProgressView()
                 }
             } else {
                 // Actual view
                 VStack(alignment: .leading){
-                    HStack {
-                        if let se = selectedEvent {
-                            HStack {
-                                if let sm = selectedMealPhoto {
-                                    Image(uiImage: sm)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 60)
-                                        .clipShape(Circle())
-                                }
-                                NavigationLink(destination: {
-                                    MetricView(meal: meals[se.meal_id], event: se)
-                                }) {
-                                    Text(meals[se.meal_id]!.name)
-                                        .font(.headline)
-                                }
+                    if let se = selectedEvent {
+                        HStack {
+                            if let sm = selectedMealPhoto {
+                                Image(uiImage: sm)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 60)
+                                    .clipShape(Circle())
+                                    .animation(.easeIn)
+                            } else {
+                                Circle()
+                                    .fill(.black.opacity(0.2))
+                                    .frame(height: 60)
+                                    .animation(.easeIn)
+                            }
+                            NavigationLink(destination: {
+                                MetricView(meal: meals[se.meal_id], event: se)
+                            }) {
+                                Text(meals[se.meal_id]!.name)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
                             }
                             .animation(.spring())
-                            .padding()
                         }
-                        Spacer()
-                        HStack(alignment: .firstTextBaseline) {
-                            Menu {
-                                Button {
-                                    hours = 3
-                                } label: {
-                                    Text("3 hours")
+                        .padding()
+                    }
+                        
+                    VStack(alignment: .trailing){
+                        if let se = selectedEvent {
+                            HStack(alignment: .lastTextBaseline) {
+                                Menu {
+                                    Button {
+                                        hours = 3
+                                    } label: {
+                                        Text("3 hours")
+                                    }
+                                    Button {
+                                        hours = 6
+                                    } label: {
+                                        Text("6 hours")
+                                    }
                                 }
-                                Button {
-                                    hours = 6
-                                } label: {
-                                    Text("6 hours")
-                                }
-                            }
                             label: {
                                 Text("\(hours) hours")
                             }
-                        }.padding()
-                        
-                    }
-                    
-                    
-                    VStack(alignment: .center){
-                        if let se = selectedEvent {
+                            }
                             MetricGraph(event: se, dataType: .Glucose, hours: hours)
-//                            MetricGraph(event: se, dataType: .Insulin, hours: hours)
-//                                .frame(height: 50)
-//                                .padding()
+                            //                            MetricGraph(event: se, dataType: .Insulin, hours: hours)
+                            //                                .frame(height: 50)
+                            //                                .padding()
                         } else {
-                            HStack(alignment: .center) {
+                            VStack(alignment: .center) {
+                                Image(systemName: "tray.fill")
+                                    .resizable()
+                                    .frame(width:60, height: 40)
+                                    .foregroundColor(.black.opacity(0.5))
+                                    .padding()
                                 Text("No event selected")
                             }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
                     }
-                    .padding(.top, 30)
-                    .padding(.bottom, 30)
-                    .padding(.leading, 10)
+                    .padding([.bottom], 30)
+                    .padding([.leading,.trailing], 10)
                     .background(LinearGradient(colors:[
-                        Color(hex: 0x8693AB),
-                        Color(hex: 0xBDD4E7)
-                    ], startPoint: .top, endPoint: .bottom))
-//                    .background(Color(.systemGroupedBackground).opacity(0.3))
-                                        
+                        Color(hex: 0xEEEEEE),
+                        Color(hex: 0xFFFFFF)
+                    ], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .cornerRadius(15)
+                    //                    .background(Color(.systemGroupedBackground).opacity(0.3))
+                    
                     Spacer()
                     Text("Events")
                         .font(.headline)
                         .padding()
                     let eventDates = events.map { $0.key }.sorted(by: >)
+                    if let dateInView = dateInView {
+                        Text(formatAsDay(dateInView))
+                            .font(.subheadline)
+                    }
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(eventDates, id: \.self ){ key in
                                 VStack(alignment: .leading) {
-                                    Text(formatAsDay(key))
-                                        .font(.subheadline)
-                                    
                                     let currentEvents = events[key]!
                                     HStack {
                                         ForEach(currentEvents){ event in
                                             VStack(alignment: .leading) {
                                                 if let meal = meals[event.meal_id]{
                                                     EventTimelineCard(meal: meal, event: event)
+                                                        .animation(.spring())
                                                         .onTapGesture {
                                                             selectedEvent = event
                                                             PhotosAPI.getPhoto(meal: meals[event.meal_id]!){ result in
@@ -133,21 +144,27 @@ struct EventList: View {
                                         }
                                     }
                                 }
+                                .onAppear {
+                                    dateInView = key
+                                }
+                                .onDisappear{
+                                    dateInView = nil
+                                }
                             }
                         }
                         .padding()
                     }
-
+                    
                     .frame(height: 200)
-
+                    
                     
                 }
-
+                
                 .navigationTitle("Events")
             }
-
+            
         }
-
+        
         .onAppear {
             if preview {
                 return
@@ -189,11 +206,6 @@ struct EventList: View {
         }
     }
     
-    func formatAsTime(_ date:Date) -> String {
-        let hourlyFormatter = DateFormatter()
-        hourlyFormatter.dateFormat = "HH:mm"
-        return hourlyFormatter.string(from: date)
-    }
     
     func formatDate(date: Date) -> String {
         if Calendar.current.isDateInToday(date) {

@@ -28,6 +28,7 @@ struct MealDetails: View {
         HStack {
             ValueStats(eventSamples: eventGlucoseSamples,
                        hoursAhead: hours,
+                       dateStepSizeMinutes: hours < 5 ? 30 : 60,
                        valueMin: 75 ,
                        valueStepSize: 25,
                        valueMax: 300,
@@ -43,7 +44,7 @@ struct MealDetails: View {
                 }
             }
             )
-            .frame(height: 360)
+            .frame(height: 160)
         }
     }
     
@@ -53,6 +54,7 @@ struct MealDetails: View {
             ValueStats(eventSamples: eventInsulinSamples,
                        hoursAhead: hours,
                        valueAxisEvery: 2,
+                       dateStepSizeMinutes: hours < 5 ? 30 : 60,
                        valueMin: 0 ,
                        valueStepSize: 0.5,
                        valueMax: 3,
