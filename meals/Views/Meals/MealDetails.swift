@@ -23,7 +23,7 @@ struct MealDetails: View {
     
     func drawAggs() -> some View {
         GlucoseStats(eventSamples: eventSamples)
-            .frame(height: 300)
+            .frame(height: 360)
     }
     
     var body: some View {
@@ -48,34 +48,41 @@ struct MealDetails: View {
                             
                             VStack(alignment: .leading) {
                                 HStack() {
-                                    Text("Meal events")
+                                    Text("Glucose statistics")
                                         .font(.headline)
                                     Text("total: \(mealEvents.count)")
                                         .font(.subheadline)
                                 }
-                                Text("Aggregated event count: \(eventSamples.count)")
                                 if eventSamples.count == mealEvents.count {
                                     drawAggs()
+                                        .padding()
                                 } else if mealEvents.count > 0 {
                                     Text("Loading..\(eventSamples.count / mealEvents.count)")
                                 } else {
                                     Text("No events")
                                 }
                                 
-//
-//                                ForEach(mealEvents, id: \.id) { mealEvent in
-//                                    NavigationLink(
-//                                        destination: {
-//                                            MetricView(meal: meal, event: mealEvent)
-//                                                .onDisappear {
-//                                                    loadEvents()
-//                                                }
-//                                        },
-//                                        label: {
-//                                            Text(mealEvent.date.formatted())
-//                                        }
-//                                    )
-//                                }
+
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding()
+                            .background(Color(uiColor: UIColor.systemBackground))
+                            .cornerRadius(15)
+                            
+                            VStack {
+                                List(mealEvents, id: \.id) { mealEvent in
+                                    NavigationLink(
+                                        destination: {
+                                            MetricView(meal: meal, event: mealEvent)
+                                                .onDisappear {
+                                                    loadEvents()
+                                                }
+                                        },
+                                        label: {
+                                            Text(mealEvent.date.formatted())
+                                        }
+                                    )
+                                }
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding()

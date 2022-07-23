@@ -24,6 +24,8 @@ struct GlucoseStats: View {
         Array(stride(from: glucoseMin, to:glucoseMax, by: glucoseStepSize))
     }
     
+    @State var selectedIdx: Int? = nil
+    
     func dateAxisLabels(size: CGSize) -> some View {
         let values = Array ( getDateAxisValues().enumerated().filter { $0.offset % dateAxisEvery == 0} )
         return ForEach(values, id: \.element.self){ idx, axisValue in
@@ -93,22 +95,51 @@ struct GlucoseStats: View {
                         dateAxisGrid(size: geo.size)
                        
                         // Value axis and labels
-                        valueAxisLabels(size: geo.size)
+                        valueAxisLabels(size: geo.size, every: 1)
                         valueAxisGrid(size: geo.size)
 
                         // Capsules
                         ForEach(Array(glucoseRanges.enumerated()), id: \.offset) { index, capsule  in
                             let glucoseDiff = glucoseDiffToPixels(glucose: Int(capsule.valueMax - capsule.valueMin), height: geo.size.height)
                             let capsuleWidth = geo.size.height / CGFloat(glucoseRanges.count) * 0.3
+                            let minutePixels = minutesToPixels(minutes: index * 30, width: geo.size.width)
+                            let glucosePixels = glucoseToPixels(glucose: Int(capsule.valueMax), height: geo.size.height)
+                            let padding:CGFloat = 15
                             Capsule()
                                 .fill(glucoseRangeGradient(capsule: capsule))
                                 .frame(
                                     width: capsuleWidth,
                                     height: glucoseDiff )
                                 .position(
-                                    x: minutesToPixels(minutes: index * 30, width: geo.size.width),
-                                    y: glucoseToPixels(glucose: Int(capsule.valueMax), height: geo.size.height) + glucoseDiff / 2
+                                    x: minutePixels,
+                                    y: glucosePixels + glucoseDiff / 2
                                 )
+                                .onTapGesture {
+                                    selectedIdx = index
+                                }
+                                .onHover { over in
+                                    if over {
+                                       selectedIdx = index
+                                    } else {
+                                       selectedIdx = nil
+                                    }
+                                }
+                        
+                            
+                            // Range labels
+                            if selectedIdx == index {
+                                Text(String(Int(capsule.valueMax)))
+                                    .padding(3)
+                                    .background(glucoseValueColor(value: capsule.valueMax).opacity(0.1))
+                                    .cornerRadius(10)
+                                    .position(x: minutePixels, y: glucosePixels-padding)
+                            
+                                Text(String(Int(capsule.valueMin)))
+                                    .padding(3)
+                                    .background(glucoseValueColor(value: capsule.valueMin).opacity(0.1))
+                                    .cornerRadius(10)
+                                    .position(x: minutePixels, y: glucosePixels+glucoseDiff+padding)
+                            }
                         }
                     }
                 }
@@ -157,10 +188,10 @@ struct GlucoseStats: View {
     }
     
     func glucoseToPixels(glucose: Int, height: CGFloat) -> CGFloat {
-        let offset:CGFloat = -25
+        let offset:CGFloat = -40
         let fromMin = CGFloat(glucose-glucoseMin)
-        let scale = height / CGFloat(glucoseMax - glucoseMin)
-        return height - fromMin * scale + offset
+        let scale = (height*0.9) / CGFloat(glucoseMax - glucoseMin)
+        return height*0.9 - fromMin * scale + offset
     }
     
     func glucoseDiffToPixels(glucose: Int, height: CGFloat) -> CGFloat {
@@ -182,34 +213,26 @@ struct GlucoseStats: View {
         // 0 -> 70: Black to Red.
         // 70 -> 150 -> green
         // 150 -> 300 -> Red to black
-        var firstColor: Color
-        var secondColor: Color
+        var firstColor: Color = glucoseValueColor(value: capsule.valueMin)
+        var secondColor: Color = glucoseValueColor(value: capsule.valueMax)
         
-        if capsule.valueMax < 70 {
-            firstColor = .black
-        } else if capsule.valueMax <  180 {
-            firstColor = .green
-        } else if capsule.valueMin < 250 {
-            firstColor = .red
-        } else {
-            firstColor = .black
-        }
-        
-        if capsule.valueMin < 70 {
-            secondColor = .black
-        } else if capsule.valueMin <  180 {
-            secondColor = .green
-        } else if capsule.valueMin < 250 {
-            secondColor = .red
-        } else {
-            secondColor = .black
-        }
         
         return LinearGradient(
             gradient: Gradient(colors: [firstColor, secondColor]),
             startPoint: .top,
             endPoint: .bottom)
-        
+    }
+    
+    func glucoseValueColor(value: Double) -> Color {
+        if value < 70 {
+            return .black
+        } else if value  <  180 {
+            return  .green
+        } else if value < 250 {
+            return  .red
+        } else {
+            return  .black
+        }
     }
     
 }
