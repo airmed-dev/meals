@@ -15,6 +15,8 @@ struct EventTimelineCard: View {
     var body: some View {
         GeometryReader { geo in
             VStack(alignment: .leading){
+                Text(meal.name)
+                    .font(.caption2)
                 if let image = image {
                     Image(uiImage: image).resizable()
                         .frame(height: geo.size.height * 0.75)
@@ -27,8 +29,6 @@ struct EventTimelineCard: View {
                         .cornerRadius(15)
                         .shadow(radius: 2)
                 }
-            Text(meal.name)
-                .font(.headline)
 
             }
         }.onAppear {

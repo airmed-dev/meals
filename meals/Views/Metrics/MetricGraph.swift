@@ -68,7 +68,6 @@ struct MetricGraph: View {
                                    valueMax: 3,
                                    valueColor: { _ in Color.accentColor }
                         )
-                        .frame(height: 160)
                     }
                 case .Glucose:
                     ValueStats(eventSamples: [event.id: (event.date,samples)],
@@ -91,15 +90,6 @@ struct MetricGraph: View {
                     })
                 }
             }
-            
-            //            if debug {
-            //                List(computedSamples) { sample in
-            //                    HStack {
-            //                        Text(sample.date.formatted(e)
-            //                        Text(String(sample.value))
-            //                    }
-            //                }
-            //            }
         }
         .onAppear {
             authorizeHealthKit { authorized, error in

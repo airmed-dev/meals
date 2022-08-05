@@ -44,8 +44,8 @@ struct MealDetails: View {
                 }
             }
             )
-            .frame(height: 160)
         }
+        .frame(height:250)
     }
     
     func drawInsulinAggs() -> some View {
@@ -60,8 +60,8 @@ struct MealDetails: View {
                        valueMax: 3,
                        valueColor: { _ in Color.accentColor }
             )
-                .frame(height: 160)
         }
+        .frame(height:250)
     }
     
     var body: some View {
@@ -88,12 +88,12 @@ struct MealDetails: View {
                                 HStack() {
                                     Text("Glucose statistics")
                                         .font(.headline)
-                                    Text("total: \(mealEvents.count)")
+                                        .padding()
+                                    Text("total events: \(mealEvents.count)")
                                         .font(.subheadline)
                                 }
                                 if eventGlucoseSamples.count == mealEvents.count {
                                     drawGlucoseAggs()
-                                        .padding()
                                 } else if mealEvents.count > 0 {
                                     Text("Loading..")
                                     ProgressView()
@@ -104,12 +104,12 @@ struct MealDetails: View {
                                 HStack() {
                                     Text("Insulin statistics")
                                         .font(.headline)
-                                    Text("total: \(mealEvents.count)")
+                                        .padding()
+                                    Text("total events: \(mealEvents.count)")
                                         .font(.subheadline)
                                 }
                                 if eventInsulinSamples.count == mealEvents.count {
                                     drawInsulinAggs()
-                                        .padding()
                                 } else if mealEvents.count > 0 {
                                     ProgressView()
                                 } else {
@@ -119,7 +119,6 @@ struct MealDetails: View {
 
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
-                            .padding()
                             .background(Color(uiColor: UIColor.systemBackground))
                             .cornerRadius(15)
                             

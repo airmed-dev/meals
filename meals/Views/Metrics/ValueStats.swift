@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct ValueBucket {
+    var index: Int
     var min: Double
     var max: Double
-    var index: Int
 }
 
 struct ValueStats: View {
@@ -28,7 +28,8 @@ struct ValueStats: View {
     var valueStepSize: Double
     var valueMax: Double
     var valueColor: (_: Double) -> Color
-
+    var calculatePercentiles: Bool = false
+    
     @State var selectedIdx: Int? = nil
     
     func dateAxisLabels(size: CGSize) -> some View {
@@ -71,7 +72,7 @@ struct ValueStats: View {
     }
     
     func valueSteps(valueBuckets: [ValueBucket]) -> [Double]{
-       return Array(stride(from: getTrueMin(buckets: valueBuckets), to: getTrueMax(valueBuckets: valueBuckets), by: valueStepSize))
+        return Array(stride(from: getTrueMin(buckets: valueBuckets), to: getTrueMax(valueBuckets: valueBuckets), by: valueStepSize))
     }
     
     func dateAxisGrid(size: CGSize) -> some View {
@@ -94,82 +95,85 @@ struct ValueStats: View {
     var body: some View {
         let valueBuckets = aggregate(samples: eventSamples)
         
-        HStack {
-            VStack {
-                // Glucose Axis
-                GeometryReader { geo in
-                    if valueBuckets.count == 0 {
-                        Text("No data")
-                    } else {
-                        // Date axis and labels
-                        dateAxisLabels(size: geo.size)
-                                .animation(.spring())
-                        dateAxisGrid(size: geo.size)
-                                .animation(.spring())
-                       
-                        // Value axis and labels
-                        valueAxisLabels(size: geo.size,  valueBuckets: valueBuckets, every: valueAxisEvery)
-                                .animation(.spring())
-                        valueAxisGrid(size: geo.size, valueBuckets: valueBuckets)
-                                .animation(.spring())
-
-                        // Capsules
-                        ForEach(Array(valueBuckets.enumerated()), id: \.offset) { index, valueBucket  in
-                            let valueRange = valuePixelRange(value: valueBucket.max - valueBucket.min, height: geo.size.height, buckets: valueBuckets)
-                            let capsuleWidth = minutesToPixels(minutes: Double(dateStepSizeMinutes), width: geo.size.width) * 0.2
-                            let minutePixels = minutesToPixels(minutes: Double(index) * dateStepSizeMinutes, width: geo.size.width)
-                            let valuePixels = valueToPixels(value: valueBucket.max, height: geo.size.height, buckets: valueBuckets)
-                            let padding:CGFloat = 15
-                            let centerPoint = valuePixels + valueRange / 2
-                            Capsule()
-                                .fill(valueRangeGradient(valueBucket: valueBucket))
-                                .frame(
-                                    width: capsuleWidth,
-                                    height: valueRange )
-                                .position(
-                                    x: minutePixels,
-                                    y: centerPoint
-                                )
-                                .onTapGesture {
-                                    selectedIdx = index
-                                }
-                                .onHover { over in
-                                    if over {
-                                       selectedIdx = index
-                                    } else {
-                                       selectedIdx = nil
-                                    }
-                                }
-                                .animation(.spring())
-                                
-                        
-                            
-                            // Range labels
-                            if selectedIdx == index {
-                                Text(String(Int(valueBucket.max)))
-                                    .padding(3)
-                                    .background(valueColor(valueBucket.max).opacity(0.1))
-                                    .cornerRadius(10)
-                                    .position(x: minutePixels, y: valuePixels-padding)
-                            
-                                Text(String(Int(valueBucket.min)))
-                                    .padding(3)
-                                    .background(valueColor(valueBucket.max).opacity(0.1))
-                                    .cornerRadius(10)
-                                    .position(x: minutePixels, y: valuePixels+valueRange+padding)
+        VStack {
+            // Glucose Axis
+            GeometryReader { geo in
+                if valueBuckets.count == 0 {
+                    Text("No data")
+                } else {
+                    // Date axis and labels
+                    dateAxisLabels(size: geo.size)
+                        .animation(.spring())
+                    dateAxisGrid(size: geo.size)
+                        .animation(.spring())
+                    
+                    // Value axis and labels
+                    valueAxisLabels(size: geo.size,  valueBuckets: valueBuckets, every: valueAxisEvery)
+                        .animation(.spring())
+                    valueAxisGrid(size: geo.size, valueBuckets: valueBuckets)
+                        .animation(.spring())
+                    
+                    // Capsules
+                    ForEach(Array(valueBuckets.enumerated()), id: \.offset) { index, valueBucket  in
+                        let valueRange = valuePixelRange(value: valueBucket.max - valueBucket.min, height: geo.size.height, buckets: valueBuckets)
+                        let capsuleWidth = minutesToPixels(minutes: Double(dateStepSizeMinutes), width: geo.size.width) * 0.2
+                        let minutePixels = minutesToPixels(minutes: Double(index) * dateStepSizeMinutes, width: geo.size.width)
+                        let valuePixels = valueToPixels(value: valueBucket.max, height: geo.size.height, buckets: valueBuckets)
+                        let padding:CGFloat = 15
+                        let centerPoint = valuePixels + valueRange / 2
+                        Capsule()
+                            .fill(valueRangeGradient(valueBucket: valueBucket))
+                            .frame(
+                                width: capsuleWidth,
+                                height: valueRange )
+                            .position(
+                                x: minutePixels,
+                                y: centerPoint
+                            )
+                            .onTapGesture {
+                                selectedIdx = index
                             }
+                            .onHover { over in
+                                if over {
+                                    selectedIdx = index
+                                } else {
+                                    selectedIdx = nil
+                                }
+                            }
+                            .animation(.spring())
+                        
+                        
+                        
+                        // Range labels
+                        if selectedIdx == index {
+                            Text("\(valueBucket.max, specifier: "%.0f")")
+                                .padding(5)
+                                .background(valueColor(valueBucket.max).opacity(0.7))
+                                .cornerRadius(10)
+                                .position(x: minutePixels, y: valuePixels-padding)
+                                .shadow(radius: 3)
+                                .foregroundColor(.white)
+                            
+                            Text("\(valueBucket.min, specifier: "%.1f")")
+                                .padding(5)
+                                .background(valueColor(valueBucket.min).opacity(0.7))
+                                .cornerRadius(10)
+                                .position(x: minutePixels, y: valuePixels+valueRange+padding)
+                                .shadow(radius: 3)
+                                .foregroundColor(.white)
                         }
                     }
                 }
             }
         }
+        .padding()
     }
     
     func aggregate(samples: [Int:(Date,[MetricSample])]) -> [ValueBucket] {
         // Map from [EventID : (EventDate, [Samples])
         // to (offset, samples)
         let sampleValues: [(Int, Double)] = samples.values.flatMap { entry -> [(Int, Double)] in
-
+            
             let offsets = entry.1.map { sample in
                 (
                     Int(sample.date.timeIntervalSince(entry.0) / (dateStepSizeMinutes*60)),
@@ -185,10 +189,11 @@ struct ValueStats: View {
             let values = samples.map { $0.1 }
             let min = values.min()!
             let max = values.max()!
-            return ValueBucket(min: min, max: max, index: index)
+            return ValueBucket(index: index, min: min, max: max)
         }.sorted(by: { $0.index < $1.index})
         
     }
+    
     
     func formatTime(interval: TimeInterval) -> String{
         if interval == 0 {
