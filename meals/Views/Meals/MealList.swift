@@ -16,6 +16,8 @@ struct MealList: View {
     @State var preview = false
     
     @State var degrees: Double = 45.0
+    @Namespace var nspace
+
     var animation: Animation {
         Animation.linear(duration: 1)
             .repeatForever()
@@ -51,7 +53,8 @@ struct MealList: View {
                                             }) {
                                                 MealCard(meal: meal)
                                                     .frame(width: 150,height: 150)
-                                                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 30, height: 30)))
+                                                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                                                    .cornerRadius(10, corners: [.topLeft, .topRight])
                                                     .padding()
                                             }
                                             

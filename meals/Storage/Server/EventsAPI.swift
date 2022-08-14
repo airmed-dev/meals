@@ -29,7 +29,8 @@ class EventsAPI {
         urlComponents.host = "my-meals-api.herokuapp.com"
         urlComponents.path = "/api/meal-events"
         urlComponents.queryItems = [
-            URLQueryItem(name: "populate", value: "*")
+            URLQueryItem(name: "populate", value: "*"),
+            URLQueryItem(name: "sort[0]", value: "date:desc"),
         ]
         
         if let mealID = mealID {

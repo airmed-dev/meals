@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MealCard: View {
+    var font: Font = Font.caption
     @State var meal: Meal
     @State var image: UIImage?
     
@@ -18,22 +19,22 @@ struct MealCard: View {
                     Image(uiImage: image)
                         .resizable()
                         .frame(width: geo.size.width, height: geo.size.height)
+                        .cornerRadius(10, corners: [.topLeft, .topRight])
                 } else {
-                   Image(systemName: "photo.fill")
-                        .resizable()
-                        .frame(width: geo.size.width, height: geo.size.height)
+                    renderNoimage()
                 }
             }
+//            .cornerRadius(30, corners: [.topLeft, .topRight])
+//            .cornerRadius(10, corners: [.bottomLeft, .bottomRight])
             
             Text(meal.name)
-                .font(.headline)
+                .font(font)
                 .fontWeight(.bold)
-                .foregroundColor(.black)
-                .padding(5)
-                .background(.white.opacity(0.9))
+                .foregroundColor(.white)
+                .padding(10)
+                .background(.linearGradient(colors: [.black, .black.opacity(0)], startPoint: .bottom, endPoint: .top))
+                .frame(width:.infinity)
         }
-        .cornerRadius(30, corners: [.topLeft, .topRight])
-        .cornerRadius(10, corners: [.bottomLeft, .bottomRight])
         .onAppear {
             PhotosAPI.getPhoto(meal: meal) { result in
                 switch result {
@@ -43,6 +44,17 @@ struct MealCard: View {
                     print("Error loading image: \(error)")
                 }
             }
+        }
+    }
+    
+    func renderNoimage() -> some View{
+        let colors = [Color(hex:0x424242), Color(hex:0x002266)]
+        return ZStack {
+            LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
+            Image(systemName: "photo.circle")
+                .resizable()
+                .foregroundColor(.white)
+                .frame(width: 30, height: 30)
         }
     }
 }

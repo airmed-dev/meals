@@ -106,19 +106,18 @@ struct EventList: View {
                     }
                     .padding([.leading,.trailing,.top], 3)
                     .padding([.top], 5)
-                    .background(
-                        LinearGradient(
-                            colors: [Color(hex:0xf0fff0), Color(hex: 0x838391)],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        )
-                    )
+//                    .background(
+//                        LinearGradient(
+//                            colors: [Color(hex:0xf0fff0), Color(hex: 0x838391)],
+//                            startPoint: .topLeading, endPoint: .bottomTrailing
+//                        )
+//                    )
                     
                     .cornerRadius(15)
                     
                     Spacer()
                     Text("Events")
                         .font(.headline)
-                        .padding()
                     let eventDates = events.map { $0.key }.sorted(by: >)
                     ScrollView(.horizontal) {
                         HStack {
@@ -126,14 +125,13 @@ struct EventList: View {
                                 VStack(alignment: .leading) {
                                     Text(formatDate(date: eventDate))
                                         .font(.caption)
-                                        .padding()
                                     let currentEvents = events[eventDate]!
                                     HStack {
                                         ForEach(currentEvents){ event in
                                             VStack(alignment: .leading) {
                                                 if let meal = meals[event.meal_id]{
                                                     EventTimelineCard(meal: meal, event: event)
-                                                        .frame(width:100)
+                                                        .frame(width:130)
                                                         .animation(.spring())
                                                         .onTapGesture {
                                                             selectedEvent = event
@@ -151,7 +149,7 @@ struct EventList: View {
                                                     Text("Error: No meal")
                                                 }
                                             }
-                                            .frame(width: 130, height: 90)
+                                            .frame(width: 130, height: 120)
                                         }
                                     }
                                 }

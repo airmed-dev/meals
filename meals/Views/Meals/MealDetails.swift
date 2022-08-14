@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MealDetails: View {
     @Environment(\.presentationMode) var presentationMode
+    @Namespace var nspace
     
     @State var showLogMeal: Bool = false
     @State var showMealEditor: Bool = false
@@ -50,6 +51,7 @@ struct MealDetails: View {
     
     func drawInsulinAggs() -> some View {
         // Calculate ranges and step sizes
+        // TODO: Calculate IOBs
         HStack {
             ValueStats(eventSamples: eventInsulinSamples,
                        hoursAhead: hours,
@@ -69,8 +71,9 @@ struct MealDetails: View {
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geo in
                     ScrollView {
-                        MealCard(meal: meal)
+                        MealCard(font: .headline, meal: meal)
                             .frame(width: geo.size.width, height: geo.size.height/2)
+                            .matchedGeometryEffect(id: "card", in: nspace)
                         VStack(alignment: .leading) {
                             VStack(alignment: .leading) {
                                 Text("Description")
@@ -122,23 +125,25 @@ struct MealDetails: View {
                             .background(Color(uiColor: UIColor.systemBackground))
                             .cornerRadius(15)
                             
-                            VStack {
-                                List(mealEvents, id: \.id) { mealEvent in
-                                    NavigationLink(
-                                        destination: {
-                                            MetricView(meal: meal, event: mealEvent)
-                                                .onDisappear {
-                                                    loadEvents()
-                                                }
-                                        },
-                                        label: {
-                                            Text(mealEvent.date.formatted())
-                                        }
-                                    )
+                            VStack(alignment: .leading) {
+                                HStack() {
+                                    Text("Meal events")
+                                        .font(.headline)
+                                        .padding()
+                                    Text("total events: \(mealEvents.count)")
+                                        .font(.subheadline)
+                                }
+                                ForEach(mealEvents, id: \.id) { event in
+                                    NavigationLink(destination: {
+                                        MetricView(meal: meal, event: event)
+                                    }) {
+                                        MetricGraph(event: event, dataType: .Glucose, hours: hours)
+                                            .frame(height: 200)
+                                    }
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
-                            .padding()
+                            .padding(5)
                             .background(Color(uiColor: UIColor.systemBackground))
                             .cornerRadius(15)
                         }
@@ -148,6 +153,7 @@ struct MealDetails: View {
                     Button(action: {showLogMeal.toggle() }) {
                         Image(systemName: "plus")
                             .frame(width: 50, height: 50)
+                            .shadow(radius: 15)
                             .background(Color( red: 27, green: 27, blue: 27))
                             .clipShape(Circle())
                     }

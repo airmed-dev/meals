@@ -16,7 +16,8 @@ struct EventTimelineCard: View {
         GeometryReader { geo in
             VStack(alignment: .leading){
                 Text(meal.name)
-                    .font(.caption2)
+                    .font(.caption)
+                    .fontWeight(.bold)
                 if let image = image {
                     Image(uiImage: image).resizable()
                         .frame(height: geo.size.height * 0.75)
@@ -49,8 +50,8 @@ struct EventTimelineCard: View {
             LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
             Image(systemName: "photo.circle")
                 .resizable()
-                .frame(width: 30, height: 30)
                 .foregroundColor(.white)
+                .frame(width: 30, height: 30)
         }
     }
     
