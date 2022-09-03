@@ -34,15 +34,13 @@ import SwiftUI
     // it's based on whether the meal has an ID or not
     // TODO: Error propagation
     func saveMeal(meal:Meal, image: UIImage?){
+        var mealID = meal.id != 0 ? meal.id : (meals.map { $0.id }.max() ?? 0) + 1
         if(meal.id == 0){
-            let largestMealID = meals.map { $0.id }.max()
-            let newMealID =  (largestMealID ?? 0) + 1
-            let newMeal = Meal(
-                id: newMealID,
+            self.meals.append(Meal(
+                id: mealID,
                 name: meal.name,
                 description: meal.description
-            )
-            self.meals.append(newMeal)
+            ))
         } else {
             let mealIndex = meals.firstIndex(where: {$0.id == meal.id })
             guard let mealIndex = mealIndex else {
@@ -53,7 +51,7 @@ import SwiftUI
         save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
         
         if let image = image {
-            saveImage(fileName: "\(meal.id).jpeg", image: image)
+            saveImage(fileName: "\(mealID).jpeg", image: image)
         }
     }
     
