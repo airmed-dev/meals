@@ -1,17 +1,8 @@
 //
-//  mealsApp.swift
+//  MealsApp.swift
 //  meals
 //
-//  Created by aclowkey on 07/05/2022.
+//  Created by aclowkey on 20/08/2022.
 //
 
-import SwiftUI
-
-@main
-struct mealsApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
-}
+import Foundation

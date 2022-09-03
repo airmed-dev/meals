@@ -599,54 +599,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D4AE9B73-2AB6-4A10-830F-19797C2612FF"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "meals/Views/Meals/MealEditor.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "D4AE9B73-2AB6-4A10-830F-19797C2612FF - 482e33f7857b4d3f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "meals.MealEditor.body.getter : some"
-                  moduleName = "meals"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aclowkey/Desktop/meals/meals/Views/Meals/MealEditor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "29"
-                  endingLineNumber = "29"
-                  offsetFromSymbolStart = "1052">
-               </Location>
-               <Location
-                  uuid = "D4AE9B73-2AB6-4A10-830F-19797C2612FF - 7120ee0b755b841f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.ZStack&lt;SwiftUI.TupleView&lt;(SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.aspectRatio(_: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, contentMode: SwiftUI.ContentMode) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.aspectRatio(_: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, contentMode: SwiftUI.ContentMode) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of SwiftUI.View.aspectRatio(_: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, contentMode: SwiftUI.ContentMode) -&gt; some&gt;&gt;.0&gt;, SwiftUI.Button&lt;&lt;&lt;opaque return type of SwiftUI.View.clipShape&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.Shape&gt;(_: &#x3c4;_1_0, style: SwiftUI.FillStyle) -&gt; some&gt;&gt;.0&gt;)&gt;&gt;, SwiftUI.Spacer, SwiftUI.List&lt;Swift.Never, SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.Spacer, SwiftUI.TextField&lt;SwiftUI.Text&gt;)&gt;&gt;, SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.ModifiedContent&lt;SwiftUI.TextEditor, SwiftUI.AccessibilityAttachmentModifier&gt;)&gt;&gt;)&gt;&gt;, SwiftUI.Spacer, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt; in meals.MealEditor.body.getter : some"
-                  moduleName = "meals"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aclowkey/Desktop/meals/meals/Views/Meals/MealEditor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "29"
-                  endingLineNumber = "29"
-                  offsetFromSymbolStart = "1648">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "1C76167E-990D-422A-8DB2-267641218D4E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1150,8 +1102,8 @@
             filePath = "meals/Views/Meals/MealEditor.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
             landmarkName = "save(meal:image:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1166,8 +1118,8 @@
             filePath = "meals/Views/Meals/MealEditor.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
             landmarkName = "save(meal:image:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1950,8 +1902,8 @@
             filePath = "meals/Views/Meals/MealDetails.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
             landmarkName = "loadEvents()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1982,8 +1934,8 @@
             filePath = "meals/Views/Meals/MealDetails.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -2126,8 +2078,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
+            startingLineNumber = "257"
+            endingLineNumber = "257"
             landmarkName = "getTrueMax(valueBuckets:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2143,8 +2095,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "246"
-            endingLineNumber = "246"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
             landmarkName = "getTrueMin(buckets:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2159,8 +2111,8 @@
             filePath = "meals/Views/Meals/MealDetails.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
             landmarkName = "drawGlucoseAggs()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2175,8 +2127,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "242"
-            endingLineNumber = "242"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
             landmarkName = "getTrueMin(buckets:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2271,8 +2223,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "96"
-            endingLineNumber = "96"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -2303,8 +2255,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -2320,8 +2272,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "98"
-            endingLineNumber = "98"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
@@ -2432,8 +2384,8 @@
             filePath = "meals/Views/Meals/MealDetails.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
             landmarkName = "drawInsulinAggs()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2448,8 +2400,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -2464,8 +2416,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
             landmarkName = "aggregate(samples:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2480,8 +2432,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
             landmarkName = "aggregate(samples:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2496,8 +2448,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "aggregate(samples:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2512,8 +2464,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
+            startingLineNumber = "233"
+            endingLineNumber = "233"
             landmarkName = "getDateAxisValues()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2528,8 +2480,8 @@
             filePath = "meals/Views/Meals/MealDetails.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
             landmarkName = "drawInsulinAggs()"
             landmarkType = "7">
             <Locations>
@@ -2576,8 +2528,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
             landmarkName = "aggregate(samples:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2592,8 +2544,8 @@
             filePath = "meals/Views/Metrics/ValueStats.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
             landmarkName = "aggregate(samples:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2608,8 +2560,8 @@
             filePath = "meals/Views/Meals/MealDetails.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
             landmarkName = "drawInsulinAggs()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2736,8 +2688,8 @@
             filePath = "meals/Views/Meals/MealEditor.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -2752,8 +2704,8 @@
             filePath = "meals/ContentView-ViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
             landmarkName = "saveImage(fileName:image:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2784,9 +2736,232 @@
             filePath = "meals/ContentView-ViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "96"
-            endingLineNumber = "96"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
             landmarkName = "loadImage(meal:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1030B9EE-2DD5-4FE9-A41E-2BC37EE1DEAC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/Views/Meals/MealDetails.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "214"
+            endingLineNumber = "214"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "000F5E72-5BB4-4946-B9A3-3F6DE89DC5FB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/Views/Meals/MealList.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "12"
+            endingLineNumber = "12"
+            landmarkName = "MealList"
+            landmarkType = "14">
+            <Locations>
+               <Location
+                  uuid = "000F5E72-5BB4-4946-B9A3-3F6DE89DC5FB - e2947720ff888a37"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "meals.MealList.viewModel.getter : meals.ContentViewViewModel"
+                  moduleName = "meals"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aclowkey/Desktop/meals/meals/Views/Meals/MealList.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "92">
+               </Location>
+               <Location
+                  uuid = "000F5E72-5BB4-4946-B9A3-3F6DE89DC5FB - fcbdc70d9e917e29"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "meals.MealList.$viewModel.getter : SwiftUI.EnvironmentObject&lt;meals.ContentViewViewModel&gt;.Wrapper"
+                  moduleName = "meals"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aclowkey/Desktop/meals/meals/Views/Meals/MealList.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "92">
+               </Location>
+               <Location
+                  uuid = "000F5E72-5BB4-4946-B9A3-3F6DE89DC5FB - ff2fd49e98ceefea"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "meals.MealList.init() -&gt; meals.MealList"
+                  moduleName = "meals"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aclowkey/Desktop/meals/meals/Views/Meals/MealList.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "52">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F84145C9-4BC6-4B01-8804-52065A2E0E68"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/Views/Meals/MealList.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "mealGrid"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F660ED6B-6604-4CC0-A2D0-8F1CE3A11277"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/Views/Meals/MealList.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "mealGrid"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "68855AE6-CD08-4DE6-B8CE-9C971756F0DB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/Views/Meals/MealList.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "mealGrid"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "96A415EF-CDB1-49D5-B6C4-52C05146B10F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/ContentView-ViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "deleteMeal(meal:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E4BD4467-DD6E-414D-9AA4-639FF4BBF7C5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/Views/Meals/MealEditor.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
+            landmarkName = "delete(meal:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C4A11608-286D-4118-BE7F-7EA4977687A7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/ContentView-ViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
+            landmarkName = "deleteImage(fileName:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C7671661-898F-4B61-ABBA-26B518DA530A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/ContentView-ViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "deleteImage(fileName:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "00E9E843-8524-4035-A043-72521FCE4CD3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/ContentView-ViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
+            landmarkName = "deleteImage(fileName:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9D7E51C3-41ED-438F-9FD0-E44100D031B6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "meals/ContentView-ViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "saveImage(fileName:image:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

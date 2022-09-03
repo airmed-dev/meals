@@ -3,7 +3,24 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "closure #1 in MetricGraph.body.getter:MetricGraph.swift">
+         contextName = "closure #1 in closure #1 in closure #1 in closure #1 in closure #6 in MetricView.body.getter:MetricView.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in MetricGraph.loadSamples():EventMetricsView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "event.date">
+            </PersistentString>
+            <PersistentString
+               value = "samples.last!.value">
+            </PersistentString>
+            <PersistentString
+               value = "samples.first!.date">
+            </PersistentString>
+            <PersistentString
+               value = "samples.first!.value">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "closure #2 in closure #1 in closure #1 in MetricGraph.body.getter:MetricGraph.swift">
@@ -14,10 +31,140 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #1 in closure #1 in MetricGraph.body.getter:MetricGraph.swift">
+         contextName = "closure #1 in closure #1 in closure #4 in closure #2 in closure #1 in EventList.body.getter:EventList.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "event.id">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #2 in EventList.body.getter:EventList.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in static PhotosAPI.getPhoto(meal:completion:):PhotosAPI.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "httpResponse.statusCode">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in SimpleGlucose.body.getter:SimpleGlucose.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "samplesAndRange.start">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "static EventsAPI.saveEvent(event:completion:):EventsAPI.swift">
+      </ContextState>
+      <ContextState
+         contextName = "MetricGraph.aggregate(samples:):EventMetricsView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "groupedByClosestHour[0]![0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in MetricGraph.body.getter:MetricGraph.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "glucoseSamples.count">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in MetricGraph.body.getter:MetricGraph.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in MealDetails.body.getter:MealDetails.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in closure #2 in EventList.body.getter:EventList.swift">
+      </ContextState>
+      <ContextState
+         contextName = "SimpleGlucose.getDateAxisValues():SimpleGlucose.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "Array(stride(from: 0, to: diffMinutes, by: getStepSizeMinutes()))">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #2 in closure #1 in SimpleGlucose.body.getter:SimpleGlucose.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "getDateAxisValues()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ContentViewViewModel.init():ContentView-ViewModel.swift">
       </ContextState>
       <ContextState
          contextName = "closure #1 in MetricGraph.loadSamples():MetricGraph.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #5 in closure #1 in closure #1 in closure #1 in closure #1 in SimpleGlucose.body.getter:SimpleGlucose.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "minutesToPixels(minutes: index * getStepSizeMinutes(), width: geo.size.width)">
+            </PersistentString>
+            <PersistentString
+               value = "glucoseToPixels(glucose: Int(capsule.valueMax), height: geo.size.height) + glucoseDiff / 2">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in closure #1 in closure #1 in closure #1 in closure #1 in MealList.mealGrid.getter:MealList.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "meal.id">
+            </PersistentString>
+            <PersistentString
+               value = "meal.name">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GlucoseStats.body.getter:GlucoseStats.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "eventSamples">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #1 in MetricGraph.body.getter:MetricGraph.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in MetricGraph.body.getter:EventMetricsView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "computedSamples.first!.value">
+            </PersistentString>
+            <PersistentString
+               value = "computedSamples.last!.value">
+            </PersistentString>
+            <PersistentString
+               value = "sampleAndStart">
+            </PersistentString>
+            <PersistentString
+               value = "aggregate(samples: computedSamples).first">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MetricGraph.loadSamples():MetricGraph.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #2 in closure #1 in closure #1 in EventList.body.getter:EventList.swift">
+      </ContextState>
+      <ContextState
+         contextName = "static MealsAPI.getMeals():MealsAPI.swift">
       </ContextState>
       <ContextState
          contextName = "closure #1 in MetricGraph.normalizeGraph(samples:width:height:dateMin:dateMax:):MetricGraph.swift">
@@ -37,7 +184,20 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #1 in MetricGraph.body.getter:MetricGraph.swift">
+         contextName = "static PhotosAPI.getPhoto(meal:completion:):PhotosAPI.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "urlComponents.url">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "SimpleGlucose.body.getter:SimpleGlucose.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "samplesAndRange.samples.last!.date">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
    </ContextStates>
 </VariablesViewState>
