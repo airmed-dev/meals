@@ -82,7 +82,7 @@ struct MealDetails: View {
                 GeometryReader { geo in
                     ScrollView {
                         MealCard(
-                            font: .headline,
+                            font: .largeTitle,
                             meal: meal,
                             image: ContentViewViewModel.loadImage(meal: meal)
                         )

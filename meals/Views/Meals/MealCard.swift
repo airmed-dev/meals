@@ -25,12 +25,22 @@ struct MealCard: View {
                 }
             }
             
-            Text(meal.name)
-                .font(font)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(10)
-                .background(.linearGradient(colors: [.black, .black.opacity(0)], startPoint: .bottom, endPoint: .top))
+            HStack(alignment: .firstTextBaseline) {
+                Text(meal.name)
+                    .font(font)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.leading, 2)
+                    .padding(.trailing, 2)
+                    .padding(.bottom, 2)
+                    .background(
+                        .linearGradient(
+                            colors: [.black, .black.opacity(0)],
+                            startPoint: .bottom,
+                            endPoint: .top)
+                    )
+            }
         }
     }
     
