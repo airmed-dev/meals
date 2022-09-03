@@ -9,10 +9,12 @@ import SwiftUI
 
 // MealEditor allows a user to edit a meal
 struct MealEditor: View {
+    static var placeholderDescription = "Enter a description"
+    
     @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
     
-    @State var meal: Meal = Meal(id:0, name: "", description: "")
+    @State var meal: Meal = Meal(id:0, name: "", description: MealEditor.placeholderDescription)
     
     // Photo
     @State var imageWasSelected = false
@@ -37,6 +39,7 @@ struct MealEditor: View {
     @State var showErrorAlert: Bool = false
     @State var errorMessage: String = ""
     
+    
     var body: some View {
         VStack {
             // Image editor
@@ -50,17 +53,33 @@ struct MealEditor: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 } else {
-                   Image(systemName: "photo.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+                    VStack {
+                       Image(systemName: "photo.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 100)
+                            .foregroundColor(.white)
+                        Text("Add a photo")
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: 300)
+                    .background(LinearGradient(
+                        colors: [Color(hex: 0xffd89b), Color(hex: 0x19547b)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .opacity(0.5)
                 }
                 
                 Button(action: {showPhotoPickerMenu.toggle() }) {
                     Image(systemName: "plus")
-                        .frame(width: 50, height: 50)
-                        .background(.white.opacity(0.1))
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(.white)
+                        .padding(15)
+                        .background(.primary)
                         .clipShape(Circle())
                 }
+                .padding()
             }
             Spacer()
             // Meal fields
@@ -69,15 +88,25 @@ struct MealEditor: View {
                     Text("Name")
                         .bold()
                     Spacer()
-                    TextField("Meal name", text: $meal.name)
+                    TextField("Enter meal name", text: $meal.name)
                 }
                 VStack(alignment: .leading) {
                     Text("Description")
                         .bold()
                     TextEditor(text: $meal.description)
-                        .accessibilityHint("Enter meal description")
+                        .foregroundColor(
+                            meal.description == MealEditor.placeholderDescription
+                            ? .gray
+                            : .primary
+                        )
+                        .onTapGesture {
+                            if meal.description == MealEditor.placeholderDescription {
+                                meal.description = ""
+                            }
+                        }
                 }
             }
+            .listStyle(.inset)
             
             Spacer()
             
@@ -178,7 +207,12 @@ struct MealEditor: View {
 
 struct MealEditor_Previews: PreviewProvider {
     static var previews: some View {
-        let meal = Meal(id: 1, name: "", description: "")
-        MealEditor(meal: meal)
+        Group {
+            // With default empty meal
+            MealEditor()
+            
+            // With an existing meal
+            MealEditor(meal: Meal(id: 1, name: "A delicious meal", description: "Some desciprtion for the meal"))
+        }
     }
 }
