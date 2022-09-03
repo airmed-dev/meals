@@ -91,6 +91,30 @@ struct ValueStats: View {
     }
     
     
+    var noData: some View {
+        return VStack(alignment: .center) {
+                Spacer()
+                Image(systemName: "tray.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .font(.system(size: 30, weight: .ultraLight))
+                    .frame(width: 80)
+            
+                Text("No data")
+                    .font(.title)
+            
+                HStack(alignment: .center){
+                    Spacer()
+                    Text("Log an event")
+                        .font(.body)
+                    Spacer()
+                }
+                Spacer()
+            }
+        
+    }
+    
     
     var body: some View {
         let valueBuckets = aggregate(samples: eventSamples)
@@ -99,7 +123,7 @@ struct ValueStats: View {
             // Glucose Axis
             GeometryReader { geo in
                 if valueBuckets.count == 0 {
-                    Text("No data")
+                    noData
                 } else {
                     // Date axis and labels
                     dateAxisLabels(size: geo.size)

@@ -68,6 +68,28 @@ struct MealDetails: View {
         .frame(height:250)
     }
     
+    var noData: some View {
+        return VStack(alignment: .center) {
+                Image(systemName: "tray.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .font(.system(size: 30, weight: .ultraLight))
+                    .frame(width: 80)
+            
+                Text("No data")
+                    .font(.title)
+            
+                HStack(alignment: .center){
+                    Spacer()
+                    Text("Log an event")
+                        .font(.body)
+                    Spacer()
+                }
+            }
+        
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -116,7 +138,7 @@ struct MealDetails: View {
                                     Text("Loading..")
                                     ProgressView()
                                 } else {
-                                    Text("No events")
+                                    noData
                                 }
                                 
                                 HStack() {
@@ -131,7 +153,7 @@ struct MealDetails: View {
                                 } else if mealEvents.count > 0 {
                                     ProgressView()
                                 } else {
-                                    Text("No events")
+                                    noData
                                 }
                                 
 
@@ -148,13 +170,17 @@ struct MealDetails: View {
                                     Text("total events: \(mealEvents.count)")
                                         .font(.subheadline)
                                 }
-                                ForEach(mealEvents, id: \.id) { event in
-                                    NavigationLink(destination: {
-                                        MetricView(meal: meal, event: event)
-                                    }) {
-                                        MetricGraph(event: event, dataType: .Glucose, hours: hours)
-                                            .frame(height: 200)
+                                if mealEvents.count > 0 {
+                                    ForEach(mealEvents, id: \.id) { event in
+                                        NavigationLink(destination: {
+                                            MetricView(meal: meal, event: event)
+                                        }) {
+                                            MetricGraph(event: event, dataType: .Glucose, hours: hours)
+                                                .frame(height: 200)
+                                        }
                                     }
+                                } else {
+                                    noData
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
