@@ -13,48 +13,7 @@ class MealsAPI {
     static let baseURL = URL(string: "https://my-meals-api.herokuapp.com/api/meals")!
     
     static func getMeals(completion: @escaping (Result<[Meal],Error>) -> Void ){
-        var urlComponents = URLComponents()
-        urlComponents.scheme = "https"
-        urlComponents.host = "my-meals-api.herokuapp.com"
-        urlComponents.path = "/api/meals"
-        urlComponents.queryItems = [
-            URLQueryItem(name: "populate", value: "photo"),
-            // TODO: Handling pagination properly
-            URLQueryItem(name: "pagination[pageSize]", value: "50")
-        ]
-        
-        var request = URLRequest(url: urlComponents.url!)
-        request.setValue("Bearer \(TOKEN)", forHTTPHeaderField: "Authorization")
-        
-        let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
-            guard let data = data else { return }
-            
-            do {
-                let decoder = JSONDecoder()
-                let formatter:DateFormatter = DateFormatter()
-                formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
-                
-                decoder.dateDecodingStrategy = .formatted(formatter)
-                let mealResponse = try decoder.decode(MealResponse.self, from: data)
-                
-                let meals = mealResponse.data.map { m -> Meal in
-                    var meal: Meal = Meal(
-                        id: m.id,
-                        name: m.attributes.name,
-                        description: m.attributes.description
-                    )
-                    if let photo = m.attributes.photo?.data {
-                        meal.image = MealImage(imageURL: photo.attributes.url, imageID: photo.id)
-                    }
-                    return meal
-                }
-                completion(.success(meals))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-        task.resume()
-        
+        // Not supported
     }
     
     static func createMeal(meal: Meal, photo: UIImage?, _ completion: @escaping (Result<Bool, Error>) -> Void) {

@@ -8,20 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var newMealPresented = false
+    @ObservedObject var viewModel = ContentViewViewModel()
     
     var body: some View {
-        TabView {
-            EventList()
-                .tabItem {
-                    Label("Events", systemImage: "clock")
-                }
-            MealList()
-                .tabItem {
-                    Label("Meals", systemImage: "list.dash")
-                }
-
-        }
+        MealList()
+            .tabItem {
+                Label("Meals", systemImage: "list.dash")
+            }
+            .environmentObject(viewModel)
     }
 }
 

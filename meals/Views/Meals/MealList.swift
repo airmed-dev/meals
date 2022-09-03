@@ -9,139 +9,123 @@ import SwiftUI
 import Alamofire
 
 struct MealList: View {
-    @State var meals: [Meal] = []
+    @EnvironmentObject var viewModel: ContentViewViewModel
     @State var showNewMeal: Bool = false
-    
     @State var loading = true
-    @State var preview = false
     
-    @State var degrees: Double = 45.0
-    @Namespace var nspace
-
-    var animation: Animation {
-        Animation.linear(duration: 1)
-            .repeatForever()
+    
+    var mealGrid: some View {
+        let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
+        return LazyVGrid (columns: twoColumns){
+            ForEach(viewModel.meals, id: \.id) { meal in
+                HStack {
+                    withAnimation(.easeInOut(duration: 10.0)){
+                        NavigationLink(destination: {
+                            MealDetails(meal: meal)
+                        }) {
+                            MealCard(meal: meal, image: ContentViewViewModel.loadImage(meal: meal))
+                                .frame(width: 150,height: 150)
+                                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                           
+                                .cornerRadius(10, corners: [.topLeft, .topRight])
+                                .padding()
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    var noMeals: some View {
+        return VStack(alignment: .center) {
+                Image(systemName: "tray.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .font(.system(size: 30, weight: .ultraLight))
+                    .frame(width: 80)
+            
+                Text("No meals")
+                    .font(.title)
+            
+                HStack(alignment: .center){
+                    Spacer()
+                    Text("Click on the plus button")
+                        .font(.body)
+                    Spacer()
+                }
+            }
+        
     }
     
     var body: some View {
-        NavigationView {
-            let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
-            ZStack(alignment: .bottomTrailing) {
-                ZStack {
-                    Color.gray.opacity(0.1)
-                    if loading {
-                        ProgressView()
-                        ScrollView {
-                            LazyVGrid (columns: twoColumns){
-                                ForEach(0...10, id: \.self) { _ in
-                                    RoundedRectangle(cornerSize: CGSize(width: 30, height: 30))
-                                        .frame(width: 150,height: 150)
-                                        .foregroundColor(Color.primary.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 30, height: 30)))
-                                        .padding()
-                                }
-                            }
-                        }
-                    } else if meals.count > 0 {
-                        ScrollView {
-                            LazyVGrid (columns: twoColumns){
-                                ForEach(meals, id: \.id) { meal in
-                                    HStack {
-                                        withAnimation(.easeInOut(duration: 10.0)){
-                                            NavigationLink(destination: {
-                                                MealDetails(meal: meal)
-                                            }) {
-                                                MealCard(meal: meal)
-                                                    .frame(width: 150,height: 150)
-                                                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
-                                                    .cornerRadius(10, corners: [.topLeft, .topRight])
-                                                    .padding()
-                                            }
-                                            
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    } else {
-                        VStack(alignment: .center) {
-                            HStack {
-                                Text("No meals")
-                                    .font(.body)
-                                Image(systemName: "tray")
-                            }
-                        }
-
-                    }
+        VStack {
+            GeometryReader { geo in
+                if viewModel.meals.count == 0 {
+                   noMeals
+                        .position(
+                            x: geo.frame(in: .local).midX,
+                            y: geo.frame(in: .local).midY
+                        )
+                } else {
+                    mealGrid
                 }
-                .navigationTitle("Meals")
-                
-                Button(action: {showNewMeal.toggle() }) {
-                    Image(systemName: "plus")
-                        .frame(width: 50, height: 50)
-                        .background(Color( red: 27, green: 27, blue: 27))
-                        .clipShape(Circle())
-                }
-                .padding(30)
-                
-            }
-            .sheet(isPresented: $showNewMeal) {
-                // User creates a new meal
-                let mealDraft = Meal(id: 0,
-                                     name: "",
-                                     description: ""
-                )
-                Text("Create a new meal")
-                    .padding()
-                MealEditor(meal: mealDraft)
-                    .onDisappear {
-                        loadMeals()
-                    }
             }
         }
-        .onAppear {
-            if preview {
-                return
+        .overlay {
+            // FAB
+            VStack(alignment: .trailing) {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: {/* TODO: */}){
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.white)
+                            .padding(15)
+                            .background(.primary)
+                            .clipShape(Circle())
+                    }
+                    .padding(10)
+                }
             }
-            
-            loadMeals()
-        }
-    }
-    
-    func loadMeals() {
-        loading = true
-        MealsAPI.getMeals { result in
-            switch result {
-            case .success(let loadedMeals):
-                meals = loadedMeals
-            case .failure(let error):
-                print("Error loading meals: \(error)")
-            }
-            loading = false
         }
     }
 }
 
 struct MealList_Previews: PreviewProvider {
     static var previews: some View {
+        let mealTemplates = (1...3).map{value in
+            return Meal(id: value, name: "blueberry pie", description: "delicious blueberry")
+        }
         Group {
-            MealList(meals:[
-                Meal(id: 0, name: "Blueberry pie", description: "My tasty blueberries"),
-                Meal(id: 1, name: "Blueberry pie", description: "My tasty blueberries"),
-                //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-                //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-                //            Meal(id: UUID(), name: "Blueberry pie", description: "My tasty blueberries"),
-            ],
-                     loading: false,
-                     preview: true
+            // No meals
+            MealList(
+                loading: false
+            ).environmentObject(ContentViewViewModel(
+                meals: mealTemplates,
+                events: [])
             )
-            MealList(meals: [],
-                     loading: true,
-                     preview: true)
-            MealList(meals: [],
-                     loading: false,
-                     preview: true)
+            
+            // Some meals
+            MealList(
+                loading: false
+            ).environmentObject(ContentViewViewModel(
+                meals: mealTemplates,
+                events: [])
+            )
+            
+            // Skeleton
+            MealList(
+                loading: true
+            )
+            .environmentObject(ContentViewViewModel(
+                meals: [],
+                events: [])
+            )
+            
         }
     }
 }

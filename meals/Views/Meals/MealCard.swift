@@ -24,8 +24,6 @@ struct MealCard: View {
                     renderNoimage()
                 }
             }
-//            .cornerRadius(30, corners: [.topLeft, .topRight])
-//            .cornerRadius(10, corners: [.bottomLeft, .bottomRight])
             
             Text(meal.name)
                 .font(font)
@@ -33,17 +31,6 @@ struct MealCard: View {
                 .foregroundColor(.white)
                 .padding(10)
                 .background(.linearGradient(colors: [.black, .black.opacity(0)], startPoint: .bottom, endPoint: .top))
-                .frame(width:.infinity)
-        }
-        .onAppear {
-            PhotosAPI.getPhoto(meal: meal) { result in
-                switch result {
-                case .success(let loadedImage):
-                   image = loadedImage
-                case .failure(let error):
-                    print("Error loading image: \(error)")
-                }
-            }
         }
     }
     

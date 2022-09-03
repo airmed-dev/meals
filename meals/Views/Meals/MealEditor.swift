@@ -9,6 +9,7 @@ import SwiftUI
 
 // MealEditor allows a user to edit a meal
 struct MealEditor: View {
+    @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
     @State var image: UIImage? = nil
@@ -92,7 +93,7 @@ struct MealEditor: View {
                     } else if let image = image {
                         photo = image
                     }
-                    save(meal: meal, photo: photo)
+                    save(meal: meal, image: photo)
                 }
                 Spacer()
                 LoadingButton(status: deleteButtonStatus,
@@ -106,14 +107,7 @@ struct MealEditor: View {
             .padding()
         }
         .onAppear {
-            PhotosAPI.getPhoto(meal: meal) { result in
-                switch result {
-                case .success(let loadedImage):
-                    image = loadedImage
-                case .failure(let error):
-                    print("Error: \(error)")
-                }
-            }
+            // TODO: Fetching photo
         }
         .confirmationDialog("Select a source", isPresented: $showPhotoPickerMenu, titleVisibility: .visible) {
             Button("Photo library"){
@@ -163,51 +157,13 @@ struct MealEditor: View {
         }
     }
     
-    func save(meal: Meal, photo: UIImage?) {
+    func save(meal: Meal, image: UIImage?) {
         saveButtonStatus = .Clicked
-        if meal.id != 0 {
-            MealsAPI.updateMealAndPhoto(mealID: meal.id, meal: meal, photo: photo) { result in
-                switch result {
-                case .success(_):
-                    saveButtonStatus = .Saved
-                    showSuccessAlert = true
-                    successMessage = "Updated meal"
-                case .failure(let error):
-                    saveButtonStatus = .Initial
-                    showErrorAlert = true
-                    errorMessage = "Error saving meal: \(error)"
-                }
-            }
-        } else {
-            MealsAPI.createMeal(meal: meal, photo: photo) { result in
-                switch result {
-                case .success(_):
-                    saveButtonStatus = .Saved
-                    showSuccessAlert = true
-                    successMessage = "Created a meal"
-                case .failure(let error):
-                    saveButtonStatus = .Initial
-                    showErrorAlert = true
-                    errorMessage = "Error creating meal: \(error)"
-                }
-            }
-        }
+        viewModel.saveMeal(meal: meal, image: image)
     }
     
     func delete(meal: Meal){
-        deleteButtonStatus = .Clicked
-        MealsAPI.deleteMeal(meal: meal) { result in
-            switch result {
-            case .success(_):
-                deleteButtonStatus = .Saved
-                showSuccessAlert = true
-                successMessage = "Deleted meal"
-            case .failure(let error):
-                deleteButtonStatus = .Initial
-                showErrorAlert = true
-                errorMessage = "Error deleting meal: \(error)"
-            }
-        }
+        // TODO: viewMode.delete(meal)
     }
 }
 

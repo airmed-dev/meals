@@ -6,17 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 
 struct Meal: Codable {
     var id: Int
     var name: String
     var description: String
-    var image: MealImage?
 }
-
-struct MealImage: Codable {
-    var imageURL: String
-    var imageID: Int
-}
-
