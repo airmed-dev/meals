@@ -43,49 +43,50 @@ struct MealEditor: View {
     var body: some View {
         VStack {
             // Image editor
-            ZStack(alignment: .bottomTrailing) {
-                if imageWasSelected {
-                    Image(uiImage: imageDraft)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } else if let image = image{
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } else {
+            GeometryReader { geo in
+                ZStack(alignment: .bottomTrailing) {
                     VStack {
-                       Image(systemName: "photo.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 100)
-                            .foregroundColor(.white)
+                        if imageWasSelected {
+                            Image(uiImage: imageDraft)
+                                .resizable()
+                        } else if let image = image{
+                            Image(uiImage: image)
+                                .resizable()
+                        } else {
+                            VStack {
+                               Image(systemName: "photo.circle")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.white)
+                            }
+                            .frame(width: geo.size.width, height: geo.size.height)
+                            .background(LinearGradient(
+                                colors: [Color(hex: 0xffd89b), Color(hex: 0x19547b)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
+                            .opacity(0.5)
+                        }
                     }
-                    .frame(maxWidth: .infinity, maxHeight: 300)
-                    .background(LinearGradient(
-                        colors: [Color(hex: 0xffd89b), Color(hex: 0x19547b)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ))
-                    .opacity(0.5)
-                }
-                
-                Button(action: {showPhotoPickerMenu.toggle() }) {
-                    HStack {
-                        Image(systemName: "plus")
-                            .resizable()
-                            .frame(width: 15, height: 15)
-                            .foregroundColor(.white)
-                        Text("Edit photo")
-                            .foregroundColor(.white)
+                    
+                    Button(action: {showPhotoPickerMenu.toggle() }) {
+                        HStack {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+                                .foregroundColor(.white)
+                            Text("Edit photo")
+                                .foregroundColor(.white)
+                        }
+                        .padding(15)
+                        .background(.primary)
+                        .cornerRadius(15)
                     }
-                    .padding(15)
-                    .background(.primary)
-                    .cornerRadius(15)
-//                    .clipShape(Circle())
+                    .padding()
                 }
-                .padding()
+
             }
-            Spacer()
+            
             // Meal fields
             List {
                 HStack {
@@ -111,6 +112,8 @@ struct MealEditor: View {
                 }
             }
             .listStyle(.inset)
+//            .cornerRadius(5, corners:[.topLeft, .topRight])
+//            .offset(y: -10)
             
             Spacer()
             
@@ -140,9 +143,6 @@ struct MealEditor: View {
                 }
             }
             .padding()
-        }
-        .onAppear {
-            // TODO: Fetching photo
         }
         .confirmationDialog("Select a source", isPresented: $showPhotoPickerMenu, titleVisibility: .visible) {
             Button("Photo library"){
