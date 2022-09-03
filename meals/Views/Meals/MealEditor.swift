@@ -11,24 +11,20 @@ import SwiftUI
 struct MealEditor: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State var meal: Meal
-    @State var image: UIImage? = nil
+    @State var meal: Meal = Meal(id:0, name: "", description: "")
     
-    var newMeal: Bool = false
+    // Photo
+    @State var imageWasSelected = false
+    @State var image: UIImage? = nil
+    @State var imageDraft: UIImage = UIImage()
     
     @State var showPhotoPickerMenu = false
     @State var showPhotoPickerLibrary = false
     @State var showPhotoPickerCamera = false
     @State var deletePhotoSelected = false
-    
     @State var showDeleteMenu = false
     
-    @State var imageDraft: UIImage = UIImage()
-    @State var imageWasSelected = false
-    
-    // Callbacks
-    var onCompletion: () -> Void = {}
-    
+
     // Buttons
     @State var saveButtonStatus: ButtonStatus = .Initial
     @State var deleteButtonStatus: ButtonStatus = .Initial
@@ -42,6 +38,7 @@ struct MealEditor: View {
     
     var body: some View {
         VStack {
+            // Image editor
             ZStack(alignment: .bottomTrailing) {
                 if imageWasSelected {
                     Image(uiImage: imageDraft)
@@ -82,6 +79,8 @@ struct MealEditor: View {
             }
             
             Spacer()
+            
+            // Buttons
             HStack(alignment: .firstTextBaseline){
                 LoadingButton(status: saveButtonStatus,
                               label: "Save",
@@ -95,13 +94,15 @@ struct MealEditor: View {
                     }
                     save(meal: meal, image: photo)
                 }
-                Spacer()
-                LoadingButton(status: deleteButtonStatus,
-                              role: .destructive,
-                              label: "Delete",
-                              loadingLabel: "Deleting..",
-                              doneLabel: "Deleted"){
-                    showDeleteMenu = true
+                if meal.id != 0{
+                    Spacer()
+                    LoadingButton(status: deleteButtonStatus,
+                                  role: .destructive,
+                                  label: "Delete",
+                                  loadingLabel: "Deleting..",
+                                  doneLabel: "Deleted"){
+                        showDeleteMenu = true
+                    }
                 }
             }
             .padding()
@@ -152,7 +153,7 @@ struct MealEditor: View {
         }
         .alert(successMessage, isPresented: $showSuccessAlert) {
             Button("Ok", role: .cancel){
-                onCompletion()
+                presentationMode.wrappedValue.dismiss()
             }
         }
     }
@@ -160,6 +161,9 @@ struct MealEditor: View {
     func save(meal: Meal, image: UIImage?) {
         saveButtonStatus = .Clicked
         viewModel.saveMeal(meal: meal, image: image)
+        saveButtonStatus = .Saved
+        showSuccessAlert = true
+        successMessage = "Created \(meal.name)"
     }
     
     func delete(meal: Meal){

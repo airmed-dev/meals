@@ -168,10 +168,7 @@ struct MealDetails: View {
             }
         }
         .sheet(isPresented: $showMealEditor ){
-            MealEditor(meal: meal, onCompletion: {
-                showMealEditor = false
-                presentationMode.wrappedValue.dismiss()
-            })
+            MealEditor(meal: meal)
         }
         .alert(isPresented: $showLogMeal) {
             let date = Date()

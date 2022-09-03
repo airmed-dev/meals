@@ -10,7 +10,7 @@ import Alamofire
 
 struct MealList: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
-    @State var showNewMeal: Bool = false
+    @State var displayBottomSheet: Bool = false
     @State var loading = true
     
     
@@ -74,12 +74,14 @@ struct MealList: View {
             }
         }
         .overlay {
-            // FAB
+            // FAB: TODO: Perhaps add the button to both views?
             VStack(alignment: .trailing) {
                 Spacer()
                 HStack {
                     Spacer()
-                    Button(action: {/* TODO: */}){
+                    Button(action: {
+                        displayBottomSheet = true
+                    }){
                         Image(systemName: "plus")
                             .resizable()
                             .frame(width: 20, height: 20)
@@ -91,6 +93,10 @@ struct MealList: View {
                     .padding(10)
                 }
             }
+        }
+        .bottomSheet(isPresented: $displayBottomSheet, detents: [.large()]){
+            MealEditor()
+                .environmentObject(viewModel)
         }
     }
 }
