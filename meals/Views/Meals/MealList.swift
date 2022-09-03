@@ -20,7 +20,7 @@ struct MealList: View {
     var mealGrid: some View {
         let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
         return LazyVGrid (columns: twoColumns){
-            ForEach(viewModel.meals, id: \.id) { meal in
+            ForEach(viewModel.meals, id: \.hashValue) { meal in
                 HStack {
                     withAnimation(.easeInOut(duration: 10.0)){
                         Button(action: {

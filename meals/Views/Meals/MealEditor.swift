@@ -11,6 +11,7 @@ import SwiftUI
 struct MealEditor: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
+    
     @State var meal: Meal = Meal(id:0, name: "", description: "")
     
     // Photo
@@ -163,7 +164,7 @@ struct MealEditor: View {
         viewModel.saveMeal(meal: meal, image: image)
         saveButtonStatus = .Saved
         showSuccessAlert = true
-        successMessage = "Created \(meal.name)"
+        successMessage = "Saved '\(meal.name)'"
     }
     
     func delete(meal: Meal){

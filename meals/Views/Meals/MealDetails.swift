@@ -70,6 +70,15 @@ struct MealDetails: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+                Button("Edit"){
+                   showMealEditor = true
+                }
+                .padding()
+            }
+            .border(.gray)
+            .background(.secondary)
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geo in
                     ScrollView {
@@ -167,15 +176,15 @@ struct MealDetails: View {
                 }
             }
         }
-        .padding()
         .background(.gray.opacity(0.2))
-        .toolbar {
-            Button("Edit"){
-               showMealEditor = true
-            }
-        }
         .sheet(isPresented: $showMealEditor ){
-            MealEditor(meal: meal)
+            MealEditor(
+                meal: meal,
+                image: ContentViewViewModel.loadImage(meal: meal)
+            )
+            .onDisappear {
+                presentationMode.wrappedValue.dismiss()
+            }
         }
         .alert(isPresented: $showLogMeal) {
             let date = Date()
@@ -195,6 +204,7 @@ struct MealDetails: View {
             )
         }
         .onAppear {
+            // TODO: Load events from the viewModel
             if mealEvents.isEmpty {
                 loadEvents()
             }

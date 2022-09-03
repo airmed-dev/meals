@@ -9,8 +9,9 @@ import Foundation
 import SwiftUI
 
 
-struct Meal: Codable {
+struct Meal: Codable, Hashable {
     var id: Int
     var name: String
     var description: String
 }
+
