@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct MealDetails: View {
+    @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
     @Namespace var nspace
     
+    @State var meal: Meal
+    
     @State var showLogMeal: Bool = false
     @State var showMealEditor: Bool = false
-    @State var meal: Meal
     @State var mealEvents: [Event] = []
     @State var hours: Int = 3
     
@@ -71,9 +73,14 @@ struct MealDetails: View {
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geo in
                     ScrollView {
-                        MealCard(font: .headline, meal: meal)
+                        MealCard(
+                            font: .headline,
+                            meal: meal,
+                            image: ContentViewViewModel.loadImage(meal: meal)
+                        )
                             .frame(width: geo.size.width, height: geo.size.height/2)
                             .matchedGeometryEffect(id: "card", in: nspace)
+                        
                         VStack(alignment: .leading) {
                             VStack(alignment: .leading) {
                                 Text("Description")

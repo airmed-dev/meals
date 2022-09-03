@@ -10,8 +10,11 @@ import Alamofire
 
 struct MealList: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
-    @State var displayBottomSheet: Bool = false
-    @State var loading = true
+    
+    @State var displayMealEditor: Bool = false
+    @State var displayMealDetails: Bool = false
+    
+    @State var selectedMeal: Meal?
     
     
     var mealGrid: some View {
@@ -20,16 +23,19 @@ struct MealList: View {
             ForEach(viewModel.meals, id: \.id) { meal in
                 HStack {
                     withAnimation(.easeInOut(duration: 10.0)){
-                        NavigationLink(destination: {
-                            MealDetails(meal: meal)
-                        }) {
-                            MealCard(meal: meal, image: ContentViewViewModel.loadImage(meal: meal))
-                                .frame(width: 150,height: 150)
-                                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
-                           
-                                .cornerRadius(10, corners: [.topLeft, .topRight])
-                                .padding()
-                        }
+                        Button(action: {
+                           selectedMeal = meal
+                           displayMealDetails = true
+                        }){
+                         MealCard(
+                            meal: meal,
+                            image: ContentViewViewModel.loadImage(meal: meal)
+                         )
+                            .frame(width: 150,height: 150)
+                            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                       
+                            .cornerRadius(10, corners: [.topLeft, .topRight])
+                            .padding()                       }
                         
                     }
                 }
@@ -80,7 +86,7 @@ struct MealList: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        displayBottomSheet = true
+                        displayMealEditor = true
                     }){
                         Image(systemName: "plus")
                             .resizable()
@@ -94,8 +100,12 @@ struct MealList: View {
                 }
             }
         }
-        .bottomSheet(isPresented: $displayBottomSheet, detents: [.large()]){
+        .bottomSheet(isPresented: $displayMealEditor, detents: [.large()]){
             MealEditor()
+                .environmentObject(viewModel)
+        }
+        .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
+            MealDetails(meal: selectedMeal!)
                 .environmentObject(viewModel)
         }
     }
@@ -108,29 +118,25 @@ struct MealList_Previews: PreviewProvider {
         }
         Group {
             // No meals
-            MealList(
-                loading: false
-            ).environmentObject(ContentViewViewModel(
-                meals: mealTemplates,
-                events: [])
-            )
+            MealList()
+                .environmentObject(ContentViewViewModel(
+                    meals: mealTemplates,
+                    events: [])
+                )
             
             // Some meals
-            MealList(
-                loading: false
-            ).environmentObject(ContentViewViewModel(
-                meals: mealTemplates,
-                events: [])
-            )
+            MealList()
+                .environmentObject(ContentViewViewModel(
+                    meals: mealTemplates,
+                    events: [])
+                )
             
             // Skeleton
-            MealList(
-                loading: true
-            )
-            .environmentObject(ContentViewViewModel(
-                meals: [],
-                events: [])
-            )
+            MealList()
+                .environmentObject(ContentViewViewModel(
+                    meals: [],
+                    events: [])
+                )
             
         }
     }
