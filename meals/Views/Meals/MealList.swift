@@ -66,7 +66,10 @@ struct MealList: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
+            Text("Meals")
+                .font(.largeTitle)
+                .padding()
             GeometryReader { geo in
                 if viewModel.meals.count == 0 {
                    noMeals

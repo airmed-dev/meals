@@ -70,23 +70,23 @@ struct MealDetails: View {
     
     var noData: some View {
         return VStack(alignment: .center) {
-                Image(systemName: "tray.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .font(.system(size: 30, weight: .ultraLight))
-                    .frame(width: 80)
+            Image(systemName: "tray.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(.secondary.opacity(0.5))
+                .font(.system(size: 30, weight: .ultraLight))
+                .frame(width: 80)
             
-                Text("No data")
-                    .font(.title)
+            Text("No data")
+                .font(.title)
             
-                HStack(alignment: .center){
-                    Spacer()
-                    Text("Log an event")
-                        .font(.body)
-                    Spacer()
-                }
+            HStack(alignment: .center){
+                Spacer()
+                Text("Log an event")
+                    .font(.body)
+                Spacer()
             }
+        }
         
     }
     
@@ -95,21 +95,23 @@ struct MealDetails: View {
             HStack {
                 Spacer()
                 Button("Edit"){
-                   showMealEditor = true
+                    showMealEditor = true
                 }
                 .padding()
             }
-            .border(.gray)
             ZStack(alignment: .bottomTrailing) {
+                
                 GeometryReader { geo in
+                    
+                    
                     ScrollView {
                         MealCard(
                             font: .largeTitle,
                             meal: meal,
                             image: ContentViewViewModel.loadImage(meal: meal)
                         )
-                            .frame(width: geo.size.width, height: geo.size.height/2)
-                            .matchedGeometryEffect(id: "card", in: nspace)
+                        .frame(width: geo.size.width, height: geo.size.height/2)
+                        .matchedGeometryEffect(id: "card", in: nspace)
                         
                         VStack(alignment: .leading) {
                             VStack(alignment: .leading) {
@@ -156,7 +158,7 @@ struct MealDetails: View {
                                     noData
                                 }
                                 
-
+                                
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                             .background(Color(uiColor: UIColor.systemBackground))
@@ -203,7 +205,7 @@ struct MealDetails: View {
                         .padding(15)
                         .background(.primary)
                         .cornerRadius(15)
-    //                    .clipShape(Circle())
+                        //                    .clipShape(Circle())
                     }
                     .shadow(radius: 5)
                     .padding()
@@ -262,10 +264,10 @@ struct MealDetails: View {
                 mealEvents.forEach{ event in
                     Nightscout().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
                         switch result {
-                            case .success(let samples):
-                                eventGlucoseSamples[event.id] = (event.date, samples)
-                            case .failure(let error):
-                                print("Error \(error)")
+                        case .success(let samples):
+                            eventGlucoseSamples[event.id] = (event.date, samples)
+                        case .failure(let error):
+                            print("Error \(error)")
                         }
                     }
                     HealthKitUtils().getInsulinSamples(
@@ -273,10 +275,10 @@ struct MealDetails: View {
                         end: event.date.advanced(by: TimeInterval(hours*60*60))
                     ) { result in
                         switch result {
-                             case .success(let samples):
-                                eventInsulinSamples[event.id] = (event.date, samples)
-                            case .failure(let error):
-                                print("Error \(error)")
+                        case .success(let samples):
+                            eventInsulinSamples[event.id] = (event.date, samples)
+                        case .failure(let error):
+                            print("Error \(error)")
                         }
                     }
                 }

@@ -11,11 +11,17 @@ struct ContentView: View {
     @ObservedObject var viewModel = ContentViewViewModel()
     
     var body: some View {
-        MealList()
-            .tabItem {
-                Label("Meals", systemImage: "list.dash")
-            }
-            .environmentObject(viewModel)
+        TabView {
+            MealList()
+                .tabItem {
+                    Label("Meals", systemImage: "circle.hexagongrid.circle")
+                }
+                .environmentObject(viewModel)
+            EventList()
+                .tabItem {
+                    Label("Events", systemImage: "calendar.day.timeline.leading")
+                }
+        }
     }
 }
 
