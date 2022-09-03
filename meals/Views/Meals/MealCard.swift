@@ -35,9 +35,10 @@ struct MealCard: View {
     }
     
     func renderNoimage() -> some View{
-        let colors = [Color(hex:0x424242), Color(hex:0x002266)]
+        let colors = [ Color(hex: 0xffd89b), Color(hex: 0x19547b)]
         return ZStack {
             LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
+                .opacity(0.5)
             Image(systemName: "photo.circle")
                 .resizable()
                 .foregroundColor(.white)

@@ -78,7 +78,6 @@ struct MealDetails: View {
                 .padding()
             }
             .border(.gray)
-            .background(.secondary)
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geo in
                     ScrollView {
@@ -167,12 +166,21 @@ struct MealDetails: View {
                 }
                 HStack(alignment: .lastTextBaseline) {
                     Button(action: {showLogMeal.toggle() }) {
-                        Image(systemName: "plus")
-                            .frame(width: 50, height: 50)
-                            .shadow(radius: 15)
-                            .background(Color( red: 27, green: 27, blue: 27))
-                            .clipShape(Circle())
+                        HStack {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+                                .foregroundColor(.white)
+                            Text("Log event")
+                                .foregroundColor(.white)
+                        }
+                        .padding(15)
+                        .background(.primary)
+                        .cornerRadius(15)
+    //                    .clipShape(Circle())
                     }
+                    .shadow(radius: 5)
+                    .padding()
                 }
             }
         }

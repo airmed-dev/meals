@@ -54,12 +54,11 @@ struct MealEditor: View {
                         .aspectRatio(contentMode: .fit)
                 } else {
                     VStack {
-                       Image(systemName: "photo.fill")
+                       Image(systemName: "photo.circle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 100)
                             .foregroundColor(.white)
-                        Text("Add a photo")
                     }
                     .frame(maxWidth: .infinity, maxHeight: 300)
                     .background(LinearGradient(
@@ -71,13 +70,18 @@ struct MealEditor: View {
                 }
                 
                 Button(action: {showPhotoPickerMenu.toggle() }) {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundColor(.white)
-                        .padding(15)
-                        .background(.primary)
-                        .clipShape(Circle())
+                    HStack {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 15, height: 15)
+                            .foregroundColor(.white)
+                        Text("Edit photo")
+                            .foregroundColor(.white)
+                    }
+                    .padding(15)
+                    .background(.primary)
+                    .cornerRadius(15)
+//                    .clipShape(Circle())
                 }
                 .padding()
             }
@@ -212,7 +216,15 @@ struct MealEditor_Previews: PreviewProvider {
             MealEditor()
             
             // With an existing meal
-            MealEditor(meal: Meal(id: 1, name: "A delicious meal", description: "Some desciprtion for the meal"))
+            MealEditor(
+                meal: Meal(
+                    id: 1,
+                    name: "A delicious meal",
+                    description: "Some desciprtion for the meal"
+                ),
+                image: ContentViewViewModel.loadImage(meal: Meal(id:0, name:"dummy", description: "dummy"))
+                
+            )
         }
     }
 }

@@ -85,16 +85,19 @@ struct MealList: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    Button(action: {
-                        displayMealEditor = true
-                    }){
-                        Image(systemName: "plus")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundColor(.white)
-                            .padding(15)
-                            .background(.primary)
-                            .clipShape(Circle())
+                    Button(action: {displayMealEditor.toggle() }) {
+                        HStack {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+                                .foregroundColor(.white)
+                            Text("Create a meal")
+                                .foregroundColor(.white)
+                        }
+                        .padding(15)
+                        .background(.primary)
+                        .cornerRadius(15)
+        //                    .clipShape(Circle())
                     }
                     .padding(10)
                 }
