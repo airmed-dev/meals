@@ -100,10 +100,7 @@ struct MealDetails: View {
                 .padding()
             }
             ZStack(alignment: .bottomTrailing) {
-                
                 GeometryReader { geo in
-                    
-                    
                     ScrollView {
                         MealCard(
                             font: .largeTitle,

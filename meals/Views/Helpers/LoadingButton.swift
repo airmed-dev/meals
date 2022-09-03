@@ -38,6 +38,8 @@ struct LoadingButton: View {
                 }
             }
         }
+        .padding(15)
+        .cornerRadius(15)
     }
 }
 
