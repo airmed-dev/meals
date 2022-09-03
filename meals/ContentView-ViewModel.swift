@@ -55,6 +55,12 @@ import SwiftUI
         }
     }
     
+    func deleteMeal(meal: Meal){
+        self.meals = self.meals.filter{ $0.id != meal.id}
+        save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
+        deleteImage(fileName: "\(meal.id).jpeg")
+    }
+    
     // Save an event, either a new one or an existing one.
     // If the event has a 0 ID, it will create a new one starting from the latest or 1
     // TODO: Error propagations
@@ -78,6 +84,7 @@ import SwiftUI
         save(data: self.meals, fileName: ContentViewViewModel.eventsFileName)
     }
     
+    
     private func saveImage(fileName: String, image: UIImage) -> String? {
         let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent(fileName)
         if let imageData = image.jpegData(compressionQuality: 1.0) {
@@ -86,6 +93,13 @@ import SwiftUI
         }
         print("Error saving image")
         return nil
+    }
+    
+    private func deleteImage(fileName: String){
+        let path = ContentViewViewModel.documentsUrl.appendingPathComponent(fileName).path
+        if FileManager.default.fileExists(atPath: path) {
+            try? FileManager.default.removeItem(atPath: path)
+        }
     }
 
     private static func loadMeals() -> [Meal] {
@@ -106,6 +120,7 @@ import SwiftUI
         }
         return nil
     }
+    
     
     // TODO: Error propagation
     func save<T: Encodable>(data: [T], fileName: String){

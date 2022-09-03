@@ -168,7 +168,11 @@ struct MealEditor: View {
     }
     
     func delete(meal: Meal){
-        // TODO: viewMode.delete(meal)
+        deleteButtonStatus = .Clicked
+        viewModel.deleteMeal(meal: meal)
+        deleteButtonStatus = .Saved
+        showSuccessAlert = true
+        successMessage = "Delete \(meal.name)"
     }
 }
 
