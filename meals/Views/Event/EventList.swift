@@ -21,13 +21,13 @@ struct EventList: View {
     
     var body: some View {
         VStack {
-            header
-            statistics
-            timeline
+            headerSkeleton
+            statisticsSkeleton
+            timelineSkeleton
         }
     }
     
-    var header: some View {
+    var headerSkeleton: some View {
         HStack(alignment: .firstTextBaseline) {
             Circle()
                 .frame(width: 100, height: 100)
@@ -51,7 +51,7 @@ struct EventList: View {
         .padding(.leading, 5)
     }
     
-    var statistics: some View {
+    var statisticsSkeleton: some View {
         VStack {
             HStack {
                 Text("Statistics")
@@ -60,12 +60,12 @@ struct EventList: View {
                     .padding(.leading, 5)
                 Spacer()
             }
-            glucoseStatistics
-            insulinStatistics
+            glucoseStatisticsSkeleton
+            insulinStatisticsSkeleton
         }
     }
     
-    var timeline: some View {
+    var timelineSkeleton: some View {
         VStack {
             HStack {
                 Text("Timeline")
@@ -88,12 +88,11 @@ struct EventList: View {
             
             ScrollView(.horizontal){
                 HStack {
-                    timelineSkeleton
-                    timelineSkeleton
-                    timelineSkeleton
-                    timelineSkeleton
-                    timelineSkeleton
-                    timelineSkeleton
+                    timelineCardSkeleton
+                    timelineCardSkeleton
+                    timelineCardSkeleton
+                    timelineCardSkeleton
+                    timelineCardSkeleton
                 }
             }
             .padding(.top, 25)
@@ -105,7 +104,7 @@ struct EventList: View {
         }
     }
     
-    var glucoseStatistics: some View {
+    var glucoseStatisticsSkeleton: some View {
         VStack {
             HStack {
                 Text("Glucose")
@@ -113,12 +112,12 @@ struct EventList: View {
                     .padding(.leading, 5)
                 Spacer()
             }
-            statisticsSkeleton
+            statisticsGraphSkeleton
             Spacer()
         }
     }
     
-    var insulinStatistics: some View {
+    var insulinStatisticsSkeleton: some View {
         VStack {
             HStack {
                 Text("Insulin")
@@ -126,12 +125,12 @@ struct EventList: View {
                     .padding(.leading, 5)
                 Spacer()
             }
-            statisticsSkeleton
+            statisticsGraphSkeleton
             Spacer()
         }
     }
     
-    var statisticsSkeleton: some View {
+    var statisticsGraphSkeleton: some View {
         ZStack {
             Rectangle()
                 .foregroundColor(Color(uiColor: .systemGray6))
@@ -152,7 +151,7 @@ struct EventList: View {
         .padding(.trailing, 3)
     }
     
-    var timelineSkeleton: some View {
+    var timelineCardSkeleton: some View {
         VStack {
             textSkeleton
                 .frame(height: 10)
