@@ -10,170 +10,170 @@ import Foundation
 import SwiftUI
 
 struct EventList: View {
-    @State var events: [Date: [Event]] = [:]
+    @EnvironmentObject var viewModel: ContentViewViewModel
     
     @State var selectedEvent: Event?
-    @State var meals: [Int: Meal] = [:]
-    
     @State var preview = false
     
-    @State var loadingEvents = true
-    @State var loadingMeals = true
     @State var hours = 3
     @State var selectedMealPhoto: UIImage?
     @State var dateInView: Date?
     
     var body: some View {
-        NavigationView {
-            if loadingMeals || loadingEvents {
-                // Skeleton
-                ZStack {
-                    ProgressView()
-                }
-            } else {
-                // Actual view
-                VStack(){
-                    if let se = selectedEvent {
-                        HStack() {
-                            VStack() {
-                                if let sm = selectedMealPhoto {
-                                    Image(uiImage: sm)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 60)
-                                        .clipShape(Circle())
-                                        .animation(.easeIn)
-                                } else {
-                                    Circle()
-                                        .fill(.black.opacity(0.2))
-                                        .position(x: 30,y:30)
-                                        .frame(height: 60)
-                                        .animation(.easeIn)
-                                }
-                            }
-                            NavigationLink(destination: {
-                                MetricView(meal: meals[se.meal_id], event: se)
-                            }) {
-                                VStack {
-                                    Text(meals[se.meal_id]!.name)
-                                        .font(.headline)
-                                        .foregroundColor(.primary)
-                                    Text(formatDate(date: se.date))
-                                        .font(.subheadline)
-                                        .foregroundColor(.primary.opacity(0.4))
-                                }
-                            }
-                            .animation(.spring())
-                            Spacer()
-                        }
-                        .padding([.leading,.trailing])
-                    }
-                        
-                    VStack(alignment: .trailing){
-                        if let se = selectedEvent {
-                            HStack(alignment: .lastTextBaseline) {
-                                Menu {
-                                    Button {
-                                        hours = 3
-                                    } label: {
-                                        Text("3 hours")
-                                    }
-                                    Button {
-                                        hours = 6
-                                    } label: {
-                                        Text("6 hours")
-                                    }
-                                }
-                            label: {
-                                Text("\(hours) hours")
-                            }
-                            }
-                            VStack {
-                                MetricGraph(event: se, dataType: .Glucose, hours: hours)
-                                MetricGraph(event: se, dataType: .Insulin, hours: hours)
-                            }
-                        } else {
-                            VStack(alignment: .center) {
-                                Image(systemName: "tray.fill")
-                                    .resizable()
-                                    .frame(width:60, height: 40)
-                                    .foregroundColor(.black.opacity(0.5))
-                                    .padding()
-                                Text("No event selected")
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        }
-                    }
-                    .padding([.leading,.trailing,.top], 3)
-                    .padding([.top], 5)
-//                    .background(
-//                        LinearGradient(
-//                            colors: [Color(hex:0xf0fff0), Color(hex: 0x838391)],
-//                            startPoint: .topLeading, endPoint: .bottomTrailing
-//                        )
-//                    )
-                    
-                    .cornerRadius(15)
-                    
-                    Spacer()
-                    Text("Events")
-                        .font(.headline)
-                    let eventDates = events.map { $0.key }.sorted(by: >)
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(eventDates, id: \.self ){ eventDate in
-                                VStack(alignment: .leading) {
-                                    Text(formatDate(date: eventDate))
-                                        .font(.caption)
-                                    let currentEvents = events[eventDate]!
-                                    HStack {
-                                        ForEach(currentEvents){ event in
-                                            VStack(alignment: .leading) {
-                                                if let meal = meals[event.meal_id]{
-                                                    EventTimelineCard(meal: meal, event: event)
-                                                        .frame(width:130)
-                                                        .animation(.spring())
-                                                        .onTapGesture {
-                                                            selectedEvent = event
-                                                            PhotosAPI.getPhoto(meal: meals[event.meal_id]!){ result in
-                                                                switch result {
-                                                                case .success(let photo):
-                                                                    selectedMealPhoto = photo
-                                                                    break
-                                                                case .failure(let error):
-                                                                    break
-                                                                }
-                                                            }
-                                                        }
-                                                } else {
-                                                    Text("Error: No meal")
-                                                }
-                                            }
-                                            .frame(width: 130, height: 120)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .frame(height: 100)
-                    .padding()
-                    
-                    
-                }
-                
-                .navigationTitle("Events")
-            }
-            
-        }
-        
-        .onAppear {
-            if preview {
-                return
-            }
-            loadData()
+        VStack {
+            header
+            statistics
+            timeline
         }
     }
+    
+    var header: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Circle()
+                .frame(width: 100, height: 100)
+                .foregroundColor(Color(uiColor: .systemGray3))
+            VStack {
+                Spacer()
+                HStack{
+                    textSkeleton.frame(height: 30)
+                    Spacer()
+                }
+                HStack{
+                    textSkeleton
+                        .frame(height: 10)
+                    Spacer()
+                }
+                Spacer()
+            }
+            Spacer()
+        }
+        .frame(height: 100)
+        .padding(.leading, 5)
+    }
+    
+    var statistics: some View {
+        VStack {
+            HStack {
+                Text("Statistics")
+                    .font(.headline)
+                    .padding(.bottom, 5)
+                    .padding(.leading, 5)
+                Spacer()
+            }
+            glucoseStatistics
+            insulinStatistics
+        }
+    }
+    
+    var timeline: some View {
+        VStack {
+            HStack {
+                Text("Timeline")
+                    .font(.headline)
+                    .padding(.bottom, 5)
+                    .padding(.top, 5)
+                    .padding(.leading, 10)
+                Spacer()
+                Circle()
+                    .foregroundColor(Color(uiColor: .systemGray3))
+                    .frame(width: 25)
+                    .frame(height: 25)
+                    .overlay {
+                        Image(systemName: "plus")
+                            .padding()
+                    }
+            }
+            .frame(height: 20)
+            .padding(.trailing, 10)
+            
+            ScrollView(.horizontal){
+                HStack {
+                    timelineSkeleton
+                    timelineSkeleton
+                    timelineSkeleton
+                    timelineSkeleton
+                    timelineSkeleton
+                    timelineSkeleton
+                }
+            }
+            .padding(.top, 25)
+            .padding(.bottom, 15)
+            .padding(.leading, 3)
+            .padding(.trailing, 3)
+            .background(Color(uiColor: .systemGray6))
+            .cornerRadius(15)
+        }
+    }
+    
+    var glucoseStatistics: some View {
+        VStack {
+            HStack {
+                Text("Glucose")
+                    .font(.subheadline)
+                    .padding(.leading, 5)
+                Spacer()
+            }
+            statisticsSkeleton
+            Spacer()
+        }
+    }
+    
+    var insulinStatistics: some View {
+        VStack {
+            HStack {
+                Text("Insulin")
+                    .font(.subheadline)
+                    .padding(.leading, 5)
+                Spacer()
+            }
+            statisticsSkeleton
+            Spacer()
+        }
+    }
+    
+    var statisticsSkeleton: some View {
+        ZStack {
+            Rectangle()
+                .foregroundColor(Color(uiColor: .systemGray6))
+                .cornerRadius(15)
+            GeometryReader { geo in
+                ForEach(
+                    Array(stride(from: 30, to: geo.size.width, by: geo.size.width/7)), id: \.self
+                ) { index in
+                    Rectangle()
+                        .foregroundColor(Color(uiColor: .systemGray3))
+                        .frame(width: 30, height: geo.size.height*0.8)
+                        .cornerRadius(15)
+                        .position(x: index, y: geo.size.height/2)
+                }
+            }
+        }
+        .padding(.leading, 3)
+        .padding(.trailing, 3)
+    }
+    
+    var timelineSkeleton: some View {
+        VStack {
+            textSkeleton
+                .frame(height: 10)
+            Rectangle()
+                .foregroundColor(Color(uiColor: .systemGray5))
+                .cornerRadius(10)
+                .frame(width: 100, height: 100)
+        }
+        .padding(.leading, 10)
+        .padding(.bottom, 5)
+    }
+    
+    var textSkeleton: some View {
+        HStack() {
+            Rectangle()
+                .foregroundColor(Color(uiColor: .systemGray3))
+                .cornerRadius(10)
+            Spacer()
+        }
+    }
+    
     
     func formatAsDay(_ date:Date) -> String {
         if(Calendar.current.isDateInToday(date)){
@@ -183,31 +183,6 @@ struct EventList: View {
         formatter.dateStyle = .short
         return formatter.string(from: date)
     }
-    
-    func loadData(){
-        EventsAPI.getEvents(mealID: nil) { result in
-            switch result {
-            case .success(let loadedEvents):
-                events = Dictionary(grouping: loadedEvents, by: {
-                    Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: $0.date))!
-                })
-            case .failure(let error):
-                print("Error fetching events:\(error)")
-            }
-            loadingEvents = false
-        }
-        MealsAPI.getMeals { result in
-            switch result {
-            case .success(let loadedMeals):
-                meals = Dictionary(grouping: loadedMeals, by: {$0.id} )
-                    .mapValues { value in value.first! }
-            case .failure(let error):
-                print("Error fetching events:\(error)")
-            }
-            loadingMeals = false
-        }
-    }
-    
     
     func formatDate(date: Date) -> String {
         if Calendar.current.isDateInToday(date) {
@@ -223,7 +198,6 @@ struct EventList: View {
         return formatter.string(from: date)
     }
     
-    
 }
 
 struct EventList_Previews: PreviewProvider {
@@ -231,31 +205,22 @@ struct EventList_Previews: PreviewProvider {
     static var previews: some View {
         let mealUUID = 1
         let today = Date()
-        EventList(
-            events: [
-                today:[
+        EventList()
+            .environmentObject( ContentViewViewModel(
+                meals: [
+                    Meal(id: mealUUID, name: "Test", description: "Test")
+                ],
+                events: [
                     Event(meal_id: mealUUID, id: 1),
                     Event(meal_id: mealUUID),
                     Event(meal_id: mealUUID),
-                ],
-                Calendar.current.date(byAdding: .day, value: -1, to: today)!: [
                     Event(meal_id: mealUUID),
                     Event(meal_id: mealUUID),
                     Event(meal_id: mealUUID),
-                ],
-                Calendar.current.date(byAdding: .day, value: -2, to: today)!: [
                     Event(meal_id: mealUUID),
                     Event(meal_id: mealUUID),
                     Event(meal_id: mealUUID),
                 ]
-            ],
-            selectedEvent: Event(meal_id: mealUUID, id: 1),
-            meals: [
-                mealUUID: Meal(id: mealUUID, name: "Test", description: "Test")
-            ],
-            preview: true,
-            loadingEvents: false,
-            loadingMeals:  false
-        )
+            ))
     }
 }

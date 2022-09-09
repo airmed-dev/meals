@@ -21,6 +21,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("Events", systemImage: "calendar.day.timeline.leading")
                 }
+                .environmentObject(viewModel)
         }
     }
 }
