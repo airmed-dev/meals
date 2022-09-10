@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 @MainActor class ContentViewViewModel: ObservableObject {
+    private static let dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z"
     private static let mealsFileName = "meals.json"
     private static let eventsFileName = "events.json"
     
@@ -23,6 +24,7 @@ import SwiftUI
     init() {
         meals = ContentViewViewModel.loadMeals()
         events = ContentViewViewModel.load(fileName: ContentViewViewModel.eventsFileName)
+            .sorted(by: {$0.date < $1.date})
     }
     
     init(meals: [Meal], events: [Event]){
@@ -128,8 +130,10 @@ import SwiftUI
     
     // TODO: Error propagation
     func save<T: Encodable>(data: [T], fileName: String){
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .formatted(ContentViewViewModel.dateFormatter())
         do {
-            let data = try JSONEncoder().encode(data)
+            let data = try encoder.encode(data)
             let url = try FileManager.default.url(
                 for: .documentDirectory,
                 in: .userDomainMask,
@@ -143,6 +147,9 @@ import SwiftUI
     }
     
     static func load<T:Decodable>(fileName: String) -> [T] {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .formatted(dateFormatter())
+        
         do {
             let url = try FileManager.default.url(
                 for: .documentDirectory,
@@ -154,11 +161,19 @@ import SwiftUI
             guard let file = try? FileHandle(forReadingFrom: url) else {
                 return []
             }
-            return try JSONDecoder().decode([T].self, from: file.availableData)
+            return try decoder.decode([T].self, from: file.availableData)
         
         } catch {
             return []
         }
+    }
+    
+    static func dateFormatter() -> DateFormatter {
+        let formatter:DateFormatter = DateFormatter()
+        formatter.dateFormat = dateFormat
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter
     }
 
 }

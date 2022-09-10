@@ -13,11 +13,16 @@ struct EventList: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
     @State var ready = false
     
+    // Meal event logging
     @State var showMealSelector = false
     @State var showLogEventAlert = false
     @State var mealToLog: Meal? = nil
     
+    // Event statistics
     @State var selectedEvent: Event? = nil
+    @State var hours = 3
+    
+    
     
     var body: some View {
         VStack {
@@ -27,7 +32,7 @@ struct EventList: View {
                 timelineSkeleton
             } else {
                 header
-                statisticsSkeleton
+                statistics
                 timeline
             }
         }
@@ -102,6 +107,51 @@ struct EventList: View {
         }
         .frame(height: 130)
         .padding(.leading, 5)
+    }
+    
+    var statistics: some View {
+        VStack {
+            HStack {
+                Text("Statistics")
+                    .font(.headline)
+                    .padding(.bottom, 5)
+                    .padding(.leading, 5)
+                Spacer()
+            }
+            if let selectedEvent = selectedEvent {
+                glucoseStatistics(event: selectedEvent)
+                insulinStatistics(event: selectedEvent)
+            } else {
+                glucoseStatisticsSkeleton
+                insulinStatisticsSkeleton
+            }
+        }
+    }
+    
+    func glucoseStatistics(event: Event) -> some View {
+        return VStack {
+            HStack {
+                Text("Glucose")
+                    .font(.subheadline)
+                    .padding(.leading, 5)
+                Spacer()
+            }
+            MetricGraph(event: event, dataType: .Glucose, hours: hours)
+            Spacer()
+        }
+    }
+    
+    func insulinStatistics(event: Event) -> some View {
+        return VStack {
+            HStack {
+                Text("Insulin")
+                    .font(.subheadline)
+                    .padding(.leading, 5)
+                Spacer()
+            }
+            MetricGraph(event: event, dataType: .Insulin, hours: hours)
+            Spacer()
+        }
     }
     
     var timeline: some View {
