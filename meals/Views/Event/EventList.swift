@@ -11,22 +11,276 @@ import SwiftUI
 
 struct EventList: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
+    @State var ready = false
     
-    @State var selectedEvent: Event?
-    @State var preview = false
+    @State var showMealSelector = false
+    @State var showLogEventAlert = false
+    @State var mealToLog: Meal? = nil
     
-    @State var hours = 3
-    @State var selectedMealPhoto: UIImage?
-    @State var dateInView: Date?
+    @State var selectedEvent: Event? = nil
     
     var body: some View {
         VStack {
-            headerSkeleton
-            statisticsSkeleton
-            timelineSkeleton
+            if !ready {
+                headerSkeleton
+                statisticsSkeleton
+                timelineSkeleton
+            } else {
+                header
+                statisticsSkeleton
+                timeline
+            }
+        }
+        .task {
+            sleep(1)
+            withAnimation {
+                ready = true
+            }
+        }
+    }
+    var header: some View {
+        let colors = [Color(hex:0x424242), Color(hex:0x002266)]
+        let meal = selectedEvent != nil
+            ? viewModel.getMeal(event: selectedEvent!)!
+            : nil
+        let image = meal != nil
+            ? ContentViewViewModel.loadImage(meal: meal!)
+            : nil
+
+
+        return HStack {
+            if let selectedEvent = selectedEvent {
+                // TODO: loadImage(event: event?)
+                if let image=image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .frame(width: 100,  height: 100)
+                        .clipShape(Circle())
+                } else{
+                    Circle()
+                        .fill(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
+                        .frame(width: 100, height: 100)
+                }
+                VStack {
+                    Spacer()
+                    HStack{
+                        Text(meal!.name)
+                            .font(.headline)
+                        Spacer()
+                    }
+                    HStack{
+                        Text("\(formatDate(date:selectedEvent.date)) at \(formatTime(date: selectedEvent.date))")
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                Spacer()
+            } else {
+                VStack{
+                    Spacer()
+                    Circle()
+                        .fill(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
+                        .frame(width: 100, height: 100)
+                    Spacer()
+                }
+                VStack {
+                    Spacer()
+                    HStack{
+                        Text("No event is selected")
+                            .font(.headline)
+                            .frame(height: 30)
+                    }
+                    HStack{
+                        Text("Select an event in the timeline")
+                            .font(.caption)
+                            .frame(height: 10)
+                    }
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
+        .frame(height: 130)
+        .padding(.leading, 5)
+    }
+    
+    var timeline: some View {
+        VStack {
+            HStack {
+                Text("Timeline")
+                    .font(.headline)
+                    .padding(.bottom, 5)
+                    .padding(.top, 5)
+                    .padding(.leading, 10)
+                Spacer()
+                Circle()
+                    .foregroundColor(Color(uiColor: .systemGray3))
+                    .frame(width: 25)
+                    .frame(height: 25)
+                    .overlay {
+                        Image(systemName: "plus")
+                            .padding()
+                    }
+                    .onTapGesture {
+                       showMealSelector = true
+                    }
+            }
+            .bottomSheet(isPresented: $showMealSelector, detents: [.large()]){
+                mealSelector
+                    .environmentObject(viewModel)
+            }
+            .frame(height: 20)
+            .padding(.trailing, 10)
+            
+            HStack {
+                if viewModel.events.isEmpty{
+                   noData
+                } else {
+                    ScrollView(.horizontal){
+                        HStack {
+                            ForEach(Array(viewModel.events.enumerated()), id: \.1.hashValue){ index, event in
+                                timelineCard(
+                                    event: event,
+                                    meal: viewModel.getMeal(event: event)!,
+                                    firstInDay:
+                                        index == 0 || !isSameDay(
+                                            date1: viewModel.events[index-1].date,
+                                            date2: event.date
+                                        )
+                                )
+                                .onTapGesture{
+                                    withAnimation {
+                                        selectedEvent = event
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .frame(height: 150)
+            .padding(.top, 5)
+            .padding(.bottom, 15)
+            .padding(.leading, 3)
+            .padding(.trailing, 3)
+            .background(Color(uiColor: .systemGray6))
+            .cornerRadius(15)
         }
     }
     
+    var mealSelector: some View {
+        let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
+        let date = Date()
+        return NavigationView {
+            VStack {
+                LazyVGrid(columns: twoColumns) {
+                    ForEach(viewModel.meals, id: \.hashValue){ meal in
+                        NavigationLink(destination: {
+                            VStack {
+                                GeometryReader { geo in
+                                    ScrollView {
+                                        MealCard(
+                                            font: .largeTitle,
+                                            meal: meal,
+                                            image: ContentViewViewModel.loadImage(meal: meal)
+                                        )
+                                        .frame(width: geo.size.width*0.9, height: geo.size.height/2)
+                                        .clipShape(
+                                            RoundedRectangle(
+                                                cornerSize: CGSize(width: 10, height: 10)))
+                                        .padding()
+                                        
+                                        HStack(alignment: .firstTextBaseline) {
+                                            VStack(alignment: .leading) {
+                                                Text("Log an event at \(formatDate(date: date))")
+                                                Button(action: {
+                                                    viewModel.saveEvent(event: Event(meal_id: meal.id, id: 0, date: date))
+                                                }){
+                                                    Text("Log it")
+                                                }
+                                            }
+                                            Spacer()
+                                        }
+                                        .padding()
+                                    }
+                                }
+                            }
+                         }) {
+                            MealCard(
+                                font: .headline,
+                                meal: meal,
+                                image: ContentViewViewModel.loadImage(meal: meal)
+                            )
+                            .frame(width: 150,height: 150)
+                            .clipShape(
+                                RoundedRectangle(
+                                    cornerSize: CGSize(width: 10, height: 10)))
+                            .padding()
+                        }
+                    }
+                }
+                Spacer()
+            }
+            .navigationTitle("Log a meal event")
+        }
+    }
+    
+    func timelineCard(event: Event, meal: Meal, firstInDay: Bool) -> some View {
+        VStack {
+            HStack {
+                if firstInDay {
+                    Text(formatDate(date: event.date))
+                }
+                Spacer()
+            }
+            Spacer()
+            HStack {
+                Text(formatTime(date: event.date))
+                    .font(.caption)
+                    .padding(0)
+                Spacer()
+            }
+            MealCard(
+                font: .caption,
+                meal: meal,
+                image: ContentViewViewModel.loadImage(meal: meal)
+            )
+            .clipShape(
+                RoundedRectangle(
+                    cornerSize: CGSize(width: 10, height: 10)))
+            .frame(width: 100, height: 100)
+        }
+        .padding(.leading, 10)
+        .padding(.bottom, 5)
+    }
+    
+    var noData: some View {
+        HStack(alignment: .center) {
+            Spacer()
+            VStack(alignment: .center) {
+                Image(systemName: "tray.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .font(.system(size: 30, weight: .ultraLight))
+                    .frame(width: 80)
+                
+                Text("No data")
+                    .font(.title)
+                
+                HStack(alignment: .center){
+                    Spacer()
+                    Text("Log an event")
+                        .font(.body)
+                    Spacer()
+                }
+            }
+            Spacer()
+        }
+        
+    }
+    
+    // Skeletons sections
     var headerSkeleton: some View {
         HStack(alignment: .firstTextBaseline) {
             Circle()
@@ -88,14 +342,15 @@ struct EventList: View {
             
             ScrollView(.horizontal){
                 HStack {
-                    timelineCardSkeleton
-                    timelineCardSkeleton
-                    timelineCardSkeleton
-                    timelineCardSkeleton
-                    timelineCardSkeleton
+                    timelineCardSkeleton(true)
+                    timelineCardSkeleton()
+                    timelineCardSkeleton()
+                    timelineCardSkeleton(true)
+                    timelineCardSkeleton()
                 }
             }
-            .padding(.top, 25)
+            .frame(height: 150)
+            .padding(.top, 5)
             .padding(.bottom, 15)
             .padding(.leading, 3)
             .padding(.trailing, 3)
@@ -104,6 +359,8 @@ struct EventList: View {
         }
     }
     
+
+    // Skeleton subcomponenets
     var glucoseStatisticsSkeleton: some View {
         VStack {
             HStack {
@@ -151,14 +408,21 @@ struct EventList: View {
         .padding(.trailing, 3)
     }
     
-    var timelineCardSkeleton: some View {
+    func timelineCardSkeleton(_ displayDateSkeleton: Bool = false) -> some View {
         VStack {
+            VStack {
+                if displayDateSkeleton {
+                    textSkeleton
+                }
+            }
+            .frame(height: 10)
+            
             textSkeleton
                 .frame(height: 10)
             Rectangle()
                 .foregroundColor(Color(uiColor: .systemGray5))
                 .cornerRadius(10)
-                .frame(width: 100, height: 100)
+                .frame(width: 100)
         }
         .padding(.leading, 10)
         .padding(.bottom, 5)
@@ -173,13 +437,25 @@ struct EventList: View {
         }
     }
     
+    // Event handler
+    func onMealTap(meal: Meal){
+        showLogEventAlert = true
+        mealToLog = meal
+    }
     
-    func formatAsDay(_ date:Date) -> String {
-        if(Calendar.current.isDateInToday(date)){
-            return "Today"
+    // Helpers
+    func isSameDay(date1: Date, date2: Date) -> Bool {
+        let diff = Calendar.current.dateComponents([.day], from: date1, to: date2)
+        if diff.day == 0 {
+            return true
+        } else {
+            return false
         }
+    }
+    
+    func formatTime(date:Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .short
+        formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }
     
@@ -192,7 +468,7 @@ struct EventList: View {
         }
         
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMM d, yyyy"
+        formatter.dateFormat = "yyyy-MM-dd"
         
         return formatter.string(from: date)
     }
@@ -203,7 +479,6 @@ struct EventList_Previews: PreviewProvider {
     
     static var previews: some View {
         let mealUUID = 1
-        let today = Date()
         EventList()
             .environmentObject( ContentViewViewModel(
                 meals: [

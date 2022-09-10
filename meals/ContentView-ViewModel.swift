@@ -81,7 +81,11 @@ import SwiftUI
             }
             events[eventIndex] = event
         }
-        save(data: self.meals, fileName: ContentViewViewModel.eventsFileName)
+        save(data: self.events, fileName: ContentViewViewModel.eventsFileName)
+    }
+    
+    func getMeal(event: Event) -> Meal? {
+        return meals.first { $0.id == event.meal_id }
     }
     
     

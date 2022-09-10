@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Event: Codable, Identifiable, Equatable {
+struct Event: Codable, Identifiable, Equatable, Hashable {
     var meal_id: Int
     var id: Int = 0
     var date: Date = Date()
