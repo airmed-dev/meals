@@ -230,7 +230,6 @@ struct MealEditor_Previews: PreviewProvider {
                     description: "Some desciprtion for the meal"
                 ),
                 image: ContentViewViewModel.loadImage(meal: Meal(id:0, name:"dummy", description: "dummy"))
-                
             )
         }
     }

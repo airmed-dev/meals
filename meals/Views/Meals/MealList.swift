@@ -19,24 +19,30 @@ struct MealList: View {
     
     var mealGrid: some View {
         let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
-        return LazyVGrid (columns: twoColumns){
-            ForEach(viewModel.meals, id: \.hashValue) { meal in
-                HStack {
-                    withAnimation(.easeInOut(duration: 10.0)){
-                        Button(action: {
-                           selectedMeal = meal
-                           displayMealDetails = true
-                        }){
-                         MealCard(
-                            meal: meal,
-                            image: ContentViewViewModel.loadImage(meal: meal)
-                         )
-                            .frame(width: 150,height: 150)
-                            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
-                       
-                            .cornerRadius(10, corners: [.topLeft, .topRight])
-                            .padding()                       }
-                        
+        return GeometryReader { geo in
+            LazyVGrid (columns: twoColumns){
+                ForEach(viewModel.meals, id: \.hashValue) { meal in
+                    HStack {
+                        withAnimation(.easeInOut(duration: 10.0)){
+                            Button(action: {
+                                withAnimation(.easeInOut){
+                                    selectedMeal = meal
+                                    displayMealDetails = true
+                                }
+                            }){
+                                MealCard(
+                                    font: .headline,
+                                    meal: meal,
+                                    image: viewModel.loadImage(meal: meal)
+                                )
+                                .frame(
+                                    width: geo.size.width * 0.45,
+                                    height: geo.size.width * 0.45
+                                )
+                                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                                .cornerRadius(10, corners: [.topLeft, .topRight])
+                            }
+                        }
                     }
                 }
             }
@@ -69,7 +75,7 @@ struct MealList: View {
         VStack(alignment: .leading) {
             Text("Meals")
                 .font(.largeTitle)
-                .padding()
+                .padding(2)
             GeometryReader { geo in
                 if viewModel.meals.count == 0 {
                    noMeals

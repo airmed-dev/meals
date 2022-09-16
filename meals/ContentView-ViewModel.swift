@@ -16,6 +16,8 @@ import SwiftUI
     @Published var meals: [Meal]
     @Published var events: [Event]
     
+    private var imageCache: [Int: UIImage] = [:]
+    
     // For Photo: TODO: Encrypted?
     static var documentsUrl: URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -98,6 +100,21 @@ import SwiftUI
         return events.filter { $0.meal_id == mealId}
     }
     
+    public func loadImage(meal: Meal) -> UIImage? {
+        if let image = imageCache[meal.id] {
+            // TODO: Invalidate cache?
+            return image
+        }
+        let image = ContentViewViewModel.loadImage(meal: meal)
+        imageCache[meal.id] = image
+        return image
+    }
+    
+    public static func loadImage(meal: Meal) -> UIImage? {
+        let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent("\(meal.id).jpeg")
+        return ContentViewViewModel.loadImage(fileURL: fileURL)
+    }
+    
     private func saveImage(fileName: String, image: UIImage) -> String? {
         let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent(fileName)
         if let imageData = image.jpegData(compressionQuality: 1.0) {
@@ -119,10 +136,6 @@ import SwiftUI
         return ContentViewViewModel.load(fileName: mealsFileName)
     }
     
-    public static func loadImage(meal: Meal) -> UIImage? {
-        let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent("\(meal.id).jpeg")
-        return loadImage(fileURL: fileURL)
-    }
     
     public static func loadImage(fileURL: URL) -> UIImage? {
         do {

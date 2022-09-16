@@ -10,7 +10,6 @@ import SwiftUI
 struct MealDetails: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
-    @Namespace var nspace
     @State var meal: Meal
     
     @State var showLogMeal: Bool = false
@@ -159,10 +158,9 @@ struct MealDetails: View {
                     MealCard(
                         font: .largeTitle,
                         meal: meal,
-                        image: ContentViewViewModel.loadImage(meal: meal)
+                        image: viewModel.loadImage(meal: meal)
                     )
                     .frame(width: geo.size.width, height: geo.size.height/2)
-                    .matchedGeometryEffect(id: "card", in: nspace)
                     
                     VStack(alignment: .leading) {
                         VStack(alignment: .leading) {
@@ -215,7 +213,7 @@ struct MealDetails: View {
                     NavigationLink("Edit"){
                         MealEditor(
                             meal: meal,
-                            image: ContentViewViewModel.loadImage(meal: meal),
+                            image: viewModel.loadImage(meal: meal),
                             onEdit: {
                                 presentationMode.wrappedValue.dismiss()
                             }

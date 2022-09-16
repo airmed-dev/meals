@@ -17,6 +17,10 @@ struct EventList: View {
     @State var showMealSelector = false
     @State var showLogEventAlert = false
     @State var mealToLog: Meal? = nil
+    @State var mealEventDate: Date = Date()
+    
+    // Meal event logging alerts
+    @State var showMealSuccessAlert = false
     
     // Event statistics
     @State var selectedEvent: Event? = nil
@@ -49,7 +53,7 @@ struct EventList: View {
             ? viewModel.getMeal(event: selectedEvent!)!
             : nil
         let image = meal != nil
-            ? ContentViewViewModel.loadImage(meal: meal!)
+            ? viewModel.loadImage(meal: meal!)
             : nil
 
 
@@ -164,11 +168,12 @@ struct EventList: View {
                     .padding(.leading, 10)
                 Spacer()
                 Circle()
-                    .foregroundColor(Color(uiColor: .systemGray3))
+                    .foregroundColor(.blue)
                     .frame(width: 25)
                     .frame(height: 25)
                     .overlay {
                         Image(systemName: "plus")
+                            .foregroundColor(.primary)
                             .padding()
                     }
                     .onTapGesture {
@@ -181,6 +186,10 @@ struct EventList: View {
             }
             .frame(height: 20)
             .padding(.trailing, 10)
+            .alert(isPresented: $showMealSuccessAlert){
+                Alert(title: Text("Save"))
+            }
+
             
             HStack {
                 if viewModel.events.isEmpty{
@@ -218,48 +227,54 @@ struct EventList: View {
         }
     }
     
+    func mealEventLogger(meal: Meal) -> some View {
+        return VStack {
+            MealCard(
+                font: .largeTitle,
+                meal: meal,
+                image: viewModel.loadImage(meal: meal)
+            )
+            .clipShape(
+                RoundedRectangle(
+                    cornerSize: CGSize(width: 10, height: 10)))
+            .padding()
+            
+            Spacer()
+            
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading) {
+                    DatePicker("Meal time", selection: $mealEventDate)
+                    Spacer()
+                    Button(action: {
+//                        viewModel.saveEvent(event: Event(meal_id: meal.id, id: 0, date: mealEventDate))
+                        showMealSuccessAlert = true
+                    }){
+                        HStack {
+                            Spacer()
+                            Text("Save")
+                            Spacer()
+                        }
+                    }
+                }
+            }
+            .padding()
+        }
+        .navigationTitle(Text("New meal event"))
+
+        
+    }
+    
     var mealSelector: some View {
         let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
-        let date = Date()
         return NavigationView {
             VStack {
                 LazyVGrid(columns: twoColumns) {
                     ForEach(viewModel.meals, id: \.hashValue){ meal in
-                        NavigationLink(destination: {
-                            VStack {
-                                GeometryReader { geo in
-                                    ScrollView {
-                                        MealCard(
-                                            font: .largeTitle,
-                                            meal: meal,
-                                            image: ContentViewViewModel.loadImage(meal: meal)
-                                        )
-                                        .frame(width: geo.size.width*0.9, height: geo.size.height/2)
-                                        .clipShape(
-                                            RoundedRectangle(
-                                                cornerSize: CGSize(width: 10, height: 10)))
-                                        .padding()
-                                        
-                                        HStack(alignment: .firstTextBaseline) {
-                                            VStack(alignment: .leading) {
-                                                Text("Log an event at \(formatDate(date: date))")
-                                                Button(action: {
-                                                    viewModel.saveEvent(event: Event(meal_id: meal.id, id: 0, date: date))
-                                                }){
-                                                    Text("Log it")
-                                                }
-                                            }
-                                            Spacer()
-                                        }
-                                        .padding()
-                                    }
-                                }
-                            }
-                         }) {
+                        NavigationLink(destination: mealEventLogger(meal: meal)) {
                             MealCard(
                                 font: .headline,
                                 meal: meal,
-                                image: ContentViewViewModel.loadImage(meal: meal)
+                                image: viewModel.loadImage(meal: meal)
                             )
                             .frame(width: 150,height: 150)
                             .clipShape(
@@ -271,7 +286,7 @@ struct EventList: View {
                 }
                 Spacer()
             }
-            .navigationTitle("Log a meal event")
+            .navigationTitle("Log")
         }
     }
     
@@ -293,7 +308,7 @@ struct EventList: View {
             MealCard(
                 font: .caption,
                 meal: meal,
-                image: ContentViewViewModel.loadImage(meal: meal)
+                image: viewModel.loadImage(meal: meal)
             )
             .clipShape(
                 RoundedRectangle(

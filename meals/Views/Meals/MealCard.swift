@@ -11,6 +11,7 @@ struct MealCard: View {
     var font: Font = Font.caption
     @State var meal: Meal
     @State var image: UIImage?
+    @Namespace private var animation
     
     var body: some View {
         ZStack(alignment: .bottomLeading){
@@ -20,6 +21,7 @@ struct MealCard: View {
                         .resizable()
                         .frame(width: geo.size.width, height: geo.size.height)
                         .cornerRadius(10, corners: [.topLeft, .topRight])
+                        .matchedGeometryEffect(id: meal.id, in: animation, anchor: .center)
                 } else {
                     renderNoimage()
                 }

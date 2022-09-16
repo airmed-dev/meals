@@ -140,7 +140,7 @@ struct MetricView: View {
             .frame(width: .infinity)
             .onAppear {
                 if let meal = meal {
-                    image = ContentViewViewModel.loadImage(meal: meal)
+                    image = viewModel.loadImage(meal: meal)
                 }
             }
             .alert(isPresented: $showDeleteConfirmation) {

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EventTimelineCard: View {
+    @EnvironmentObject var viewModel: ContentViewViewModel
+
     @State var image: UIImage? = nil
     var meal: Meal
     var event: Event
@@ -33,7 +35,7 @@ struct EventTimelineCard: View {
 
             }
         }.onAppear {
-            image = ContentViewViewModel.loadImage(meal: meal)
+            image = viewModel.loadImage(meal: meal)
         }
     }
     

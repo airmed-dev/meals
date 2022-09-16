@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EventListItem: View {
+    @EnvironmentObject var viewModel: ContentViewViewModel
+
     @State var event: Event
     @State var meal: Meal
     @State var image: UIImage? = nil
@@ -42,7 +44,7 @@ struct EventListItem: View {
             
         }
         .onAppear {
-            image = ContentViewViewModel.loadImage(meal: meal)
+            image = viewModel.loadImage(meal: meal)
         }
     }
     
