@@ -132,12 +132,15 @@ struct MealDetails: View {
                         MetricView(meal: meal, event: event)
                             .environmentObject(viewModel)
                     }) {
-                        VStack {
-                            Text(event.date.formatted())
-                            MetricGraph(event: event, dataType: .Glucose, hours: hours)
-                                .frame(height: 200)
+                        HStack {
+                            Text(formatDate(date: event.date))
+                            Spacer()
+                            Image(systemName: "arrow.forward.circle")
                         }
+                        .padding()
                     }
+                    MetricGraph(event: event, dataType: .Glucose, hours: hours)
+                        .frame(height: 200)
                 }
             } else {
                 noData
@@ -224,7 +227,7 @@ struct MealDetails: View {
             .background(.gray.opacity(0.2))
             .alert(isPresented: $showLogMeal) {
                 let date = Date()
-                return Alert(title: Text("Enter meal event at: \(date.formatted())"),
+                return Alert(title: Text("Enter meal event at: \(formatDate(date:date))"),
                              primaryButton: .default(Text("Yes")){
                     createEvent(date: date)
                 }, secondaryButton: .cancel())
@@ -233,6 +236,13 @@ struct MealDetails: View {
                 loadSamples()
             }
         }
+        
+    }
+    
+    func formatDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "EEEE, yyyy-MM-dd hh:mm"
+        return dateFormatter.string(from: date)
         
     }
     
