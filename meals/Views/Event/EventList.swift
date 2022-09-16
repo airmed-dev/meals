@@ -364,8 +364,11 @@ struct EventList: View {
                     .padding(.leading, 5)
                 Spacer()
             }
-            glucoseStatisticsSkeleton
+            withAnimation(.spring()){
+                glucoseStatisticsSkeleton
+            }
             insulinStatisticsSkeleton
+                .animation(.spring())
         }
     }
     

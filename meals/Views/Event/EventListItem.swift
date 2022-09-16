@@ -42,14 +42,7 @@ struct EventListItem: View {
             
         }
         .onAppear {
-            PhotosAPI.getPhoto(meal: meal) { result in
-                switch result {
-                case .success(let loadedImage):
-                   image = loadedImage
-                case .failure(let error):
-                    print("Failed getting image: \(error)")
-                }
-            }
+            image = ContentViewViewModel.loadImage(meal: meal)
         }
     }
     

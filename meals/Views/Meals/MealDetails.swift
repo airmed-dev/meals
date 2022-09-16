@@ -11,25 +11,18 @@ struct MealDetails: View {
     @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
     @Namespace var nspace
-    
     @State var meal: Meal
     
     @State var showLogMeal: Bool = false
-    @State var showMealEditor: Bool = false
-    @State var mealEvents: [Event] = []
     @State var hours: Int = 3
     
-    @State var newMealEventDate:Date = Date()
-    
-    @State var eventGlucoseSamples: [Int: (Date,[MetricSample])] = [:]
-    @State var eventInsulinSamples: [Int: (Date,[MetricSample])] = [:]
-    @State var mealEventsRange: (Date,Date)?
-    
+    @State var glucoseSamples: [Int: (Date, [MetricSample])] = [:]
+    @State var insulinSamples: [Int: (Date, [MetricSample])] = [:]
     
     func drawGlucoseAggs() -> some View {
         // Calculate ranges and step sizes
         HStack {
-            ValueStats(eventSamples: eventGlucoseSamples,
+            ValueStats(eventSamples: glucoseSamples,
                        hoursAhead: hours,
                        dateStepSizeMinutes: hours < 5 ? 30 : 60,
                        valueMin: 75 ,
@@ -55,7 +48,7 @@ struct MealDetails: View {
         // Calculate ranges and step sizes
         // TODO: Calculate IOBs
         HStack {
-            ValueStats(eventSamples: eventInsulinSamples,
+            ValueStats(eventSamples: insulinSamples,
                        hoursAhead: hours,
                        valueAxisEvery: 2,
                        dateStepSizeMinutes: hours < 5 ? 30 : 60,
@@ -87,217 +80,210 @@ struct MealDetails: View {
                 Spacer()
             }
         }
-        
+    }
+    
+    var statistics: some View {
+        VStack(alignment: .leading) {
+            HStack() {
+                Text("Glucose statistics")
+                    .font(.headline)
+                    .padding()
+                Text("total events: \(viewModel.events.count)")
+                    .font(.subheadline)
+            }
+            if viewModel.events.count > 0 {
+                drawGlucoseAggs()
+            } else {
+                noData
+            }
+            
+            HStack() {
+                Text("Insulin statistics")
+                    .font(.headline)
+                    .padding()
+                Text("total events: \(viewModel.events.count)")
+                    .font(.subheadline)
+            }
+            if viewModel.events.count > 0 {
+                drawInsulinAggs()
+            } else {
+                noData
+            }
+            
+            
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+        .background(Color(uiColor: UIColor.systemBackground))
+        .cornerRadius(15)
+    }
+    
+    var eventsList: some View {
+        VStack(alignment: .leading) {
+            HStack() {
+                Text("Meal events")
+                    .font(.headline)
+                    .padding()
+                Text("total events: \(viewModel.events.count)")
+                    .font(.subheadline)
+            }
+            if viewModel.events.count > 0 {
+                ForEach(viewModel.events, id: \.id) { event in
+                    NavigationLink(destination: {
+                        MetricView(meal: meal, event: event)
+                            .environmentObject(viewModel)
+                    }) {
+                        VStack {
+                            Text(event.date.formatted())
+                            MetricGraph(event: event, dataType: .Glucose, hours: hours)
+                                .frame(height: 200)
+                        }
+                    }
+                }
+            } else {
+                noData
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(5)
+        .background(Color(uiColor: UIColor.systemBackground))
+        .cornerRadius(15)
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Button("Edit"){
-                    showMealEditor = true
-                }
-                .padding()
-            }
-            ZStack(alignment: .bottomTrailing) {
-                GeometryReader { geo in
-                    ScrollView {
-                        MealCard(
-                            font: .largeTitle,
-                            meal: meal,
-                            image: ContentViewViewModel.loadImage(meal: meal)
-                        )
-                        .frame(width: geo.size.width, height: geo.size.height/2)
-                        .matchedGeometryEffect(id: "card", in: nspace)
-                        
+        NavigationView {
+            GeometryReader { geo in
+                ScrollView {
+                    MealCard(
+                        font: .largeTitle,
+                        meal: meal,
+                        image: ContentViewViewModel.loadImage(meal: meal)
+                    )
+                    .frame(width: geo.size.width, height: geo.size.height/2)
+                    .matchedGeometryEffect(id: "card", in: nspace)
+                    
+                    VStack(alignment: .leading) {
                         VStack(alignment: .leading) {
-                            VStack(alignment: .leading) {
-                                Text("Description")
-                                    .font(.headline)
-                                    .padding(.bottom)
-                                Text(meal.description)
-                            }
-                            .padding()
-                            .frame(width: geo.size.width, alignment: .leading)
-                            .background(Color(uiColor: UIColor.systemBackground))
-                            .cornerRadius(15)
-                            
-                            
-                            VStack(alignment: .leading) {
-                                HStack() {
-                                    Text("Glucose statistics")
-                                        .font(.headline)
-                                        .padding()
-                                    Text("total events: \(mealEvents.count)")
-                                        .font(.subheadline)
-                                }
-                                if eventGlucoseSamples.count == mealEvents.count {
-                                    drawGlucoseAggs()
-                                } else if mealEvents.count > 0 {
-                                    Text("Loading..")
-                                    ProgressView()
-                                } else {
-                                    noData
-                                }
-                                
-                                HStack() {
-                                    Text("Insulin statistics")
-                                        .font(.headline)
-                                        .padding()
-                                    Text("total events: \(mealEvents.count)")
-                                        .font(.subheadline)
-                                }
-                                if eventInsulinSamples.count == mealEvents.count {
-                                    drawInsulinAggs()
-                                } else if mealEvents.count > 0 {
-                                    ProgressView()
-                                } else {
-                                    noData
-                                }
-                                
-                                
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .background(Color(uiColor: UIColor.systemBackground))
-                            .cornerRadius(15)
-                            
-                            VStack(alignment: .leading) {
-                                HStack() {
-                                    Text("Meal events")
-                                        .font(.headline)
-                                        .padding()
-                                    Text("total events: \(mealEvents.count)")
-                                        .font(.subheadline)
-                                }
-                                if mealEvents.count > 0 {
-                                    ForEach(mealEvents, id: \.id) { event in
-                                        NavigationLink(destination: {
-                                            MetricView(meal: meal, event: event)
-                                        }) {
-                                            MetricGraph(event: event, dataType: .Glucose, hours: hours)
-                                                .frame(height: 200)
-                                        }
-                                    }
-                                } else {
-                                    noData
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(5)
-                            .background(Color(uiColor: UIColor.systemBackground))
-                            .cornerRadius(15)
+                            Text("Description")
+                                .font(.headline)
+                                .padding(.bottom)
+                            Text(meal.description)
                         }
-                    }
-                }
-                HStack(alignment: .lastTextBaseline) {
-                    Button(action: {showLogMeal.toggle() }) {
-                        HStack {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 15, height: 15)
-                                .foregroundColor(.white)
-                            Text("Log event")
-                                .foregroundColor(.white)
-                        }
-                        .padding(15)
-                        .background(.primary)
+                        .padding()
+                        .frame(width: geo.size.width, alignment: .leading)
+                        .background(Color(uiColor: UIColor.systemBackground))
                         .cornerRadius(15)
-                        //                    .clipShape(Circle())
-                    }
-                    .shadow(radius: 5)
-                    .padding()
-                }
-            }
-        }
-        .background(.gray.opacity(0.2))
-        .sheet(isPresented: $showMealEditor ){
-            MealEditor(
-                meal: meal,
-                image: ContentViewViewModel.loadImage(meal: meal)
-            )
-            .onDisappear {
-                presentationMode.wrappedValue.dismiss()
-            }
-        }
-        .alert(isPresented: $showLogMeal) {
-            let date = Date()
-            return Alert(title: Text("Enter meal event at: \(date.formatted())"),
-                         primaryButton: .default(Text("Yes")){
-                EventsAPI.createEvent(event: Event(meal_id: meal.id, id: 0, date: date)) { result in
-                    switch result {
-                    case .success(_):
-                        print("Success")
-                        loadEvents()
-                    case .failure(let error):
-                        print("Error creating meal event: \(error)")
+                        
+                        statistics
+                        eventsList
+                        
                     }
                 }
-            },
-                         secondaryButton: .cancel()
-            )
-        }
-        .onAppear {
-            // TODO: Load events from the viewModel
-            if mealEvents.isEmpty {
-                loadEvents()
+                
+            }
+            .overlay {
+                GeometryReader { _ in
+                    VStack {
+                        Spacer()
+                        HStack() {
+                            Spacer()
+                            Button(action: {showLogMeal.toggle() }) {
+                                HStack {
+                                    Image(systemName: "plus")
+                                        .resizable()
+                                        .frame(width: 15, height: 15)
+                                        .foregroundColor(.white)
+                                    Text("Log event")
+                                        .foregroundColor(.white)
+                                }
+                                .padding(15)
+                                .background(.primary)
+                                .cornerRadius(15)
+                                //                    .clipShape(Circle())
+                            }
+                            .shadow(radius: 5)
+                            .padding()
+                        }
+                    }
+                }
+            }
+            .navigationTitle(Text("Meal details"))
+            .toolbar{
+                ToolbarItem(placement: .navigationBarTrailing){
+                    NavigationLink("Edit"){
+                        MealEditor(
+                            meal: meal,
+                            image: ContentViewViewModel.loadImage(meal: meal),
+                            onEdit: {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        )
+                    }
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .background(.gray.opacity(0.2))
+            .alert(isPresented: $showLogMeal) {
+                let date = Date()
+                return Alert(title: Text("Enter meal event at: \(date.formatted())"),
+                             primaryButton: .default(Text("Yes")){
+                    createEvent(date: date)
+                }, secondaryButton: .cancel())
+            }
+            .onAppear {
+                loadSamples()
             }
         }
         
     }
     
-    func loadEvents() {
-        EventsAPI.getEvents(mealID: meal.id) { result in
-            switch result {
-            case .success(let events):
-                mealEvents = events
-                if !mealEvents.isEmpty{
-                    let dates = events.map { $0.date}
-                    mealEventsRange = (dates.min()!, dates.max()!)
-                }
-                eventGlucoseSamples = [:]
-                eventInsulinSamples = [:]
-                print("Loaded \(mealEvents.count) events")
-                // TODO: Overlaps?
-                mealEvents.forEach{ event in
-                    Nightscout().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
-                        switch result {
-                        case .success(let samples):
-                            eventGlucoseSamples[event.id] = (event.date, samples)
-                        case .failure(let error):
-                            print("Error \(error)")
-                        }
-                    }
-                    HealthKitUtils().getInsulinSamples(
-                        start: event.date,
-                        end: event.date.advanced(by: TimeInterval(hours*60*60))
-                    ) { result in
-                        switch result {
-                        case .success(let samples):
-                            eventInsulinSamples[event.id] = (event.date, samples)
-                        case .failure(let error):
-                            print("Error \(error)")
-                        }
-                    }
+    func createEvent(date: Date){
+        let event = Event(meal_id: meal.id, id: 0, date: date)
+        viewModel.saveEvent(event: event)
+        loadSamples()
+    }
+    
+    func loadSamples() {
+        glucoseSamples = [:]
+        insulinSamples = [:]
+        // TODO: Overlaps?
+        viewModel.events.forEach{ event in
+            Nightscout().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
+                switch result {
+                case .success(let samples):
+                    glucoseSamples[event.id] = (event.date, samples)
+                case .failure(let error):
+                    print("Error \(error)")
                 }
                 
-            case .failure(let error):
-                print("Failed saving events: \(error)")
+            }
+            HealthKitUtils().getInsulinSamples(
+                start: event.date,
+                end: event.date.advanced(by: TimeInterval(hours*60*60))
+            ) { result in
+                switch result {
+                case .success(let samples):
+                    insulinSamples[event.id] = (event.date, samples)
+                case .failure(let error):
+                    print("Error \(error)")
+                }
             }
         }
+        
     }
 }
 
 struct MealDetails_Previews: PreviewProvider {
     static var previews: some View {
         let mealID = 1
-        MealDetails(
-            meal: MealStore.exampleMeal,
-            mealEvents: [
-                Event(meal_id: mealID),
-                Event(meal_id: mealID),
-                Event(meal_id: mealID),
-                Event(meal_id: mealID)
-            ]
-        )
+        MealDetails(meal: MealStore.exampleMeal)
+            .environmentObject(ContentViewViewModel(
+                meals: [MealStore.exampleMeal],
+                events: [
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID)
+                ]
+            ))
     }
 }

@@ -17,8 +17,8 @@ enum HealthkitError: Error {
 let threeHours: Double = 3 * 60 * 60
 
 struct MetricView: View {
+    @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
-    
     
     @State var meal: Meal?
     @State var event: Event
@@ -35,7 +35,6 @@ struct MetricView: View {
     // Edit sheet
     @State var showEditSheet: Bool = false
     @State var newDate: Date = Date.now
-    
     
     // Alert
     @State var showSucessAlert: Bool = false
@@ -141,15 +140,7 @@ struct MetricView: View {
             .frame(width: .infinity)
             .onAppear {
                 if let meal = meal {
-                    PhotosAPI.getPhoto(meal: meal) { result in
-                        switch result {
-                        case .success(let loadedImage):
-                            image = loadedImage
-                        case .failure(let error):
-                            showErrorAlert = true
-                            errorMessage = "Failed loading image: \(error)"
-                        }
-                    }
+                    image = ContentViewViewModel.loadImage(meal: meal)
                 }
             }
             .alert(isPresented: $showDeleteConfirmation) {
@@ -168,21 +159,15 @@ struct MetricView: View {
             }
             .bottomSheet(isPresented: $showEditSheet ){
                 UpdateEventView(event: $event, newDate: newDate)
+                    .environmentObject(viewModel)
             }
         }
     }
     
     func deleteEvent(){
-        EventsAPI.deleteEvent(event: event) { result in
-            switch result {
-            case .success(_):
-                showSucessAlert = true
-                successMessage = "Event deleted"
-            case .failure(let error):
-                showErrorAlert = true
-                errorMessage = "Failed deleting event: \(error.localizedDescription)"
-            }
-        }
+        viewModel.deleteEvent(eventId: event.id)
+        showSucessAlert = true
+        successMessage = "Event deleted"
     }
     
 }
@@ -219,6 +204,7 @@ struct MetricView_Previews: PreviewProvider {
 }
 
 struct UpdateEventView: View {
+    @EnvironmentObject var viewModel: ContentViewViewModel
     @Environment(\.presentationMode) var presentationMode
     @Binding var event: Event
     @State var newDate: Date
@@ -265,17 +251,9 @@ struct UpdateEventView: View {
     
     func saveEvent(event: Event){
         let newEvent = Event(meal_id: event.meal_id, id: event.id, date: newDate)
-        EventsAPI.saveEvent(event: newEvent){ result in
-            print("Completion")
-            switch result {
-            case .success(_):
-                showSuccessAlert = true
-                successMessage = "Saved event"
-            case .failure(let error):
-                showErrorAlert = true
-                errorMessage = "Failed saving event: \(error)"
-            }
-        }
+        viewModel.saveEvent(event: newEvent)
+        showSuccessAlert = true
+        successMessage = "Saved event"
     }
     
 }

@@ -15,6 +15,7 @@ struct MealEditor: View {
     @Environment(\.presentationMode) var presentationMode
     
     @State var meal: Meal = Meal(id:0, name: "", description: MealEditor.placeholderDescription)
+
     
     // Photo
     @State var imageWasSelected = false
@@ -27,7 +28,11 @@ struct MealEditor: View {
     @State var deletePhotoSelected = false
     @State var showDeleteMenu = false
     
-
+    
+    // Event handlers
+    // onEdit is called when a meal is delete or updated
+    var onEdit: () -> Void = { }
+    
     // Buttons
     @State var saveButtonStatus: ButtonStatus = .Initial
     @State var deleteButtonStatus: ButtonStatus = .Initial
@@ -198,6 +203,7 @@ struct MealEditor: View {
         saveButtonStatus = .Saved
         showSuccessAlert = true
         successMessage = "Saved '\(meal.name)'"
+        onEdit()
     }
     
     func delete(meal: Meal){
@@ -206,6 +212,7 @@ struct MealEditor: View {
         deleteButtonStatus = .Saved
         showSuccessAlert = true
         successMessage = "Delete \(meal.name)"
+        onEdit()
     }
 }
 

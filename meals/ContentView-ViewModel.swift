@@ -36,7 +36,7 @@ import SwiftUI
     // it's based on whether the meal has an ID or not
     // TODO: Error propagation
     func saveMeal(meal:Meal, image: UIImage?){
-        var mealID = meal.id != 0 ? meal.id : (meals.map { $0.id }.max() ?? 0) + 1
+        let mealID = meal.id != 0 ? meal.id : (meals.map { $0.id }.max() ?? 0) + 1
         if(meal.id == 0){
             self.meals.append(Meal(
                 id: mealID,
@@ -85,11 +85,18 @@ import SwiftUI
         }
         save(data: self.events, fileName: ContentViewViewModel.eventsFileName)
     }
+    func deleteEvent(eventId: Int){
+        self.events = self.events.filter { $0.id != eventId }
+        save(data: self.events, fileName: ContentViewViewModel.eventsFileName)
+    }
     
     func getMeal(event: Event) -> Meal? {
         return meals.first { $0.id == event.meal_id }
     }
     
+    func getEvents(mealId: Int) -> [Event]{
+        return events.filter { $0.meal_id == mealId}
+    }
     
     private func saveImage(fileName: String, image: UIImage) -> String? {
         let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent(fileName)
