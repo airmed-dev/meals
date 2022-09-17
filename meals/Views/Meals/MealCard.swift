@@ -20,7 +20,7 @@ struct MealCard: View {
                     Image(uiImage: image)
                         .resizable()
                         .frame(width: geo.size.width, height: geo.size.height)
-                        .cornerRadius(10, corners: [.topLeft, .topRight])
+                        .cornerRadius(10)
                         .matchedGeometryEffect(id: meal.id, in: animation, anchor: .center)
                 } else {
                     renderNoimage()

@@ -40,7 +40,6 @@ struct MealList: View {
                                     height: geo.size.width * 0.45
                                 )
                                 .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
-                                .cornerRadius(10, corners: [.topLeft, .topRight])
                             }
                         }
                     }

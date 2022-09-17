@@ -38,31 +38,38 @@ import SwiftUI
     // it's based on whether the meal has an ID or not
     // TODO: Error propagation
     func saveMeal(meal:Meal, image: UIImage?){
-        let mealID = meal.id != 0 ? meal.id : (meals.map { $0.id }.max() ?? 0) + 1
+        let mealID = meal.id != 0
+            ? meal.id
+            : (meals.map { $0.id }.max() ?? 0) + 1
+        let mealToSave = Meal(
+            id: mealID,
+            name: meal.name,
+            description: meal.description,
+            updatedAt: Date.now
+        )
         if(meal.id == 0){
-            self.meals.append(Meal(
-                id: mealID,
-                name: meal.name,
-                description: meal.description
-            ))
+            self.meals.append(mealToSave)
         } else {
             let mealIndex = meals.firstIndex(where: {$0.id == meal.id })
             guard let mealIndex = mealIndex else {
                 return
             }
-            meals[mealIndex] = meal
+            meals[mealIndex] = mealToSave
         }
+        
         save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
         
         if let image = image {
             saveImage(fileName: "\(mealID).jpeg", image: image)
         }
+        imageCache[mealID] = image
     }
     
     func deleteMeal(meal: Meal){
         self.meals = self.meals.filter{ $0.id != meal.id}
         save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
         deleteImage(fileName: "\(meal.id).jpeg")
+        imageCache.removeValue(forKey: meal.id)
     }
     
     // Save an event, either a new one or an existing one.
@@ -184,6 +191,7 @@ import SwiftUI
             return try decoder.decode([T].self, from: file.availableData)
         
         } catch {
+            print("Error: \(error)")
             return []
         }
     }

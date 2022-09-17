@@ -159,7 +159,8 @@ struct EventList: View {
     }
     
     var timeline: some View {
-        VStack {
+        let timelineEvents = getTimelineEvents()
+        return VStack {
             HStack {
                 Text("Timeline")
                     .font(.headline)
@@ -197,19 +198,18 @@ struct EventList: View {
                 } else {
                     ScrollView(.horizontal){
                         HStack {
-                            ForEach(Array(viewModel.events.enumerated()), id: \.1.hashValue){ index, event in
+                            ForEach(Array(timelineEvents.enumerated()), id: \.1.hashValue){ index, timelineEvent in
                                 timelineCard(
-                                    event: event,
-                                    meal: viewModel.getMeal(event: event)!,
+                                    timelineEvent: timelineEvent,
                                     firstInDay:
                                         index == 0 || !isSameDay(
-                                            date1: viewModel.events[index-1].date,
-                                            date2: event.date
+                                            date1: timelineEvents[index-1].event.date,
+                                            date2: timelineEvent.event.date
                                         )
                                 )
                                 .onTapGesture{
                                     withAnimation {
-                                        selectedEvent = event
+                                        selectedEvent = timelineEvent.event
                                     }
                                 }
                             }
@@ -290,25 +290,25 @@ struct EventList: View {
         }
     }
     
-    func timelineCard(event: Event, meal: Meal, firstInDay: Bool) -> some View {
+    func timelineCard(timelineEvent: TimelineEvent, firstInDay: Bool) -> some View {
         VStack {
             HStack {
                 if firstInDay {
-                    Text(formatDate(date: event.date))
+                    Text(formatDate(date: timelineEvent.event.date))
                 }
                 Spacer()
             }
             Spacer()
             HStack {
-                Text(formatTime(date: event.date))
+                Text(formatTime(date: timelineEvent.event.date))
                     .font(.caption)
                     .padding(0)
                 Spacer()
             }
             MealCard(
                 font: .caption,
-                meal: meal,
-                image: viewModel.loadImage(meal: meal)
+                meal: timelineEvent.meal,
+                image: viewModel.loadImage(meal: timelineEvent.meal)
             )
             .clipShape(
                 RoundedRectangle(
@@ -541,6 +541,20 @@ struct EventList: View {
         return formatter.string(from: date)
     }
     
+    func getTimelineEvents() -> [TimelineEvent] {
+        return viewModel.events.map {
+            TimelineEvent(
+                event: $0,
+                meal: viewModel.getMeal(event: $0)!
+            )
+        }
+    }
+    
+}
+
+struct TimelineEvent: Hashable {
+    var event:Event
+    var meal: Meal
 }
 
 struct EventList_Previews: PreviewProvider {

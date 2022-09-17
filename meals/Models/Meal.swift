@@ -13,5 +13,7 @@ struct Meal: Codable, Hashable {
     var id: Int
     var name: String
     var description: String
+    var updatedAt: Date = Date.now
+
 }
 
