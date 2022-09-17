@@ -72,6 +72,7 @@ struct MetricView: View {
                                 .padding(EdgeInsets(top: -15, leading: 10, bottom: 15, trailing: 0))
                             HStack(alignment: .firstTextBaseline) {
                                 Text(meal.description)
+                                    .padding()
                             }
                             Divider()
                             HStack(alignment: .center) {
@@ -94,7 +95,7 @@ struct MetricView: View {
                         VStack {
                             // Metrics
                             VStack() {
-                                Text("Glucose - \(hours)")
+                                Text("Glucose")
                                     .font(.system(size: 18))
                                 MetricGraph(event: event, dataType: .Glucose, hours: hours)
                                     .frame(height: 200)
