@@ -25,8 +25,9 @@ import SwiftUI
     
     init() {
         meals = ContentViewViewModel.loadMeals()
-        events = ContentViewViewModel.load(fileName: ContentViewViewModel.eventsFileName)
-            .sorted(by: {$0.date < $1.date})
+        events = ContentViewViewModel
+            .load(fileName: ContentViewViewModel.eventsFileName)
+            .sorted(by: {$0.date > $1.date})
     }
     
     init(meals: [Meal], events: [Event]){

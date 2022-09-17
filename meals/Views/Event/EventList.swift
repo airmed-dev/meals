@@ -40,10 +40,10 @@ struct EventList: View {
                 timeline
             }
         }
-        .task {
-            sleep(1)
+        .onAppear {
             withAnimation {
                 ready = true
+                selectedEvent = viewModel.events.first
             }
         }
     }
@@ -200,7 +200,8 @@ struct EventList: View {
                         HStack {
                             ForEach(Array(timelineEvents.enumerated()), id: \.1.hashValue){ index, timelineEvent in
                                 timelineCard(
-                                    timelineEvent: timelineEvent,
+                                    meal: viewModel.getMeal(event: timelineEvent.event)!,
+                                    event: timelineEvent.event,
                                     firstInDay:
                                         index == 0 || !isSameDay(
                                             date1: timelineEvents[index-1].event.date,
@@ -290,25 +291,25 @@ struct EventList: View {
         }
     }
     
-    func timelineCard(timelineEvent: TimelineEvent, firstInDay: Bool) -> some View {
+    func timelineCard(meal: Meal, event: Event, firstInDay: Bool) -> some View {
         VStack {
             HStack {
                 if firstInDay {
-                    Text(formatDate(date: timelineEvent.event.date))
+                    Text(formatDate(date: event.date))
                 }
                 Spacer()
             }
             Spacer()
             HStack {
-                Text(formatTime(date: timelineEvent.event.date))
+                Text(formatTime(date: event.date))
                     .font(.caption)
                     .padding(0)
                 Spacer()
             }
             MealCard(
                 font: .caption,
-                meal: timelineEvent.meal,
-                image: viewModel.loadImage(meal: timelineEvent.meal)
+                meal: meal,
+                image: viewModel.loadImage(meal: meal)
             )
             .clipShape(
                 RoundedRectangle(
@@ -513,12 +514,7 @@ struct EventList: View {
     
     // Helpers
     func isSameDay(date1: Date, date2: Date) -> Bool {
-        let diff = Calendar.current.dateComponents([.day], from: date1, to: date2)
-        if diff.day == 0 {
-            return true
-        } else {
-            return false
-        }
+        return Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
     }
     
     func formatTime(date:Date) -> String {
@@ -542,10 +538,10 @@ struct EventList: View {
     }
     
     func getTimelineEvents() -> [TimelineEvent] {
-        return viewModel.events.map {
+        viewModel.events.map {
             TimelineEvent(
                 event: $0,
-                meal: viewModel.getMeal(event: $0)!
+                mealUpdatedAt: viewModel.getMeal(event: $0)!.updatedAt
             )
         }
     }
@@ -554,7 +550,7 @@ struct EventList: View {
 
 struct TimelineEvent: Hashable {
     var event:Event
-    var meal: Meal
+    var mealUpdatedAt: Date
 }
 
 struct EventList_Previews: PreviewProvider {
