@@ -123,7 +123,7 @@ struct MetricGraph: View {
         let hoursInSeconds = 60*60*TimeInterval(hours)
         switch self.dataType {
         case .Glucose:
-            Nightscout().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
+            HealthKitUtils().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
                 switch result {
                 case .success(let samples):
                     self.samples =  samples

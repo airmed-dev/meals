@@ -255,7 +255,7 @@ struct MealDetails: View {
         insulinSamples = [:]
         // TODO: Overlaps?
         viewModel.events.forEach{ event in
-            Nightscout().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
+            HealthKitUtils().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
                 switch result {
                 case .success(let samples):
                     glucoseSamples[event.id] = (event.date, samples)
