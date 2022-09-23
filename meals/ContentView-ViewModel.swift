@@ -61,7 +61,7 @@ import SwiftUI
         save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
         
         if let image = image {
-            saveImage(fileName: "\(mealID).jpeg", image: image)
+            saveImage(fileName: "photos/\(mealID).jpeg", image: image)
         }
         imageCache[mealID] = image
     }
@@ -69,7 +69,7 @@ import SwiftUI
     func deleteMeal(meal: Meal){
         self.meals = self.meals.filter{ $0.id != meal.id}
         save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
-        deleteImage(fileName: "\(meal.id).jpeg")
+        deleteImage(fileName: "photos/\(meal.id).jpeg")
         imageCache.removeValue(forKey: meal.id)
     }
     
@@ -119,7 +119,7 @@ import SwiftUI
     }
     
     public static func loadImage(meal: Meal) -> UIImage? {
-        let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent("\(meal.id).jpeg")
+        let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent("photos/\(meal.id).jpeg")
         return ContentViewViewModel.loadImage(fileURL: fileURL)
     }
     
