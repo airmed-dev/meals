@@ -19,28 +19,26 @@ struct MealList: View {
     
     var mealGrid: some View {
         let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
-        return GeometryReader { geo in
-            LazyVGrid (columns: twoColumns){
-                ForEach(viewModel.meals, id: \.hashValue) { meal in
-                    HStack {
-                        withAnimation(.easeInOut(duration: 10.0)){
-                            Button(action: {
-                                withAnimation(.easeInOut){
-                                    selectedMeal = meal
-                                    displayMealDetails = true
-                                }
-                            }){
-                                MealCard(
-                                    font: .headline,
-                                    meal: meal,
-                                    image: viewModel.loadImage(meal: meal)
-                                )
-                                .frame(
-                                    width: geo.size.width * 0.45,
-                                    height: geo.size.width * 0.45
-                                )
-                                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+        return LazyVGrid (columns: twoColumns){
+            ForEach(viewModel.meals, id: \.hashValue) { meal in
+                HStack {
+                    withAnimation(.easeInOut(duration: 10.0)){
+                        Button(action: {
+                            withAnimation(.easeInOut){
+                                selectedMeal = meal
+                                displayMealDetails = true
                             }
+                        }){
+                            MealCard(
+                                font: .headline,
+                                meal: meal,
+                                image: viewModel.loadImage(meal: meal)
+                            )
+                            .frame(
+                                width: 150,
+                                height: 150
+                            )
+                            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
                         }
                     }
                 }
@@ -49,7 +47,8 @@ struct MealList: View {
     }
     
     var noMeals: some View {
-        return VStack(alignment: .center) {
+        return GeometryReader { geo in
+            VStack(alignment: .center) {
                 Image(systemName: "tray.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -67,24 +66,20 @@ struct MealList: View {
                     Spacer()
                 }
             }
+            .position(
+                x: geo.frame(in: .local).midX,
+                y: geo.frame(in: .local).midY
+            )
+        }
         
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("Meals")
-                .font(.largeTitle)
-                .padding(2)
-            GeometryReader { geo in
-                if viewModel.meals.count == 0 {
-                   noMeals
-                        .position(
-                            x: geo.frame(in: .local).midX,
-                            y: geo.frame(in: .local).midY
-                        )
-                } else {
-                    mealGrid
-                }
+        ScrollView {
+            if viewModel.meals.count == 0 {
+                noMeals
+            } else {
+                mealGrid
             }
         }
         .overlay {
