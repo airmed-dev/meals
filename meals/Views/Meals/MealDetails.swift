@@ -81,16 +81,16 @@ struct MealDetails: View {
         }
     }
     
-    var statistics: some View {
+    func statistics(events: [Event]) -> some View {
         VStack(alignment: .leading) {
             HStack() {
                 Text("Glucose statistics")
                     .font(.headline)
                     .padding()
-                Text("total events: \(viewModel.events.count)")
+                Text("total events: \(events.count)")
                     .font(.subheadline)
             }
-            if viewModel.events.count > 0 {
+            if events.count > 0 {
                 drawGlucoseAggs()
             } else {
                 noData
@@ -100,10 +100,10 @@ struct MealDetails: View {
                 Text("Insulin statistics")
                     .font(.headline)
                     .padding()
-                Text("total events: \(viewModel.events.count)")
+                Text("total events: \(events.count)")
                     .font(.subheadline)
             }
-            if viewModel.events.count > 0 {
+            if events.count > 0 {
                 drawInsulinAggs()
             } else {
                 noData
@@ -116,17 +116,17 @@ struct MealDetails: View {
         .cornerRadius(15)
     }
     
-    var eventsList: some View {
+    func eventsList(events: [Event]) -> some View {
         VStack(alignment: .leading) {
             HStack() {
                 Text("Meal events")
                     .font(.headline)
                     .padding()
-                Text("total events: \(viewModel.events.count)")
+                Text("total events: \(events.count)")
                     .font(.subheadline)
             }
-            if viewModel.events.count > 0 {
-                ForEach(viewModel.events, id: \.id) { event in
+            if events.count > 0 {
+                ForEach(events, id: \.id) { event in
                     NavigationLink(destination: {
                         MetricView(meal: meal, event: event)
                             .environmentObject(viewModel)
@@ -152,7 +152,8 @@ struct MealDetails: View {
     }
     
     var body: some View {
-        NavigationView {
+        let mealEvents = viewModel.getEvents(mealId: meal.id)
+        return NavigationView {
             GeometryReader { geo in
                 ScrollView {
                     MealCard(
@@ -174,8 +175,8 @@ struct MealDetails: View {
                         .background(Color(uiColor: UIColor.systemBackground))
                         .cornerRadius(15)
                         
-                        statistics
-                        eventsList
+                        statistics(events: mealEvents)
+                        eventsList(events: mealEvents)
                         
                     }
                 }
@@ -228,10 +229,11 @@ struct MealDetails: View {
                 return Alert(title: Text("Enter meal event at: \(formatDate(date:date))"),
                              primaryButton: .default(Text("Yes")){
                     createEvent(date: date)
+                    loadSamples(events: viewModel.getEvents(mealId: meal.id))
                 }, secondaryButton: .cancel())
             }
             .onAppear {
-                loadSamples()
+                loadSamples(events: mealEvents)
             }
         }
         
@@ -247,14 +249,13 @@ struct MealDetails: View {
     func createEvent(date: Date){
         let event = Event(meal_id: meal.id, id: 0, date: date)
         viewModel.saveEvent(event: event)
-        loadSamples()
     }
     
-    func loadSamples() {
+    func loadSamples(events: [Event]) {
         glucoseSamples = [:]
         insulinSamples = [:]
         // TODO: Overlaps?
-        viewModel.events.forEach{ event in
+        events.forEach{ event in
             HealthKitUtils().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
                 switch result {
                 case .success(let samples):
