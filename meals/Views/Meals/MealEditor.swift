@@ -80,7 +80,7 @@ struct MealEditor: View {
                                 .resizable()
                                 .frame(width: 15, height: 15)
                                 .foregroundColor(.white)
-                            Text("Edit photo")
+                            Text("Photo")
                                 .foregroundColor(.white)
                         }
                         .padding(15)

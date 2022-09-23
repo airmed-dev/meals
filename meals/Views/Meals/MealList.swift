@@ -94,7 +94,7 @@ struct MealList: View {
                                 .resizable()
                                 .frame(width: 15, height: 15)
                                 .foregroundColor(.white)
-                            Text("Create a meal")
+                            Text("Meal")
                                 .foregroundColor(.white)
                         }
                         .padding(15)
