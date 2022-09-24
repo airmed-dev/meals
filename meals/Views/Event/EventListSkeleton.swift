@@ -163,7 +163,7 @@ struct EventListSkeleton: View {
     }
 
     var textSkeleton: some View {
-        HStack() {
+        HStack {
             Rectangle()
                     .foregroundColor(Color(uiColor: .systemGray3))
                     .cornerRadius(10)

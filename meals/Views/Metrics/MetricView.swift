@@ -94,7 +94,7 @@ struct MetricView: View {
                         
                         VStack {
                             // Metrics
-                            VStack() {
+                            VStack {
                                 Text("Glucose")
                                     .font(.system(size: 18))
                                 MetricGraph(event: event, dataType: .Glucose, hours: hours)
@@ -103,7 +103,7 @@ struct MetricView: View {
                             .padding(5)
                             .cornerRadius(20)
                         
-                            VStack() {
+                            VStack{
                                 Text("Insulin")
                                     .font(.system(size: 18))
                                 MetricGraph(event: event, dataType: .Insulin, hours: hours)

@@ -83,7 +83,7 @@ struct MealDetails: View {
     
     func statistics(events: [Event]) -> some View {
         VStack(alignment: .leading) {
-            HStack() {
+            HStack {
                 Text("Glucose statistics")
                     .font(.headline)
                     .padding()
@@ -96,7 +96,7 @@ struct MealDetails: View {
                 noData
             }
             
-            HStack() {
+            HStack {
                 Text("Insulin statistics")
                     .font(.headline)
                     .padding()
@@ -118,7 +118,7 @@ struct MealDetails: View {
     
     func eventsList(events: [Event]) -> some View {
         VStack(alignment: .leading) {
-            HStack() {
+            HStack {
                 Text("Meal events")
                     .font(.headline)
                     .padding()
@@ -186,7 +186,7 @@ struct MealDetails: View {
                 GeometryReader { _ in
                     VStack {
                         Spacer()
-                        HStack() {
+                        HStack {
                             Spacer()
                             Button(action: {showLogMeal.toggle() }) {
                                 HStack {
