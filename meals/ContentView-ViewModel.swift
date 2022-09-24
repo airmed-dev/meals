@@ -54,20 +54,24 @@ import SwiftUI
         )
         if (meal.id == 0) {
             self.meals.append(mealToSave)
+            save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
         } else {
-            let mealIndex = meals.firstIndex(where: { $0.id == meal.id })
-            guard let mealIndex = mealIndex else {
-                return
-            }
-            meals[mealIndex] = mealToSave
+            updateMeal(meal: meal)
         }
 
-        save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
 
         if let image = image {
             saveImage(fileName: "photos/\(mealID).jpeg", image: image)
         }
         imageCache[mealID] = image
+    }
+
+    func updateMeal(meal: Meal) {
+        let mealIndex = meals.firstIndex(where: { $0.id == meal.id })
+        guard let mealIndex = mealIndex else {
+            return
+        }
+        meals[mealIndex] = meal
     }
 
     func deleteMeal(meal: Meal) {
@@ -104,6 +108,20 @@ import SwiftUI
             events[eventIndex] = event
         }
         save(data: self.events, fileName: ContentViewViewModel.eventsFileName)
+        updateMealUpdateDate(event: event)
+    }
+
+    func updateMealUpdateDate(event: Event){
+        let meal = meals.first{$0.id == event.meal_id}
+        guard let meal = meal else {
+           return
+        }
+        updateMeal( meal: Meal(
+                    id: meal.id,
+                    name: meal.name,
+                    description: meal.description,
+                    updatedAt: Date.now
+            ))
     }
 
     func deleteEvent(eventId: Int) {
