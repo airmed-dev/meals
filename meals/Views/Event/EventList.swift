@@ -28,7 +28,6 @@ struct EventList: View {
 
     var body: some View {
         VStack {
-            Spacer()
             if let selectedEvent = selectedEvent {
                 header
                 statistics(event: selectedEvent, title: "Glucose", type: .Glucose)
@@ -37,7 +36,6 @@ struct EventList: View {
             } else {
                 EventListSkeleton()
             }
-            Spacer()
         }
                 .background(.gray.opacity(0.2))
                 .onAppear {
@@ -66,13 +64,13 @@ struct EventList: View {
                         LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
                     }
                 }
+                        .animation(.spring())
                         .frame(width: 100, height: 100)
                         .clipShape(Circle())
                         .padding(.leading, 5)
 
                 // Texts
                 VStack {
-                    Spacer()
                     HStack {
                         Text(meal!.name)
                                 .font(.headline)
@@ -82,9 +80,7 @@ struct EventList: View {
                         Text("\(formatDate(date: selectedEvent.date)) at \(formatTime(date: selectedEvent.date))")
                         Spacer()
                     }
-                    Spacer()
                 }
-                Spacer()
             } else {
                 VStack {
                     Spacer()
@@ -110,9 +106,10 @@ struct EventList: View {
                 Spacer()
             }
         }
+                .padding([.top, .bottom], 5)
                 .background(.white)
                 .cornerRadius(15)
-                .frame(height: 130)
+                .padding([.leading, .trailing], 5)
     }
 
     func statistics(event: Event, title: String, type: DataType) -> some View {
@@ -127,6 +124,7 @@ struct EventList: View {
         }
                 .background(Color(uiColor: .systemBackground))
                 .cornerRadius(15)
+                .padding([.leading, .trailing], 5)
     }
 
     var timeline: some View {
@@ -169,15 +167,11 @@ struct EventList: View {
                     }
                 }
             }
-                    .frame(height: 150)
-
+            Spacer()
         }
                 .background(Color(uiColor: .systemBackground))
-                .padding(.top, 5)
-                .padding(.bottom, 15)
-                .padding(.leading, 3)
-                .padding(.trailing, 3)
                 .cornerRadius(15)
+                .padding([.leading, .trailing], 5)
     }
 
     func timelineCard(meal: Meal, event: Event, firstInDay: Bool) -> some View {
@@ -206,7 +200,6 @@ struct EventList: View {
                     .frame(width: 100, height: 100)
         }
                 .padding(.leading, 10)
-                .padding(.bottom, 5)
     }
 
     var noData: some View {
@@ -236,14 +229,12 @@ struct EventList: View {
     }
 
     // Event handler
-
     func onMealTap(meal: Meal) {
         showLogEventAlert = true
         mealToLog = meal
     }
 
     // Helpers
-
     func isSameDay(date1: Date, date2: Date) -> Bool {
         return Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
     }
