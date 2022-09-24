@@ -101,13 +101,10 @@ struct ValueStats: View {
                     .font(.system(size: 30, weight: .ultraLight))
                     .frame(width: 80)
             
-                Text("No data")
-                    .font(.title)
-            
                 HStack(alignment: .center){
                     Spacer()
-                    Text("Log an event")
-                        .font(.body)
+                    Text("No data")
+                        .font(.title)
                     Spacer()
                 }
                 Spacer()
