@@ -12,7 +12,7 @@ enum HealthKitUtilsErrors: Error {
     case HealthKitGeneralError
 }
 
-class HealthKitUtils: GlucoseAPI {
+class HealthKitUtils: MetricStore {
     
     var healthKitStore = HKHealthStore()
     

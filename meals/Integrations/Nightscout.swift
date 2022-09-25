@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 
-class Nightscout: GlucoseAPI {
+class Nightscout: MetricStore {
     func getInsulinSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void) {
         completion(.failure(MealsError.generalError))
     }

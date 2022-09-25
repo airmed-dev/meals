@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct MealDetails: View {
-    @EnvironmentObject var store: Store
+    var metricStore: MetricStore
+    @EnvironmentObject var eventStore: EventStore
+
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
+    var image: UIImage?
     
     @State var showLogMeal: Bool = false
     @State var hours: Int = 3
@@ -97,8 +100,12 @@ struct MealDetails: View {
             if events.count > 0 {
                 ForEach(events, id: \.id) { event in
                     NavigationLink(destination: {
-                        MetricView(meal: meal, event: event)
-                            .environmentObject(store)
+                        MetricView(
+                                meal: meal,
+                                event: event,
+                                image: image
+                            )
+                            .environmentObject(eventStore)
                     }) {
                         HStack {
                             Text(formatDate(date: event.date))
@@ -107,7 +114,7 @@ struct MealDetails: View {
                         }
                         .padding()
                     }
-                    MetricGraph(event: event, dataType: .Glucose, hours: hours)
+                    MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
                         .frame(height: 200)
                 }
             } else {
@@ -121,14 +128,14 @@ struct MealDetails: View {
     }
     
     var body: some View {
-        let mealEvents = store.getEvents(mealId: meal.id)
+        let mealEvents = eventStore.getEvents(mealId: meal.id)
         return NavigationView {
             GeometryReader { geo in
                 ScrollView {
                     MealCard(
                         font: .largeTitle,
                         meal: meal,
-                        image: store.loadImage(meal: meal)
+                        image: image
                     )
                     .frame(width: geo.size.width, height: geo.size.height/2)
                     
@@ -183,7 +190,7 @@ struct MealDetails: View {
                     NavigationLink("Edit"){
                         MealEditor(
                             meal: meal,
-                            image: store.loadImage(meal: meal),
+                            image: image,
                             onEdit: {
                                 presentationMode.wrappedValue.dismiss()
                             }
@@ -198,7 +205,7 @@ struct MealDetails: View {
                 return Alert(title: Text("Enter meal event at: \(formatDate(date:date))"),
                              primaryButton: .default(Text("Yes")){
                     createEvent(date: date)
-                    loadSamples(events: store.getEvents(mealId: meal.id))
+                    loadSamples(events: eventStore.getEvents(mealId: meal.id))
                 }, secondaryButton: .cancel())
             }
             .onAppear {
@@ -217,7 +224,7 @@ struct MealDetails: View {
     
     func createEvent(date: Date){
         let event = Event(meal_id: meal.id, id: 0, date: date)
-        store.saveEvent(event: event)
+        eventStore.saveEvent(event: event)
     }
     
     func loadSamples(events: [Event]) {
@@ -227,7 +234,7 @@ struct MealDetails: View {
         events.forEach{ event in
             let start = event.date
             let end = event.date.advanced(by: TimeInterval(hours * 60 * 60))
-            store.glucoseAPI().getGlucoseSamples(start: start,end: end) { result in
+            metricStore.getGlucoseSamples(start: start,end: end) { result in
                 switch result {
                 case .success(let samples):
                     glucoseSamples[event.id] = (event.date, samples)
@@ -236,7 +243,7 @@ struct MealDetails: View {
                 }
                 
             }
-            store.glucoseAPI().getInsulinSamples(
+            metricStore.getInsulinSamples(
                 start: start,
                 end: end
             ){ result in
@@ -248,16 +255,19 @@ struct MealDetails: View {
                 }
             }
         }
-        
     }
 }
 
 struct MealDetails_Previews: PreviewProvider {
     static var previews: some View {
+        let exampleMeal: Meal = Meal(
+                id: 1,
+                name: "Example meal",
+                description: "Description"
+        )
         let mealID = 1
-        MealDetails(meal: MealStore.exampleMeal)
-            .environmentObject(Store(
-                meals: [MealStore.exampleMeal],
+        let store = Store(
+                meals: [exampleMeal],
                 events: [
                     Event(meal_id: mealID),
                     Event(meal_id: mealID),
@@ -265,6 +275,8 @@ struct MealDetails_Previews: PreviewProvider {
                     Event(meal_id: mealID)
                 ],
                 settings: Settings(dataSourceType: .HealthKit)
-            ))
+            )
+        MealDetails(metricStore: store.metricStore, meal: exampleMeal)
+            .environmentObject(store)
     }
 }

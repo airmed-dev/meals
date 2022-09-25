@@ -11,24 +11,27 @@ import HealthKit
 struct ContentView: View {
     @ObservedObject var store = Store()
 
-
     var body: some View {
         TabView {
-            MealList()
+            MealList(metricStore: store.metricStore)
                     .tabItem {
                         Label("Meals", systemImage: "circle.hexagongrid.circle")
                     }
-                    .environmentObject(store)
-            EventList()
+                    .environmentObject(store.mealStore)
+                    .environmentObject(store.photoStore)
+                    .environmentObject(store.eventStore)
+            EventList(metricStore: store.metricStore)
                     .tabItem {
                         Label("Events", systemImage: "calendar.day.timeline.leading")
                     }
-                    .environmentObject(store)
+                    .environmentObject(store.mealStore)
+                    .environmentObject(store.photoStore)
+                    .environmentObject(store.eventStore)
             SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")
                     }
-                    .environmentObject(store)
+                    .environmentObject(store.settingsStore)
 
         }
     }

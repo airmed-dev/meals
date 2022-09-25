@@ -9,7 +9,10 @@ import SwiftUI
 import Alamofire
 
 struct MealList: View {
-    @EnvironmentObject var store: Store
+    var metricStore: MetricStore
+    @EnvironmentObject var mealStore: MealStore
+    @EnvironmentObject var eventStore: EventStore
+    @EnvironmentObject var photoStore: PhotoStore
 
     @State var displayMealEditor: Bool = false
     @State var displayMealDetails: Bool = false
@@ -21,11 +24,13 @@ struct MealList: View {
     func mealGrid(textFilter: String) -> some View {
         let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
         var meals = textFilter == ""
-                ? store.meals
-                : store.meals.filter {
-                    $0.name.contains(textFilter) || $0.description.contains(textFilter)
-                }
-        meals.sort{ $0.updatedAt.compare($1.updatedAt) == .orderedDescending}
+                ? mealStore.meals
+                : mealStore.meals.filter {
+            $0.name.contains(textFilter) || $0.description.contains(textFilter)
+        }
+        meals.sort {
+            $0.updatedAt.compare($1.updatedAt) == .orderedDescending
+        }
         return LazyVGrid(columns: twoColumns) {
             ForEach(meals, id: \.hashValue) { meal in
                 HStack {
@@ -39,7 +44,7 @@ struct MealList: View {
                             MealCard(
                                     font: .headline,
                                     meal: meal,
-                                    image: store.loadImage(meal: meal)
+                                    image: photoStore.loadImage(mealID: meal.id)
                             )
                                     .frame(
                                             width: 150,
@@ -84,7 +89,7 @@ struct MealList: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if store.meals.count == 0 {
+                if mealStore.meals.count == 0 {
                     noMeals
                 } else {
                     if textFilter != "" {
@@ -126,11 +131,15 @@ struct MealList: View {
                 }
                 .bottomSheet(isPresented: $displayMealEditor, detents: [.large()]) {
                     MealEditor()
-                            .environmentObject(store)
+                            .environmentObject(mealStore)
                 }
                 .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
-                    MealDetails(meal: selectedMeal!)
-                            .environmentObject(store)
+                    MealDetails(
+                            metricStore: metricStore,
+                            meal: selectedMeal!,
+                            image: photoStore.loadImage(mealID: selectedMeal!.id)
+                    )
+                            .environmentObject(eventStore)
                 }
     }
 }
@@ -140,31 +149,38 @@ struct MealList_Previews: PreviewProvider {
         let mealTemplates = (1...3).map { value in
             Meal(id: value, name: "blueberry pie", description: "delicious blueberry")
         }
+        let noMeals = Store(
+                meals: mealTemplates,
+                events: [],
+                settings: Settings(dataSourceType: .Debug)
+        )
+        let someMeals = Store(
+                meals: mealTemplates,
+                events: [],
+                settings: Settings(dataSourceType: .Debug)
+        )
+        let skeleton = Store(
+                meals: [],
+                events: [],
+                settings: Settings(dataSourceType: .Debug)
+        )
         Group {
             // No meals
-            MealList()
-                    .environmentObject(Store(
-                            meals: mealTemplates,
-                            events: [],
-                        settings: Settings(dataSourceType: .HealthKit))
-                    )
+            MealList(metricStore: noMeals.metricStore)
+                    .environmentObject(noMeals.photoStore)
+                    .environmentObject(noMeals.mealStore)
+                    .environmentObject(noMeals.eventStore)
 
             // Some meals
-            MealList()
-                    .environmentObject(Store(
-                            meals: mealTemplates,
-                            events: [],
-                        settings: Settings(dataSourceType: .HealthKit))
-                    )
-
+            MealList(metricStore: someMeals.metricStore)
+                    .environmentObject(someMeals.photoStore)
+                    .environmentObject(someMeals.mealStore)
+                    .environmentObject(someMeals.eventStore)
             // Skeleton
-            MealList()
-                    .environmentObject(Store(
-                            meals: [],
-                            events: [],
-                        settings: Settings(dataSourceType: .HealthKit))
-                    )
-
+            MealList(metricStore: skeleton.metricStore)
+                    .environmentObject(someMeals.photoStore)
+                    .environmentObject(someMeals.mealStore)
+                    .environmentObject(someMeals.eventStore)
         }
     }
 }

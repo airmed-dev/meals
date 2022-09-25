@@ -10,7 +10,10 @@ import Foundation
 import SwiftUI
 
 struct EventList: View {
-    @EnvironmentObject var store: Store
+    var metricStore: MetricStore
+    @EnvironmentObject var mealStore: MealStore
+    @EnvironmentObject var eventStore: EventStore
+    @EnvironmentObject var photoStore: PhotoStore
     @State var ready = false
 
     // Meal event logging
@@ -41,17 +44,18 @@ struct EventList: View {
                 .onAppear {
                     withAnimation {
                         ready = true
-                        selectedEvent = store.events.first
+                        selectedEvent = eventStore.events.first
                     }
                 }
     }
+
     var header: some View {
         let colors = [Color(hex: 0x424242), Color(hex: 0x002266)]
         let meal = selectedEvent != nil
-                ? store.getMeal(event: selectedEvent!)!
+                ? mealStore.getMeal(event: selectedEvent!)!
                 : nil
         let image = meal != nil
-                ? store.loadImage(meal: meal!)
+                ? photoStore.loadImage(mealID: meal!.id)
                 : nil
 
         return HStack {
@@ -120,7 +124,7 @@ struct EventList: View {
                         .padding([.leading, .top], 10)
                 Spacer()
             }
-            MetricGraph(event: event, dataType: type, hours: hours)
+            MetricGraph(metricStore: metricStore,event: event, dataType: type, hours: hours)
         }
                 .background(Color(uiColor: .systemBackground))
                 .cornerRadius(15)
@@ -142,14 +146,14 @@ struct EventList: View {
                     .padding(.trailing, 10)
 
             HStack {
-                if store.events.isEmpty {
+                if eventStore.events.isEmpty {
                     noData
                 } else {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(Array(timelineEvents.enumerated()), id: \.1.hashValue) { index, timelineEvent in
                                 timelineCard(
-                                        meal: store.getMeal(event: timelineEvent.event)!,
+                                        meal: mealStore.getMeal(event: timelineEvent.event)!,
                                         event: timelineEvent.event,
                                         firstInDay:
                                         index == 0 || !isSameDay(
@@ -192,7 +196,7 @@ struct EventList: View {
             MealCard(
                     font: .caption,
                     meal: meal,
-                    image: store.loadImage(meal: meal)
+                    image: photoStore.loadImage(mealID: meal.id)
             )
                     .clipShape(
                             RoundedRectangle(
@@ -229,12 +233,14 @@ struct EventList: View {
     }
 
     // Event handler
+
     func onMealTap(meal: Meal) {
         showLogEventAlert = true
         mealToLog = meal
     }
 
     // Helpers
+
     func isSameDay(date1: Date, date2: Date) -> Bool {
         Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
     }
@@ -260,10 +266,10 @@ struct EventList: View {
     }
 
     func getTimelineEvents() -> [TimelineEvent] {
-        store.events.map {
+        eventStore.events.map {
             TimelineEvent(
                     event: $0,
-                    mealUpdatedAt: store.getMeal(event: $0)!.updatedAt
+                    mealUpdatedAt: mealStore.getMeal(event: $0)!.updatedAt
             )
         }
     }
@@ -278,24 +284,27 @@ struct TimelineEvent: Hashable {
 struct EventList_Previews: PreviewProvider {
 
     static var previews: some View {
-        let mealUUID = 1
-        EventList()
-                .environmentObject(Store(
-                        meals: [
-                            Meal(id: mealUUID, name: "Test", description: "Test")
-                        ],
-                        events: [
-                            Event(meal_id: mealUUID, id: 1),
-                            Event(meal_id: mealUUID),
-                            Event(meal_id: mealUUID),
-                            Event(meal_id: mealUUID),
-                            Event(meal_id: mealUUID),
-                            Event(meal_id: mealUUID),
-                            Event(meal_id: mealUUID),
-                            Event(meal_id: mealUUID),
-                            Event(meal_id: mealUUID),
-                        ],
-                        settings: Settings(dataSourceType: .HealthKit)
-                ))
+        let mealID = 1
+        let store = Store(
+                meals: [
+                    Meal(id: mealID, name: "Test", description: "Test")
+                ],
+                events: [
+                    Event(meal_id: mealID, id: 1),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                    Event(meal_id: mealID),
+                ],
+                settings: Settings(dataSourceType: .Debug)
+        )
+        EventList(metricStore: store.metricStore)
+                .environmentObject(store.mealStore)
+                .environmentObject(store.eventStore)
+                .environmentObject(store.photoStore)
     }
 }

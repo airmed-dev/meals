@@ -7,7 +7,7 @@ import Foundation
 import HealthKit
 
 struct SettingsView: View {
-    @EnvironmentObject var store: Store
+    @EnvironmentObject var settingsStore: SettingsStore
     @State var devClickCount: Int = 0
     var requiredDevClickCount = 7
 
@@ -87,7 +87,7 @@ struct SettingsView: View {
                 }
                 HStack {
                     Button(action: {
-                        store.saveSettings(settings: settingsDraft)
+                        settingsStore.saveSettings(settings: settingsDraft)
                         showSuccessAlert = true
                     }) {
                         Text("Save")
@@ -105,9 +105,9 @@ struct SettingsView: View {
                 }
                 .onAppear {
                     // When the ViewModel available copy the values to the draft
-                    settingsDraft.dataSourceType = store.settings.dataSourceType
-                    settingsDraft.nightScoutSettings = store.settings.nightScoutSettings
-                    settingsDraft.developerMode = store.settings.developerMode
+                    settingsDraft.dataSourceType = settingsStore.settings.dataSourceType
+                    settingsDraft.nightScoutSettings = settingsStore.settings.nightScoutSettings
+                    settingsDraft.developerMode = settingsStore.settings.developerMode
                     devClickCount = settingsDraft.developerMode ? requiredDevClickCount : 0
                 }
 

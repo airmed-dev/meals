@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Debug: GlucoseAPI {
+class Debug: MetricStore {
     func getGlucoseSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void) {
         completion(.success(getGlucoseSamples(start: start, end: end)))
     }

@@ -61,7 +61,7 @@ struct MealCard: View {
 
 struct MealCard_Previews: PreviewProvider {
     static var previews: some View {
-        MealCard(meal: MealStore.exampleMeal)
+        MealCard(meal: Meal(id:0, name: "Name", description: "Description"))
             .frame(width:200,height:200)
             .background(.red)
     }

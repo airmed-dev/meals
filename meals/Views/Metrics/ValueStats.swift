@@ -46,7 +46,7 @@ struct ValueStats: View {
     }
     
     func valueAxisLabels(size: CGSize, valueBuckets: [ValueBucket]) -> some View {
-        var valueSteps = valueSteps(valueBuckets: valueBuckets)
+        let valueSteps = valueSteps(valueBuckets: valueBuckets)
         return ForEach(valueSteps, id: \.self){ value in
             Text(String(value))
                 .position(

@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol GlucoseAPI {
+protocol MetricStore {
     func getGlucoseSamples(start: Date,
                            end: Date,
                            _ completion: @escaping (Result<[MetricSample], Error>) -> Void )
