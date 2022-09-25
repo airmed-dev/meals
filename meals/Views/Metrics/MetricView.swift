@@ -17,7 +17,7 @@ enum HealthkitError: Error {
 let threeHours: Double = 3 * 60 * 60
 
 struct MetricView: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var store: Store
     @Environment(\.presentationMode) var presentationMode
     
     @State var meal: Meal?
@@ -141,7 +141,7 @@ struct MetricView: View {
             .frame(width: .infinity)
             .onAppear {
                 if let meal = meal {
-                    image = viewModel.loadImage(meal: meal)
+                    image = store.loadImage(meal: meal)
                 }
             }
             .alert(isPresented: $showDeleteConfirmation) {
@@ -160,13 +160,13 @@ struct MetricView: View {
             }
             .bottomSheet(isPresented: $showEditSheet ){
                 UpdateEventView(event: $event, newDate: newDate)
-                    .environmentObject(viewModel)
+                    .environmentObject(store)
             }
         }
     }
     
     func deleteEvent(){
-        viewModel.deleteEvent(eventId: event.id)
+        store.deleteEvent(eventId: event.id)
         showSucessAlert = true
         successMessage = "Event deleted"
     }
@@ -205,7 +205,7 @@ struct MetricView_Previews: PreviewProvider {
 }
 
 struct UpdateEventView: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var store: Store
     @Environment(\.presentationMode) var presentationMode
     @Binding var event: Event
     @State var newDate: Date
@@ -252,7 +252,7 @@ struct UpdateEventView: View {
     
     func saveEvent(event: Event){
         let newEvent = Event(meal_id: event.meal_id, id: event.id, date: newDate)
-        viewModel.saveEvent(event: newEvent)
+        store.saveEvent(event: newEvent)
         showSuccessAlert = true
         successMessage = "Saved event"
     }

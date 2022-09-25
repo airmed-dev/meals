@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct EventList: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var store: Store
     @State var ready = false
 
     // Meal event logging
@@ -41,17 +41,17 @@ struct EventList: View {
                 .onAppear {
                     withAnimation {
                         ready = true
-                        selectedEvent = viewModel.events.first
+                        selectedEvent = store.events.first
                     }
                 }
     }
     var header: some View {
         let colors = [Color(hex: 0x424242), Color(hex: 0x002266)]
         let meal = selectedEvent != nil
-                ? viewModel.getMeal(event: selectedEvent!)!
+                ? store.getMeal(event: selectedEvent!)!
                 : nil
         let image = meal != nil
-                ? viewModel.loadImage(meal: meal!)
+                ? store.loadImage(meal: meal!)
                 : nil
 
         return HStack {
@@ -142,14 +142,14 @@ struct EventList: View {
                     .padding(.trailing, 10)
 
             HStack {
-                if viewModel.events.isEmpty {
+                if store.events.isEmpty {
                     noData
                 } else {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(Array(timelineEvents.enumerated()), id: \.1.hashValue) { index, timelineEvent in
                                 timelineCard(
-                                        meal: viewModel.getMeal(event: timelineEvent.event)!,
+                                        meal: store.getMeal(event: timelineEvent.event)!,
                                         event: timelineEvent.event,
                                         firstInDay:
                                         index == 0 || !isSameDay(
@@ -192,7 +192,7 @@ struct EventList: View {
             MealCard(
                     font: .caption,
                     meal: meal,
-                    image: viewModel.loadImage(meal: meal)
+                    image: store.loadImage(meal: meal)
             )
                     .clipShape(
                             RoundedRectangle(
@@ -260,10 +260,10 @@ struct EventList: View {
     }
 
     func getTimelineEvents() -> [TimelineEvent] {
-        viewModel.events.map {
+        store.events.map {
             TimelineEvent(
                     event: $0,
-                    mealUpdatedAt: viewModel.getMeal(event: $0)!.updatedAt
+                    mealUpdatedAt: store.getMeal(event: $0)!.updatedAt
             )
         }
     }
@@ -280,7 +280,7 @@ struct EventList_Previews: PreviewProvider {
     static var previews: some View {
         let mealUUID = 1
         EventList()
-                .environmentObject(ContentViewViewModel(
+                .environmentObject(Store(
                         meals: [
                             Meal(id: mealUUID, name: "Test", description: "Test")
                         ],

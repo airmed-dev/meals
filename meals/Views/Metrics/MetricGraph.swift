@@ -28,7 +28,7 @@ let insulinGradient =  [
 ]
 
 struct MetricGraph: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var store: Store
     @State var samples: [MetricSample] = []
     @State var isAuthorized = false
     @State var debug = false
@@ -111,7 +111,7 @@ struct MetricGraph: View {
         let end = event.date.advanced(by: hoursInSeconds)
         switch self.dataType {
         case .Glucose:
-            viewModel.glucoseAPI().getGlucoseSamples(start: start, end: end) { result in
+            store.glucoseAPI().getGlucoseSamples(start: start, end: end) { result in
                 switch result {
                 case .success(let samples):
                     self.samples =  samples
@@ -128,7 +128,7 @@ struct MetricGraph: View {
             let start = event.date.advanced(by: -1 * insulinActiveTime)
             let end = event.date.advanced(by: insulinActiveTime)
             
-            viewModel.glucoseAPI().getInsulinSamples(start: start, end: end) { result in
+            store.glucoseAPI().getInsulinSamples(start: start, end: end) { result in
                 switch result {
                 case .success(let samples):
                     self.samples = samples

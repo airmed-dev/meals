@@ -7,8 +7,9 @@ import Foundation
 import HealthKit
 
 struct SettingsView: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var store: Store
     @State var devClickCount: Int = 0
+    var requiredDevClickCount = 7
 
     var healthKitAuthorized: Bool {
         HKHealthStore.isHealthDataAvailable()
@@ -73,7 +74,7 @@ struct SettingsView: View {
                     HStack {
                         Button(action: {
                             devClickCount+=1
-                            if devClickCount >= 3{
+                            if devClickCount >= requiredDevClickCount {
                                 settingsDraft.developerMode = true
                             }
                         }){
@@ -86,7 +87,7 @@ struct SettingsView: View {
                 }
                 HStack {
                     Button(action: {
-                        viewModel.saveSettings(settings: settingsDraft)
+                        store.saveSettings(settings: settingsDraft)
                         showSuccessAlert = true
                     }) {
                         Text("Save")
@@ -104,8 +105,10 @@ struct SettingsView: View {
                 }
                 .onAppear {
                     // When the ViewModel available copy the values to the draft
-                    settingsDraft.dataSourceType = viewModel.settings.dataSourceType
-                    settingsDraft.nightScoutSettings = viewModel.settings.nightScoutSettings
+                    settingsDraft.dataSourceType = store.settings.dataSourceType
+                    settingsDraft.nightScoutSettings = store.settings.nightScoutSettings
+                    settingsDraft.developerMode = store.settings.developerMode
+                    devClickCount = settingsDraft.developerMode ? requiredDevClickCount : 0
                 }
 
     }
@@ -140,7 +143,7 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
-            .environmentObject(ContentViewViewModel.init(
+            .environmentObject(Store.init(
                 meals: [],
                 events: [],
                 settings: Settings(dataSourceType: .HealthKit)

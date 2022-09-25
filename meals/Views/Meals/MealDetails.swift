@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MealDetails: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var store: Store
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
     
@@ -98,7 +98,7 @@ struct MealDetails: View {
                 ForEach(events, id: \.id) { event in
                     NavigationLink(destination: {
                         MetricView(meal: meal, event: event)
-                            .environmentObject(viewModel)
+                            .environmentObject(store)
                     }) {
                         HStack {
                             Text(formatDate(date: event.date))
@@ -121,14 +121,14 @@ struct MealDetails: View {
     }
     
     var body: some View {
-        let mealEvents = viewModel.getEvents(mealId: meal.id)
+        let mealEvents = store.getEvents(mealId: meal.id)
         return NavigationView {
             GeometryReader { geo in
                 ScrollView {
                     MealCard(
                         font: .largeTitle,
                         meal: meal,
-                        image: viewModel.loadImage(meal: meal)
+                        image: store.loadImage(meal: meal)
                     )
                     .frame(width: geo.size.width, height: geo.size.height/2)
                     
@@ -183,7 +183,7 @@ struct MealDetails: View {
                     NavigationLink("Edit"){
                         MealEditor(
                             meal: meal,
-                            image: viewModel.loadImage(meal: meal),
+                            image: store.loadImage(meal: meal),
                             onEdit: {
                                 presentationMode.wrappedValue.dismiss()
                             }
@@ -198,7 +198,7 @@ struct MealDetails: View {
                 return Alert(title: Text("Enter meal event at: \(formatDate(date:date))"),
                              primaryButton: .default(Text("Yes")){
                     createEvent(date: date)
-                    loadSamples(events: viewModel.getEvents(mealId: meal.id))
+                    loadSamples(events: store.getEvents(mealId: meal.id))
                 }, secondaryButton: .cancel())
             }
             .onAppear {
@@ -217,7 +217,7 @@ struct MealDetails: View {
     
     func createEvent(date: Date){
         let event = Event(meal_id: meal.id, id: 0, date: date)
-        viewModel.saveEvent(event: event)
+        store.saveEvent(event: event)
     }
     
     func loadSamples(events: [Event]) {
@@ -227,7 +227,7 @@ struct MealDetails: View {
         events.forEach{ event in
             let start = event.date
             let end = event.date.advanced(by: TimeInterval(hours * 60 * 60))
-            viewModel.glucoseAPI().getGlucoseSamples(start: start,end: end) { result in
+            store.glucoseAPI().getGlucoseSamples(start: start,end: end) { result in
                 switch result {
                 case .success(let samples):
                     glucoseSamples[event.id] = (event.date, samples)
@@ -236,7 +236,7 @@ struct MealDetails: View {
                 }
                 
             }
-            viewModel.glucoseAPI().getInsulinSamples(
+            store.glucoseAPI().getInsulinSamples(
                 start: start,
                 end: end
             ){ result in
@@ -256,7 +256,7 @@ struct MealDetails_Previews: PreviewProvider {
     static var previews: some View {
         let mealID = 1
         MealDetails(meal: MealStore.exampleMeal)
-            .environmentObject(ContentViewViewModel(
+            .environmentObject(Store(
                 meals: [MealStore.exampleMeal],
                 events: [
                     Event(meal_id: mealID),

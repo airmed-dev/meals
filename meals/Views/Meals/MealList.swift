@@ -9,7 +9,7 @@ import SwiftUI
 import Alamofire
 
 struct MealList: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var store: Store
 
     @State var displayMealEditor: Bool = false
     @State var displayMealDetails: Bool = false
@@ -21,8 +21,8 @@ struct MealList: View {
     func mealGrid(textFilter: String) -> some View {
         let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
         var meals = textFilter == ""
-                ? viewModel.meals
-                : viewModel.meals.filter {
+                ? store.meals
+                : store.meals.filter {
                     $0.name.contains(textFilter) || $0.description.contains(textFilter)
                 }
         meals.sort{ $0.updatedAt.compare($1.updatedAt) == .orderedDescending}
@@ -39,7 +39,7 @@ struct MealList: View {
                             MealCard(
                                     font: .headline,
                                     meal: meal,
-                                    image: viewModel.loadImage(meal: meal)
+                                    image: store.loadImage(meal: meal)
                             )
                                     .frame(
                                             width: 150,
@@ -84,7 +84,7 @@ struct MealList: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if viewModel.meals.count == 0 {
+                if store.meals.count == 0 {
                     noMeals
                 } else {
                     if textFilter != "" {
@@ -126,11 +126,11 @@ struct MealList: View {
                 }
                 .bottomSheet(isPresented: $displayMealEditor, detents: [.large()]) {
                     MealEditor()
-                            .environmentObject(viewModel)
+                            .environmentObject(store)
                 }
                 .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
                     MealDetails(meal: selectedMeal!)
-                            .environmentObject(viewModel)
+                            .environmentObject(store)
                 }
     }
 }
@@ -143,7 +143,7 @@ struct MealList_Previews: PreviewProvider {
         Group {
             // No meals
             MealList()
-                    .environmentObject(ContentViewViewModel(
+                    .environmentObject(Store(
                             meals: mealTemplates,
                             events: [],
                         settings: Settings(dataSourceType: .HealthKit))
@@ -151,7 +151,7 @@ struct MealList_Previews: PreviewProvider {
 
             // Some meals
             MealList()
-                    .environmentObject(ContentViewViewModel(
+                    .environmentObject(Store(
                             meals: mealTemplates,
                             events: [],
                         settings: Settings(dataSourceType: .HealthKit))
@@ -159,7 +159,7 @@ struct MealList_Previews: PreviewProvider {
 
             // Skeleton
             MealList()
-                    .environmentObject(ContentViewViewModel(
+                    .environmentObject(Store(
                             meals: [],
                             events: [],
                         settings: Settings(dataSourceType: .HealthKit))

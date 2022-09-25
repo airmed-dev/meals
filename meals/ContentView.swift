@@ -9,7 +9,7 @@ import SwiftUI
 import HealthKit
 
 struct ContentView: View {
-    @ObservedObject var viewModel = ContentViewViewModel()
+    @ObservedObject var store = Store()
 
 
     var body: some View {
@@ -18,17 +18,17 @@ struct ContentView: View {
                     .tabItem {
                         Label("Meals", systemImage: "circle.hexagongrid.circle")
                     }
-                    .environmentObject(viewModel)
+                    .environmentObject(store)
             EventList()
                     .tabItem {
                         Label("Events", systemImage: "calendar.day.timeline.leading")
                     }
-                    .environmentObject(viewModel)
+                    .environmentObject(store)
             SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")
                     }
-                    .environmentObject(viewModel)
+                    .environmentObject(store)
 
         }
     }

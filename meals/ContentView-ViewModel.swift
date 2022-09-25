@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-@MainActor class ContentViewViewModel: ObservableObject {
+@MainActor class Store: ObservableObject {
     private static let dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z"
     private static let mealsFileName = "meals.json"
     private static let eventsFileName = "events.json"
@@ -26,13 +26,13 @@ import SwiftUI
     }
 
     init() {
-        meals = ContentViewViewModel.loadMeals()
+        meals = Store.loadMeals()
 
-        let loadedEvents: [Event] = ContentViewViewModel
-                .load(fileName: ContentViewViewModel.eventsFileName) ?? []
+        let loadedEvents: [Event] = Store
+                .load(fileName: Store.eventsFileName) ?? []
         events = loadedEvents.sorted(by: { $0.date > $1.date })
 
-        settings = ContentViewViewModel.load(fileName: ContentViewViewModel.settingsFileName)
+        settings = Store.load(fileName: Store.settingsFileName)
             ?? Settings(dataSourceType: .HealthKit)
     }
 
@@ -72,7 +72,7 @@ import SwiftUI
         )
         if (meal.id == 0) {
             self.meals.append(mealToSave)
-            save(data: meals, fileName: ContentViewViewModel.mealsFileName)
+            save(data: meals, fileName: Store.mealsFileName)
         } else {
             updateMeal(meal: meal)
         }
@@ -96,14 +96,14 @@ import SwiftUI
         meals = meals.filter {
             $0.id != meal.id
         }
-        save(data: meals, fileName: ContentViewViewModel.mealsFileName)
+        save(data: meals, fileName: Store.mealsFileName)
         deleteImage(fileName: "photos/\(meal.id).jpeg")
         imageCache.removeValue(forKey: meal.id)
     }
 
     // Save an event, either a new one or an existing one.
     func saveSettings(settings: Settings){
-        save(data: settings, fileName:ContentViewViewModel.settingsFileName)
+        save(data: settings, fileName:Store.settingsFileName)
     }
     // If the event has a 0 ID, it will create a new one starting from the latest or 1
     // TODO: Error propagations
@@ -127,7 +127,7 @@ import SwiftUI
             }
             events[eventIndex] = event
         }
-        save(data: events, fileName: ContentViewViewModel.eventsFileName)
+        save(data: events, fileName: Store.eventsFileName)
         updateMealUpdateDate(event: event)
     }
 
@@ -148,7 +148,7 @@ import SwiftUI
         events = events.filter {
             $0.id != eventId
         }
-        save(data: events, fileName: ContentViewViewModel.eventsFileName)
+        save(data: events, fileName: Store.eventsFileName)
     }
 
     func getMeal(event: Event) -> Meal? {
@@ -168,18 +168,18 @@ import SwiftUI
             // TODO: Invalidate cache?
             return image
         }
-        let image = ContentViewViewModel.loadImage(meal: meal)
+        let image = Store.loadImage(meal: meal)
         imageCache[meal.id] = image
         return image
     }
     
     public static func loadImage(meal: Meal) -> UIImage? {
-        let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent("photos/\(meal.id).jpeg")
-        return ContentViewViewModel.loadImage(fileURL: fileURL)
+        let fileURL = Store.documentsUrl.appendingPathComponent("photos/\(meal.id).jpeg")
+        return Store.loadImage(fileURL: fileURL)
     }
 
     private func saveImage(fileName: String, image: UIImage) -> String? {
-        let fileURL = ContentViewViewModel.documentsUrl.appendingPathComponent(fileName)
+        let fileURL = Store.documentsUrl.appendingPathComponent(fileName)
         if let imageData = image.jpegData(compressionQuality: 1.0) {
             try? imageData.write(to: fileURL, options: .atomic)
             return fileName // ----> Save fileName
@@ -189,14 +189,14 @@ import SwiftUI
     }
 
     private func deleteImage(fileName: String) {
-        let path = ContentViewViewModel.documentsUrl.appendingPathComponent(fileName).path
+        let path = Store.documentsUrl.appendingPathComponent(fileName).path
         if FileManager.default.fileExists(atPath: path) {
             try? FileManager.default.removeItem(atPath: path)
         }
     }
 
     private static func loadMeals() -> [Meal] {
-        ContentViewViewModel.load(fileName: mealsFileName) ?? []
+        Store.load(fileName: mealsFileName) ?? []
     }
 
 
@@ -215,7 +215,7 @@ import SwiftUI
 
     func save<T: Encodable>(data: T, fileName: String) {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(ContentViewViewModel.dateFormatter())
+        encoder.dateEncodingStrategy = .formatted(Store.dateFormatter())
         do {
             let data = try encoder.encode(data)
             let url = try FileManager.default.url(
