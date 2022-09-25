@@ -13,12 +13,12 @@ enum HealthKitUtilsErrors: Error {
 }
 
 class HealthKitUtils: GlucoseAPI {
+    
     var healthKitStore = HKHealthStore()
     
-    func getGlucoseSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
-        if true {
-            completion(.success(getRandomSamples(for: event)))
-        }
+    func getGlucoseSamples(start: Date,
+                           end: Date,
+                           _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
         
         guard let glucoseSampleType = HKSampleType.quantityType(forIdentifier: .bloodGlucose) else {
             print("unable to get blood glucose sample type")
@@ -36,8 +36,9 @@ class HealthKitUtils: GlucoseAPI {
             }
             
             let samplePredicate = HKQuery.predicateForSamples(
-                withStart: event.date,
-                end: event.date.advanced(by: hours))
+                withStart: start,
+                end: end
+            )
             
             let sampleSort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
             
@@ -65,24 +66,7 @@ class HealthKitUtils: GlucoseAPI {
     }
         
     
-    func getRandomSamples(for event: Event) -> [MetricSample]{
-        var glucoseStart = Int.random(in: 50...300)
-        var metricSamples:[MetricSample] = []
-        for i in 1...36 {
-            glucoseStart =
-            min(
-                max(
-                    glucoseStart+Int.random(in: -20...20),
-                    50
-                ),
-                300
-            )
-            metricSamples.append(MetricSample(event.date.addingTimeInterval(Double(30*i)), Double(glucoseStart)))
-        }
-        return metricSamples;
-    }
-    
-    func getInsulinSamples(start: Date , end:Date, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
+    func getInsulinSamples(start: Date , end:Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
         guard let insulinSampleType = HKSampleType.quantityType(forIdentifier: .insulinDelivery) else {
             print("unable to get insulin sample type")
             return completion(.failure(HealthKitUtilsErrors.HealthKitGeneralError))

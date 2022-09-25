@@ -8,8 +8,11 @@
 import Foundation
 
 protocol GlucoseAPI {
-    func getGlucoseSamples(event:Event,
-                           hours:TimeInterval,
-                           debug:Bool,
+    func getGlucoseSamples(start: Date,
+                           end: Date,
                            _ completion: @escaping (Result<[MetricSample], Error>) -> Void )
+    
+    func getInsulinSamples(start: Date,
+                           end: Date,
+                       _ completion: @escaping (Result<[MetricSample], Error>) -> Void )
 }

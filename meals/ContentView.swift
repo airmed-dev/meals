@@ -6,22 +6,30 @@
 //
 
 import SwiftUI
+import HealthKit
 
 struct ContentView: View {
     @ObservedObject var viewModel = ContentViewViewModel()
-    
+
+
     var body: some View {
         TabView {
             MealList()
-                .tabItem {
-                    Label("Meals", systemImage: "circle.hexagongrid.circle")
-                }
-                .environmentObject(viewModel)
+                    .tabItem {
+                        Label("Meals", systemImage: "circle.hexagongrid.circle")
+                    }
+                    .environmentObject(viewModel)
             EventList()
-                .tabItem {
-                    Label("Events", systemImage: "calendar.day.timeline.leading")
-                }
-                .environmentObject(viewModel)
+                    .tabItem {
+                        Label("Events", systemImage: "calendar.day.timeline.leading")
+                    }
+                    .environmentObject(viewModel)
+            SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape")
+                    }
+                    .environmentObject(viewModel)
+
         }
     }
 }

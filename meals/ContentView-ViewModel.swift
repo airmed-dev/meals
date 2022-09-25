@@ -12,27 +12,45 @@ import SwiftUI
     private static let dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z"
     private static let mealsFileName = "meals.json"
     private static let eventsFileName = "events.json"
+    private static let settingsFileName = "settings.json"
 
     @Published var meals: [Meal]
     @Published var events: [Event]
+    @Published var settings: Settings
 
     private var imageCache: [Int: UIImage] = [:]
 
     // For Photo: TODO: Encrypted?
     static var documentsUrl: URL {
-        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
 
     init() {
         meals = ContentViewViewModel.loadMeals()
-        events = ContentViewViewModel
-                .load(fileName: ContentViewViewModel.eventsFileName)
-                .sorted(by: { $0.date > $1.date })
+
+        let loadedEvents: [Event] = ContentViewViewModel
+                .load(fileName: ContentViewViewModel.eventsFileName) ?? []
+        events = loadedEvents.sorted(by: { $0.date > $1.date })
+
+        settings = ContentViewViewModel.load(fileName: ContentViewViewModel.settingsFileName)
+            ?? Settings(dataSourceType: .HealthKit)
     }
 
-    init(meals: [Meal], events: [Event]) {
+    init(meals: [Meal], events: [Event], settings: Settings) {
         self.meals = meals
         self.events = events
+        self.settings = settings
+    }
+    
+    func glucoseAPI() -> GlucoseAPI {
+        switch settings.dataSourceType {
+        case .HealthKit:
+            return HealthKitUtils()
+        case .NightScout:
+            return Nightscout()
+        case .Debug:
+            return Debug()
+        }
     }
 
     // Save a meal, either a new one or an existing one
@@ -54,7 +72,7 @@ import SwiftUI
         )
         if (meal.id == 0) {
             self.meals.append(mealToSave)
-            save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
+            save(data: meals, fileName: ContentViewViewModel.mealsFileName)
         } else {
             updateMeal(meal: meal)
         }
@@ -75,16 +93,18 @@ import SwiftUI
     }
 
     func deleteMeal(meal: Meal) {
-        self.meals = self.meals.filter {
+        meals = meals.filter {
             $0.id != meal.id
         }
-        save(data: self.meals, fileName: ContentViewViewModel.mealsFileName)
+        save(data: meals, fileName: ContentViewViewModel.mealsFileName)
         deleteImage(fileName: "photos/\(meal.id).jpeg")
         imageCache.removeValue(forKey: meal.id)
     }
 
     // Save an event, either a new one or an existing one.
-
+    func saveSettings(settings: Settings){
+        save(data: settings, fileName:ContentViewViewModel.settingsFileName)
+    }
     // If the event has a 0 ID, it will create a new one starting from the latest or 1
     // TODO: Error propagations
     func saveEvent(event: Event) {
@@ -99,7 +119,7 @@ import SwiftUI
                     id: newEventID,
                     date: event.date
             )
-            self.events.append(newEvent)
+            events.append(newEvent)
         } else {
             let eventIndex = events.firstIndex(where: { $0.id == event.id })
             guard let eventIndex = eventIndex else {
@@ -107,7 +127,7 @@ import SwiftUI
             }
             events[eventIndex] = event
         }
-        save(data: self.events, fileName: ContentViewViewModel.eventsFileName)
+        save(data: events, fileName: ContentViewViewModel.eventsFileName)
         updateMealUpdateDate(event: event)
     }
 
@@ -125,20 +145,20 @@ import SwiftUI
     }
 
     func deleteEvent(eventId: Int) {
-        self.events = self.events.filter {
+        events = events.filter {
             $0.id != eventId
         }
-        save(data: self.events, fileName: ContentViewViewModel.eventsFileName)
+        save(data: events, fileName: ContentViewViewModel.eventsFileName)
     }
 
     func getMeal(event: Event) -> Meal? {
-        return meals.first {
+        meals.first {
             $0.id == event.meal_id
         }
     }
 
     func getEvents(mealId: Int) -> [Event] {
-        return events.filter {
+        events.filter {
             $0.meal_id == mealId
         }
     }
@@ -176,7 +196,7 @@ import SwiftUI
     }
 
     private static func loadMeals() -> [Meal] {
-        return ContentViewViewModel.load(fileName: mealsFileName)
+        ContentViewViewModel.load(fileName: mealsFileName) ?? []
     }
 
 
@@ -193,7 +213,7 @@ import SwiftUI
 
     // TODO: Error propagation
 
-    func save<T: Encodable>(data: [T], fileName: String) {
+    func save<T: Encodable>(data: T, fileName: String) {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(ContentViewViewModel.dateFormatter())
         do {
@@ -210,7 +230,7 @@ import SwiftUI
         }
     }
 
-    static func load<T: Decodable>(fileName: String) -> [T] {
+    static func load<T: Decodable>(fileName: String) -> T? {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(dateFormatter())
 
@@ -223,13 +243,13 @@ import SwiftUI
             ).appendingPathComponent(fileName)
 
             guard let file = try? FileHandle(forReadingFrom: url) else {
-                return []
+                return nil
             }
-            return try decoder.decode([T].self, from: file.availableData)
+            return try decoder.decode(T.self, from: file.availableData)
 
         } catch {
             print("Error: \(error)")
-            return []
+            return nil
         }
     }
 
@@ -241,4 +261,23 @@ import SwiftUI
         return formatter
     }
 
+}
+
+struct Settings: Encodable, Decodable {
+   var dataSourceType: DatasourceType
+   var nightScoutSettings: NightscoutSettings = NightscoutSettings( URL: "", Token: "")
+   var developerMode: Bool = false
+}
+
+struct NightscoutSettings: Encodable, Decodable {
+   var URL: String
+   var Token: String
+}
+
+enum DatasourceType:  String, Identifiable, Encodable, Decodable, CaseIterable {
+   case HealthKit = "HealthKit"
+   case NightScout = "NightScout"
+   case Debug = "Debug"
+
+   var id: DatasourceType { self }
 }

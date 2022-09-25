@@ -10,10 +10,14 @@ import Alamofire
 
 
 class Nightscout: GlucoseAPI {
+    func getInsulinSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void) {
+        completion(.failure(MealsError.generalError))
+    }
+    
     let nightscoutURL = "https://alex-chaplianka-nightscout.herokuapp.com"
     let nightscoutSecret = "fbc2d3e1117252c52c37bf8ca98b5098dad8685e"
     
-    func getGlucoseSamples(event: Event, hours:TimeInterval, debug:Bool = false, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
+    func getGlucoseSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
         let formatter:DateFormatter = DateFormatter()
         formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
         let decoder = JSONDecoder()
@@ -26,8 +30,8 @@ class Nightscout: GlucoseAPI {
         paramFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         
         let parameters = [
-            "find[dateString][$gte]": paramFormatter.string(from: event.date),
-            "find[dateString][$lte]": paramFormatter.string(from: event.date.addingTimeInterval(hours)),
+            "find[dateString][$gte]": paramFormatter.string(from: start),
+            "find[dateString][$lte]": paramFormatter.string(from: end),
             "count": 2000
         ] as [String : Any]
         

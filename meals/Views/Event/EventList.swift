@@ -236,7 +236,7 @@ struct EventList: View {
 
     // Helpers
     func isSameDay(date1: Date, date2: Date) -> Bool {
-        return Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
+        Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
     }
 
     func formatTime(date: Date) -> String {
@@ -294,7 +294,8 @@ struct EventList_Previews: PreviewProvider {
                             Event(meal_id: mealUUID),
                             Event(meal_id: mealUUID),
                             Event(meal_id: mealUUID),
-                        ]
+                        ],
+                        settings: Settings(dataSourceType: .HealthKit)
                 ))
     }
 }

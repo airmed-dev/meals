@@ -28,6 +28,7 @@ let insulinGradient =  [
 ]
 
 struct MetricGraph: View {
+    @EnvironmentObject var viewModel: ContentViewViewModel
     @State var samples: [MetricSample] = []
     @State var isAuthorized = false
     @State var debug = false
@@ -41,7 +42,6 @@ struct MetricGraph: View {
     var body: some View {
         VStack {
             if debug {
-                Text("Authorized: \( isAuthorized ? "Authorized" : "Not authorized" )")
                 switch dataType {
                 case .Insulin:
                     Text("Insulin Samples: \( samples.count )")
@@ -56,24 +56,24 @@ struct MetricGraph: View {
             if loading {
                 ProgressView()
             } else {
+                let start = event.date
+                let end = event.date.advanced(by: TimeInterval(hours)*60*60)
                 switch dataType {
                 case .Insulin:
-                    HStack {
-                        ValueStats(eventSamples: [event.id: (event.date, samples)],
-                                   hoursAhead: hours,
-                                   dateAxisEvery: 2,
-                                   dateStepSizeMinutes: hours < 5 ? 30: 60,
-                                   valueMin: 0 ,
-                                   valueStepSize: 0.5,
-                                   valueMax: 3,
-                                   valueColor: { _ in Color.accentColor }
-                        )
-                    }
+                    ValueStats(eventSamples: [event.id: (event.date, samples)],
+                               start: start,
+                               end: end,
+                               dateStepSizeMinutes: 30,
+                               valueMin: 0 ,
+                               valueStepSize: 0.5,
+                               valueMax: 3,
+                               valueColor: { _ in Color.accentColor }
+                    )
                 case .Glucose:
                     ValueStats(eventSamples: [event.id: (event.date,samples)],
-                               hoursAhead: hours,
-                               dateAxisEvery: 2,
-                               dateStepSizeMinutes: hours < 5 ? 30 : 60,
+                               start: start,
+                               end: end,
+                               dateStepSizeMinutes: 30,
                                valueMin: 75 ,
                                valueStepSize: 25,
                                valueMax: 300,
@@ -92,21 +92,7 @@ struct MetricGraph: View {
             }
         }
         .onAppear {
-            authorizeHealthKit { authorized, error in
-                guard authorized else {
-                    let baseMessage = "HealthKit Authorization Failed"
-                    
-                    if let error = error {
-                        print("\(baseMessage). Reason: \(error.localizedDescription)")
-                    } else {
-                        print(baseMessage)
-                    }
-                    
-                    return
-                }
-                isAuthorized=true
-                loadSamples(event: event, hours: hours)
-            }
+            loadSamples(event: event, hours: hours)
         }
         .onChange(of: event) { newEvent in
             loadSamples(event: newEvent, hours: hours)
@@ -121,9 +107,11 @@ struct MetricGraph: View {
             return
         }
         let hoursInSeconds = 60*60*TimeInterval(hours)
+        let start = event.date
+        let end = event.date.advanced(by: hoursInSeconds)
         switch self.dataType {
         case .Glucose:
-            HealthKitUtils().getGlucoseSamples(event: event, hours: hoursInSeconds) { result in
+            viewModel.glucoseAPI().getGlucoseSamples(start: start, end: end) { result in
                 switch result {
                 case .success(let samples):
                     self.samples =  samples
@@ -140,12 +128,10 @@ struct MetricGraph: View {
             let start = event.date.advanced(by: -1 * insulinActiveTime)
             let end = event.date.advanced(by: insulinActiveTime)
             
-            HealthKitUtils().getInsulinSamples(start: start, end: end) { result in
+            viewModel.glucoseAPI().getInsulinSamples(start: start, end: end) { result in
                 switch result {
                 case .success(let samples):
-                    self.samples = calculateIOB(insulinDelivery: samples,
-                                                start:event.date,
-                                                end:end)
+                    self.samples = samples
                     self.error = nil
                 case .failure(let error):
                     self.error = error
@@ -157,28 +143,7 @@ struct MetricGraph: View {
     }
     
     
-    func authorizeHealthKit(completion: @escaping (Bool, Error?) -> Void ){
-        guard HKHealthStore.isHealthDataAvailable() else {
-            completion(false,  HealthkitError.notAvailableOnDevice)
-            return
-        }
-        
-        guard
-            let dateOfBirth = HKObjectType.characteristicType(forIdentifier: .dateOfBirth),
-            let glucose = HKSampleType.quantityType(forIdentifier: .bloodGlucose),
-            let insulin = HKSampleType.quantityType(forIdentifier: .insulinDelivery) else {
-            
-            completion(false, HealthkitError.dataTypeNotAvailable)
-            return
-        }
-        
-        
-        let healthKitTypesToRead: Set<HKObjectType> = [dateOfBirth, glucose, insulin]
-        
-        HKHealthStore().requestAuthorization(toShare: [], read: healthKitTypesToRead) { (success, error) in
-            completion(success, error)
-        }
-    }
+
     
     func glucoseColors(point: GraphPoint) -> Color {
         if dataType == .Glucose {

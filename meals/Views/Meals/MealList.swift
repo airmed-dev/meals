@@ -145,21 +145,24 @@ struct MealList_Previews: PreviewProvider {
             MealList()
                     .environmentObject(ContentViewViewModel(
                             meals: mealTemplates,
-                            events: [])
+                            events: [],
+                        settings: Settings(dataSourceType: .HealthKit))
                     )
 
             // Some meals
             MealList()
                     .environmentObject(ContentViewViewModel(
                             meals: mealTemplates,
-                            events: [])
+                            events: [],
+                        settings: Settings(dataSourceType: .HealthKit))
                     )
 
             // Skeleton
             MealList()
                     .environmentObject(ContentViewViewModel(
                             meals: [],
-                            events: [])
+                            events: [],
+                        settings: Settings(dataSourceType: .HealthKit))
                     )
 
         }

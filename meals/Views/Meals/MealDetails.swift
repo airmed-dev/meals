@@ -20,48 +20,17 @@ struct MealDetails: View {
     
     func drawGlucoseAggs() -> some View {
         // Calculate ranges and step sizes
-        HStack {
-            ValueStats(eventSamples: glucoseSamples,
-                       hoursAhead: hours,
-                       dateStepSizeMinutes: hours < 5 ? 30 : 60,
-                       valueMin: 75 ,
-                       valueStepSize: 25,
-                       valueMax: 300,
-                       valueColor: { value in
-                if value < 70 {
-                    return .black
-                } else if value  <  180 {
-                    return  .green
-                } else if value < 250 {
-                    return  .red
-                } else {
-                    return  .black
-                }
-            }
-            )
-        }
-        .frame(height:250)
+        Text("Not implemented")
+            .frame(height:250)
     }
     
     func drawInsulinAggs() -> some View {
-        // Calculate ranges and step sizes
-        // TODO: Calculate IOBs
-        HStack {
-            ValueStats(eventSamples: insulinSamples,
-                       hoursAhead: hours,
-                       valueAxisEvery: 2,
-                       dateStepSizeMinutes: hours < 5 ? 30 : 60,
-                       valueMin: 0 ,
-                       valueStepSize: 0.5,
-                       valueMax: 3,
-                       valueColor: { _ in Color.accentColor }
-            )
-        }
-        .frame(height:250)
+        Text("Not implemented")
+            .frame(height:250)
     }
     
     var noData: some View {
-        return VStack(alignment: .center) {
+        VStack(alignment: .center) {
             Image(systemName: "tray.fill")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -241,7 +210,7 @@ struct MealDetails: View {
     
     func formatDate(date: Date) -> String {
         let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "EEEE, yyyy-MM-dd hh:mm"
+        dateFormatter.dateFormat = "EEEE, yyyy-MM-dd hh:mm"
         return dateFormatter.string(from: date)
         
     }
@@ -256,7 +225,9 @@ struct MealDetails: View {
         insulinSamples = [:]
         // TODO: Overlaps?
         events.forEach{ event in
-            HealthKitUtils().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
+            let start = event.date
+            let end = event.date.advanced(by: TimeInterval(hours * 60 * 60))
+            viewModel.glucoseAPI().getGlucoseSamples(start: start,end: end) { result in
                 switch result {
                 case .success(let samples):
                     glucoseSamples[event.id] = (event.date, samples)
@@ -265,10 +236,10 @@ struct MealDetails: View {
                 }
                 
             }
-            HealthKitUtils().getInsulinSamples(
-                start: event.date,
-                end: event.date.advanced(by: TimeInterval(hours*60*60))
-            ) { result in
+            viewModel.glucoseAPI().getInsulinSamples(
+                start: start,
+                end: end
+            ){ result in
                 switch result {
                 case .success(let samples):
                     insulinSamples[event.id] = (event.date, samples)
@@ -292,7 +263,8 @@ struct MealDetails_Previews: PreviewProvider {
                     Event(meal_id: mealID),
                     Event(meal_id: mealID),
                     Event(meal_id: mealID)
-                ]
+                ],
+                settings: Settings(dataSourceType: .HealthKit)
             ))
     }
 }

@@ -19,9 +19,8 @@ struct ValueStats: View {
     // it used to aggregate by the time differnce between the sample, the event start
     // thus giving a relative aggregating to the meal time
     var eventSamples: [Int: (Date, [MetricSample])]
-    var hoursAhead: Int
-    var dateAxisEvery = 2
-    var valueAxisEvery = 2
+    var start:Date
+    var end:Date
     var dateStepSizeMinutes:Double
     
     var valueMin: Double
@@ -33,12 +32,12 @@ struct ValueStats: View {
     @State var selectedIdx: Int? = nil
     
     func dateAxisLabels(size: CGSize) -> some View {
-        let values = Array ( getDateAxisValues().enumerated().filter { $0.offset % dateAxisEvery == 0} )
+        let values = Array ( getDateAxisValues().enumerated())
         return ForEach(values, id: \.element.self){ idx, axisValue in
             Text(formatTime(interval: TimeInterval(axisValue*60)))
                 .position(
                     x: minutesToPixels(
-                        minutes: Double(idx)*dateStepSizeMinutes,
+                        minutes: Double(axisValue),
                         width: size.width
                     ),
                     y: size.height
@@ -46,10 +45,9 @@ struct ValueStats: View {
         }
     }
     
-    func valueAxisLabels(size: CGSize, valueBuckets: [ValueBucket], every: Int = 2) -> some View {
-        let valueSteps = valueSteps(valueBuckets: valueBuckets)
-        let values = Array(valueSteps.enumerated().compactMap { index, value in index % every == 0 ? value : nil})
-        return ForEach(values, id: \.self){ value in
+    func valueAxisLabels(size: CGSize, valueBuckets: [ValueBucket]) -> some View {
+        var valueSteps = valueSteps(valueBuckets: valueBuckets)
+        return ForEach(valueSteps, id: \.self){ value in
             Text(String(value))
                 .position(
                     x: 20,
@@ -72,7 +70,15 @@ struct ValueStats: View {
     }
     
     func valueSteps(valueBuckets: [ValueBucket]) -> [Double]{
-        return Array(stride(from: getTrueMin(buckets: valueBuckets), to: getTrueMax(valueBuckets: valueBuckets), by: valueStepSize))
+        let max = getTrueMax(valueBuckets: valueBuckets)
+        let bucketCount = max / valueStepSize
+        let stepSize = bucketCount > 5 ? valueStepSize * 2 : valueStepSize
+
+        return Array(stride(
+            from: 0,
+            through: getTrueMax(valueBuckets: valueBuckets),
+            by: stepSize
+        ))
     }
     
     func dateAxisGrid(size: CGSize) -> some View {
@@ -93,23 +99,90 @@ struct ValueStats: View {
     
     var noData: some View {
         return VStack(alignment: .center) {
-                Spacer()
-                Image(systemName: "tray.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .font(.system(size: 30, weight: .ultraLight))
-                    .frame(width: 80)
+            Spacer()
+            Image(systemName: "tray.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(.secondary.opacity(0.5))
+                .font(.system(size: 30, weight: .ultraLight))
+                .frame(width: 80)
             
-                HStack(alignment: .center){
-                    Spacer()
-                    Text("No data")
-                        .font(.title)
-                    Spacer()
-                }
+            HStack(alignment: .center){
+                Spacer()
+                Text("No data")
+                    .font(.title)
                 Spacer()
             }
+            Spacer()
+        }
         
+    }
+    
+    func capsules(valueBuckets: [ValueBucket], width: CGFloat, height: CGFloat) -> some View {
+        let e = Array(valueBuckets.enumerated())
+        return ForEach(e, id: \.offset) { index, valueBucket  in
+            let valueRange = valuePixelRange(
+                value: valueBucket.max - valueBucket.min,
+                height: height,
+                buckets: valueBuckets
+            )
+            let capsuleWidth = minutesToPixels(
+                minutes: Double(dateStepSizeMinutes),
+                width: width
+            ) * 0.2
+            let minutePixels = minutesToPixels(
+                minutes: Double(index) * dateStepSizeMinutes,
+                width: width
+            )
+            let valuePixels = valueToPixels(
+                value: valueBucket.max,
+                height: height,
+                buckets: valueBuckets
+            )
+            let padding:CGFloat = 15
+            let centerPoint = valuePixels + valueRange / 2
+            Capsule()
+                .fill(valueRangeGradient(valueBucket: valueBucket))
+                .frame(
+                    width: capsuleWidth,
+                    height: valueRange )
+                .position(
+                    x: minutePixels,
+                    y: centerPoint
+                )
+                .onTapGesture {
+                    selectedIdx = index
+                }
+                .onHover { over in
+                    if over {
+                        selectedIdx = index
+                    } else {
+                        selectedIdx = nil
+                    }
+                }
+                .animation(.spring())
+            
+            
+            
+            // Range labels
+            if selectedIdx == index {
+                Text("\(valueBucket.max, specifier: "%.0f")")
+                    .padding(5)
+                    .background(valueColor(valueBucket.max).opacity(0.7))
+                    .cornerRadius(10)
+                    .position(x: minutePixels, y: valuePixels-padding)
+                    .shadow(radius: 3)
+                    .foregroundColor(.white)
+                
+                Text("\(valueBucket.min, specifier: "%.1f")")
+                    .padding(5)
+                    .background(valueColor(valueBucket.min).opacity(0.7))
+                    .cornerRadius(10)
+                    .position(x: minutePixels, y: valuePixels+valueRange+padding)
+                    .shadow(radius: 3)
+                    .foregroundColor(.white)
+            }
+        }
     }
     
     
@@ -124,66 +197,13 @@ struct ValueStats: View {
                 } else {
                     // Date axis and labels
                     dateAxisLabels(size: geo.size)
-                        .animation(.spring())
                     dateAxisGrid(size: geo.size)
-                        .animation(.spring())
                     
-                    // Value axis and labels
-                    valueAxisLabels(size: geo.size,  valueBuckets: valueBuckets, every: valueAxisEvery)
-                        .animation(.spring())
+                    valueAxisLabels(size: geo.size, valueBuckets: valueBuckets)
                     valueAxisGrid(size: geo.size, valueBuckets: valueBuckets)
-                        .animation(.spring())
                     
                     // Capsules
-                    ForEach(Array(valueBuckets.enumerated()), id: \.offset) { index, valueBucket  in
-                        let valueRange = valuePixelRange(value: valueBucket.max - valueBucket.min, height: geo.size.height, buckets: valueBuckets)
-                        let capsuleWidth = minutesToPixels(minutes: Double(dateStepSizeMinutes), width: geo.size.width) * 0.2
-                        let minutePixels = minutesToPixels(minutes: Double(index) * dateStepSizeMinutes, width: geo.size.width)
-                        let valuePixels = valueToPixels(value: valueBucket.max, height: geo.size.height, buckets: valueBuckets)
-                        let padding:CGFloat = 15
-                        let centerPoint = valuePixels + valueRange / 2
-                        Capsule()
-                            .fill(valueRangeGradient(valueBucket: valueBucket))
-                            .frame(
-                                width: capsuleWidth,
-                                height: valueRange )
-                            .position(
-                                x: minutePixels,
-                                y: centerPoint
-                            )
-                            .onTapGesture {
-                                selectedIdx = index
-                            }
-                            .onHover { over in
-                                if over {
-                                    selectedIdx = index
-                                } else {
-                                    selectedIdx = nil
-                                }
-                            }
-                            .animation(.spring())
-                        
-                        
-                        
-                        // Range labels
-                        if selectedIdx == index {
-                            Text("\(valueBucket.max, specifier: "%.0f")")
-                                .padding(5)
-                                .background(valueColor(valueBucket.max).opacity(0.7))
-                                .cornerRadius(10)
-                                .position(x: minutePixels, y: valuePixels-padding)
-                                .shadow(radius: 3)
-                                .foregroundColor(.white)
-                            
-                            Text("\(valueBucket.min, specifier: "%.1f")")
-                                .padding(5)
-                                .background(valueColor(valueBucket.min).opacity(0.7))
-                                .cornerRadius(10)
-                                .position(x: minutePixels, y: valuePixels+valueRange+padding)
-                                .shadow(radius: 3)
-                                .foregroundColor(.white)
-                        }
-                    }
+                    capsules(valueBuckets: valueBuckets, width: geo.size.width, height: geo.size.height)
                 }
             }
         }
@@ -227,7 +247,11 @@ struct ValueStats: View {
     }
     
     func getDateAxisValues() -> [Int]{
-        return Array(stride(from: 0, to: hoursAhead*60, by: Int(dateStepSizeMinutes)))
+        return Array(stride(
+            from: 0,
+            through:  Int(end.timeIntervalSince1970-start.timeIntervalSince1970) / 60,
+            by: Int(dateStepSizeMinutes)
+        ))
     }
     
     
@@ -245,7 +269,7 @@ struct ValueStats: View {
     
     func minutesToPixels(minutes: Double, width: CGFloat) -> CGFloat {
         let offset: CGFloat = width * 0.2
-        let scale = (width-offset) / CGFloat(hoursAhead*60)
+        let scale = (width-offset) / CGFloat(end.timeIntervalSince(start) / 60)
         return offset + CGFloat(minutes) * CGFloat(scale)
     }
     
@@ -283,5 +307,69 @@ struct ValueStats: View {
             endPoint: .bottom)
     }
     
+}
+
+
+struct ValueStats_Previews: PreviewProvider {
+    static var previews: some View {
+        let hours = 3
+        let start = Date.now
+        let end = start.addingTimeInterval(TimeInterval(hours)*60*60)
+        let glucoseSamples = Debug().getGlucoseSamples(
+            start: start,
+            end: end
+        )
+        
+        let insulinSamples = Debug().getInsulinSamples(
+            start: start,
+            end: end
+        )
+        
+        return VStack {
+            VStack(alignment:.leading) {
+                Text("Step size: 30")
+                    .font(.title)
+                    .padding()
+                ValueStats(eventSamples: [0: (start, glucoseSamples)],
+                           start: start,
+                           end: end,
+                           dateStepSizeMinutes: 30,
+                           valueMin: 75 ,
+                           valueStepSize: 25,
+                           valueMax: 300,
+                           valueColor: { _ in Color.green})
+                .frame(height: 150)
+            }
+            VStack(alignment:.leading) {
+                Text("Step size: 60")
+                    .font(.title)
+                    .padding()
+                ValueStats(eventSamples: [0: (start, glucoseSamples)],
+                           start: start,
+                           end: end,
+                           dateStepSizeMinutes: 60,
+                           valueMin: 75 ,
+                           valueStepSize: 25,
+                           valueMax: 300,
+                           valueColor: { _ in Color.green})
+                .frame(height: 150)
+            }
+            VStack(alignment:.leading) {
+                Text("Insulin samples")
+                    .font(.title)
+                    .padding()
+                ValueStats(eventSamples: [0: (start, insulinSamples)],
+                           start: start,
+                           end: end,
+                           dateStepSizeMinutes: 30,
+                           valueMin: 0 ,
+                           valueStepSize: 0.5,
+                           valueMax: 3,
+                           valueColor: { _ in Color.accentColor})
+                .frame(height: 150)
+            }
+        }
+        
+    }
 }
 
