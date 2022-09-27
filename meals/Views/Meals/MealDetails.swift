@@ -10,6 +10,7 @@ import SwiftUI
 struct MealDetails: View {
     var metricStore: MetricStore
     @EnvironmentObject var eventStore: EventStore
+    @EnvironmentObject var mealStore: MealStore
 
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
@@ -101,7 +102,8 @@ struct MealDetails: View {
                 ForEach(events, id: \.id) { event in
                     NavigationLink(destination: {
                         MetricView(
-                                meal: meal,
+                            metricStore: metricStore,
+                            meal: meal,
                                 event: event,
                                 image: image
                             )
@@ -170,7 +172,7 @@ struct MealDetails: View {
                                         .resizable()
                                         .frame(width: 15, height: 15)
                                         .foregroundColor(.white)
-                                    Text("Log event")
+                                    Text("Event")
                                         .foregroundColor(.white)
                                 }
                                 .padding(15)
@@ -195,6 +197,7 @@ struct MealDetails: View {
                                 presentationMode.wrappedValue.dismiss()
                             }
                         )
+                                .environmentObject(mealStore)
                     }
                 }
             }

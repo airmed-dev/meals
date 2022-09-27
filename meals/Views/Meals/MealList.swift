@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Alamofire
 
 struct MealList: View {
     var metricStore: MetricStore
@@ -140,6 +139,7 @@ struct MealList: View {
                             image: photoStore.loadImage(mealID: selectedMeal!.id)
                     )
                             .environmentObject(eventStore)
+                            .environmentObject(mealStore)
                 }
     }
 }

@@ -29,7 +29,7 @@ import Combine
         self.mealStore = mealStore
         self.settingsStore = settingsStore
         eventStore = EventStore(mealStore: mealStore)
-        metricStore = Store.createMetricStore(datasourceType: settingsStore.settings.dataSourceType)
+        metricStore = Store.createMetricStore(settings: settingsStore.settings)
     }
 
     init(meals: [Meal], events: [Event], settings: Settings) {
@@ -42,16 +42,16 @@ import Combine
         self.photoStore = photoStore
         self.eventStore = eventStore
         self.settingsStore = settingsStore
-        metricStore = Store.createMetricStore(datasourceType: settingsStore.settings.dataSourceType)
+        metricStore = Store.createMetricStore(settings: settingsStore.settings)
     }
 
 
-    private static func createMetricStore(datasourceType: DatasourceType) -> MetricStore {
-        switch datasourceType {
+    private static func createMetricStore(settings: Settings) -> MetricStore {
+        switch settings.dataSourceType {
         case .HealthKit:
             return HealthKitUtils()
         case .NightScout:
-            return Nightscout()
+            return Nightscout(settings: settings.nightScoutSettings)
         case .Debug:
             return Debug()
         }

@@ -52,14 +52,14 @@ struct EventList: View {
     var header: some View {
         let colors = [Color(hex: 0x424242), Color(hex: 0x002266)]
         let meal = selectedEvent != nil
-                ? mealStore.getMeal(event: selectedEvent!)!
+                ? mealStore.getMeal(event: selectedEvent!)
                 : nil
         let image = meal != nil
                 ? photoStore.loadImage(mealID: meal!.id)
                 : nil
 
         return HStack {
-            if let selectedEvent = selectedEvent {
+            if let selectedEvent = selectedEvent, let meal = meal {
                 // Photo
                 HStack {
                     if let image = image {
@@ -76,7 +76,7 @@ struct EventList: View {
                 // Texts
                 VStack {
                     HStack {
-                        Text(meal!.name)
+                        Text(meal.name)
                                 .font(.headline)
                         Spacer()
                     }
@@ -124,7 +124,7 @@ struct EventList: View {
                         .padding([.leading, .top], 10)
                 Spacer()
             }
-            MetricGraph(metricStore: metricStore,event: event, dataType: type, hours: hours)
+            MetricGraph(metricStore: metricStore, event: event, dataType: type, hours: hours)
         }
                 .background(Color(uiColor: .systemBackground))
                 .cornerRadius(15)
@@ -266,10 +266,15 @@ struct EventList: View {
     }
 
     func getTimelineEvents() -> [TimelineEvent] {
-        eventStore.events.map {
-            TimelineEvent(
+        eventStore.events.compactMap {
+            // This really shouldn't happen...
+            // right now it happens because of bad deletion of meals but not related events
+            guard let meal = mealStore.getMeal(event: $0) else {
+                return nil
+            }
+            return TimelineEvent(
                     event: $0,
-                    mealUpdatedAt: mealStore.getMeal(event: $0)!.updatedAt
+                    mealUpdatedAt: meal.updatedAt
             )
         }
     }

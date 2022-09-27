@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Alamofire
 import BottomSheet
 
 enum HealthkitError: Error {
