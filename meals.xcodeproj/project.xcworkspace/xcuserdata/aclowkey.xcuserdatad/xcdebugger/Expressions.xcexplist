@@ -61,10 +61,10 @@
          contextName = "static EventsAPI.saveEvent(event:completion:):EventsAPI.swift">
       </ContextState>
       <ContextState
-         contextName = "MetricGraph.aggregate(samples:):EventMetricsView.swift">
+         contextName = "closure #1 in Debug.getInsulinSamples(start:end:_:):Debug.swift">
          <PersistentStrings>
             <PersistentString
-               value = "groupedByClosestHour[0]![0]">
+               value = "end.timeIntervalSince1970">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -78,6 +78,14 @@
       </ContextState>
       <ContextState
          contextName = "closure #1 in closure #1 in MetricGraph.body.getter:MetricGraph.swift">
+      </ContextState>
+      <ContextState
+         contextName = "MetricGraph.aggregate(samples:):EventMetricsView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "groupedByClosestHour[0]![0]">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "closure #2 in MealDetails.body.getter:MealDetails.swift">
@@ -103,6 +111,14 @@
       </ContextState>
       <ContextState
          contextName = "ContentViewViewModel.init():ContentView-ViewModel.swift">
+      </ContextState>
+      <ContextState
+         contextName = "static ContentViewViewModel.loadImage(meal:):ContentView-ViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "meal.name">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "closure #1 in MetricGraph.loadSamples():MetricGraph.swift">
@@ -144,16 +160,24 @@
          contextName = "closure #1 in MetricGraph.body.getter:EventMetricsView.swift">
          <PersistentStrings>
             <PersistentString
-               value = "computedSamples.first!.value">
-            </PersistentString>
-            <PersistentString
                value = "computedSamples.last!.value">
             </PersistentString>
             <PersistentString
                value = "sampleAndStart">
             </PersistentString>
             <PersistentString
+               value = "computedSamples.first!.value">
+            </PersistentString>
+            <PersistentString
                value = "aggregate(samples: computedSamples).first">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #1 in closure #2 in closure #1 in EventList.timeline.getter:EventList.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "timelineEvent.event.id">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -165,6 +189,14 @@
       </ContextState>
       <ContextState
          contextName = "static MealsAPI.getMeals():MealsAPI.swift">
+      </ContextState>
+      <ContextState
+         contextName = "EventList.mealSelector.getter:EventList.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "showLogEventAlert">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "closure #1 in MetricGraph.normalizeGraph(samples:width:height:dateMin:dateMax:):MetricGraph.swift">
