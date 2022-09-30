@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "51d67100121d586c9d15ec0227de96442af4dd6d"
+      }
+    },
+    {
+      "identity" : "bottomsheet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/adamfootdev/BottomSheet.git",
+      "state" : {
+        "revision" : "0e6db002eeb5e3ba402e94dfe6a120f78b5a64df",
+        "version" : "0.2.4"
+      }
+    }
+  ],
+  "version" : 2
+}
