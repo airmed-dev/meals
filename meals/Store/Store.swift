@@ -45,7 +45,10 @@ import Combine
         metricStore = Store.createMetricStore(settings: settingsStore.settings)
     }
     
-    func load(){
+    func load() throws {
+        try mealStore.load()
+        try eventStore.load()
+        try settingsStore.load()
     }
 
 

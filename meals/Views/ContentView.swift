@@ -40,9 +40,7 @@ struct ContentView: View {
         }
         .onAppear {
             do {
-                try self.store.mealStore.load()
-                try self.store.eventStore.load()
-                try self.store.settingsStore.load()
+                try store.load()
             } catch {
                 showErrorAlert = true
                 errorMessage = "Failed loading settings: \(error)"
