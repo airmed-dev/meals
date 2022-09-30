@@ -34,7 +34,7 @@ class EventStore: ObservableObject {
                     id: newEventID,
                     date: event.date
             )
-            events.append(newEvent)
+            events.insert(newEvent, at: 0)
         } else {
             let eventIndex = events.firstIndex(where: { $0.id == event.id })
             guard let eventIndex = eventIndex else {

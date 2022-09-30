@@ -178,7 +178,6 @@ struct MealDetails: View {
                                 .padding(15)
                                 .background(.primary)
                                 .cornerRadius(15)
-                                //                    .clipShape(Circle())
                             }
                             .shadow(radius: 5)
                             .padding()
@@ -203,13 +202,9 @@ struct MealDetails: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(.gray.opacity(0.2))
-            .alert(isPresented: $showLogMeal) {
-                let date = Date()
-                return Alert(title: Text("Enter meal event at: \(formatDate(date:date))"),
-                             primaryButton: .default(Text("Yes")){
-                    createEvent(date: date)
-                    loadSamples(events: eventStore.getEvents(mealId: meal.id))
-                }, secondaryButton: .cancel())
+            .bottomSheet(isPresented: $showLogMeal, detents: [.medium()]) {
+                MealEventLogger(meal: meal)
+                        .environmentObject(eventStore)
             }
             .onAppear {
                 loadSamples(events: mealEvents)
@@ -225,11 +220,7 @@ struct MealDetails: View {
         
     }
     
-    func createEvent(date: Date){
-        let event = Event(meal_id: meal.id, id: 0, date: date)
-        eventStore.saveEvent(event: event)
-    }
-    
+
     func loadSamples(events: [Event]) {
         glucoseSamples = [:]
         insulinSamples = [:]
@@ -259,6 +250,44 @@ struct MealDetails: View {
             }
         }
     }
+}
+
+struct MealEventLogger: View {
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var eventStore: EventStore
+    @State var date: Date = Date.now
+    var meal: Meal
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Log an event")
+                    .font(.largeTitle)
+            HStack {
+                Text("Log an event for")
+                Text(meal.name)
+                        .fontWeight(.heavy)
+            }
+                    .font(.subheadline)
+            DatePicker("Event date", selection: $date, displayedComponents: [.date])
+            DatePicker("Event time", selection: $date, displayedComponents: [.hourAndMinute])
+            Spacer()
+            HStack {
+                Button("Save") {
+                    let event = Event(meal_id: meal.id, id: 0, date: date)
+                    eventStore.saveEvent(event: event)
+                    presentationMode.wrappedValue.dismiss()
+                }
+                        .padding()
+                Spacer()
+                Button("Cancel", role:.cancel){
+                    presentationMode.wrappedValue.dismiss()
+                }
+                        .padding()
+            }
+        }
+                .padding()
+    }
+
 }
 
 struct MealDetails_Previews: PreviewProvider {
