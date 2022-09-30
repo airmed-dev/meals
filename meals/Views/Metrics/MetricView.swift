@@ -162,9 +162,14 @@ struct MetricView: View {
     }
 
     func deleteEvent() {
-        eventStore.deleteEvent(eventId: event.id)
-        showSucessAlert = true
-        successMessage = "Event deleted"
+        do {
+            try eventStore.deleteEvent(eventId: event.id)
+            showSucessAlert = true
+            successMessage = "Event deleted"
+        } catch {
+            showErrorAlert = true
+            errorMessage = "Failed deleting event: \(error)"
+        }
     }
 
 }
@@ -239,8 +244,7 @@ struct UpdateEventView: View {
                     newDate = event.date
                 }
                 .alert(errorMessage, isPresented: $showErrorAlert) {
-                    Button("Ok", role: .cancel) {
-                    }
+                    Button("Ok", role: .cancel) { }
                 }
                 .alert(successMessage, isPresented: $showSuccessAlert) {
                     Button("Ok", role: .cancel) {
@@ -252,9 +256,14 @@ struct UpdateEventView: View {
 
     func saveEvent(event: Event) {
         let newEvent = Event(meal_id: event.meal_id, id: event.id, date: newDate)
-        eventStore.saveEvent(event: newEvent)
-        showSuccessAlert = true
-        successMessage = "Saved event"
+        do {
+            try eventStore.saveEvent(event: newEvent)
+            showSuccessAlert = true
+            successMessage = "Saved event"
+        } catch {
+            showErrorAlert = true
+            errorMessage = "Failed saving event: \(error)"
+        }
     }
 
 }

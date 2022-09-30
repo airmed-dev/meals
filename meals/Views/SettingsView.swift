@@ -17,6 +17,9 @@ struct SettingsView: View {
     @State var authorizeRequested: Bool = false
     @State var showSuccessAlert:Bool = false
 
+    @State var showErrorAlert:Bool = false
+    @State var errorMessage: String = ""
+    
     @State
     var settingsDraft: Settings = Settings(
             dataSourceType: .HealthKit,
@@ -87,7 +90,12 @@ struct SettingsView: View {
                 }
                 HStack {
                     Button(action: {
-                        settingsStore.saveSettings(settings: settingsDraft)
+                        do {
+                            try settingsStore.saveSettings(settings: settingsDraft)
+                        } catch {
+                            showErrorAlert = true
+                            errorMessage = "Failed saving settings: \(error)"
+                        }
                         showSuccessAlert = true
                     }) {
                         Text("Save")
@@ -102,6 +110,9 @@ struct SettingsView: View {
                 }
                 .alert(isPresented: $showSuccessAlert){
                     Alert(title: Text("Saved"))
+                }
+                .alert(isPresented: $showErrorAlert) {
+                    Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .cancel())
                 }
                 .onAppear {
                     // When the ViewModel available copy the values to the draft

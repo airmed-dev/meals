@@ -43,7 +43,7 @@ struct MealList: View {
                             MealCard(
                                     font: .headline,
                                     meal: meal,
-                                    image: photoStore.loadImage(mealID: meal.id)
+                                    image: try? photoStore.loadImage(mealID: meal.id)
                             )
                                     .frame(
                                             width: 150,
@@ -136,7 +136,7 @@ struct MealList: View {
                     MealDetails(
                             metricStore: metricStore,
                             meal: selectedMeal!,
-                            image: photoStore.loadImage(mealID: selectedMeal!.id)
+                            image: try? photoStore.loadImage(mealID: selectedMeal!.id)
                     )
                             .environmentObject(eventStore)
                             .environmentObject(mealStore)

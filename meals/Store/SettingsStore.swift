@@ -9,15 +9,19 @@ class SettingsStore: ObservableObject {
     @Published var settings: Settings
 
     init() {
-        settings = JsonUtils.load(fileName: SettingsStore.fileName)
-                ?? Settings(dataSourceType: .HealthKit)
+        settings = Settings(dataSourceType: .Debug)
     }
 
     init(settings: Settings) {
         self.settings = settings
     }
+    
+    func load() throws {
+         settings = try JsonUtils.load(fileName: SettingsStore.fileName)
+                ?? Settings(dataSourceType: .HealthKit)
+    }
 
-    func saveSettings(settings: Settings) {
-        JsonUtils.save(data: settings, fileName: SettingsStore.fileName)
+    func saveSettings(settings: Settings) throws {
+        try JsonUtils.save(data: settings, fileName: SettingsStore.fileName)
     }
 }

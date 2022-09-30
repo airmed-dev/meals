@@ -11,23 +11,27 @@ class MealStore: ObservableObject {
     private static let fileName = "meals.json"
     private var photoStore: PhotoStore
 
-    init(photoStore: PhotoStore) {
+    init(photoStore: PhotoStore){
         self.photoStore = photoStore
-        meals = JsonUtils.load(fileName: MealStore.fileName) ?? []
+        self.meals = []
     }
 
     init(photoStore: PhotoStore, meals: [Meal]) {
         self.photoStore = photoStore
         self.meals = meals
     }
-
+    
+    func load() throws {
+        meals = try JsonUtils.load(fileName: MealStore.fileName) ?? []
+    }
+    
     func getMeal(event: Event) -> Meal? {
         meals.first {
             $0.id == event.meal_id
         }
     }
 
-    func saveMeal(meal: Meal, image: UIImage?) {
+    func saveMeal(meal: Meal, image: UIImage?) throws {
         let mealID = meal.id != 0
                 ? meal.id
                 : (meals.map {
@@ -42,40 +46,41 @@ class MealStore: ObservableObject {
         )
         if (meal.id == 0) {
             meals.append(mealToSave)
-            JsonUtils.save(data: meals, fileName: MealStore.fileName)
+            try JsonUtils.save(data: meals, fileName: MealStore.fileName)
         } else {
-            updateMeal(meal: meal)
+            try updateMeal(meal: meal)
         }
 
         if let image = image {
-            photoStore.saveImage(mealID: mealID, image: image)
+            try photoStore.saveImage(mealID: mealID, image: image)
         }
     }
 
-    func updateMeal(meal: Meal) {
+    func updateMeal(meal: Meal) throws {
         let mealIndex = meals.firstIndex(where: { $0.id == meal.id })
         guard let mealIndex = mealIndex else {
             return
         }
         meals[mealIndex] = meal
+        try JsonUtils.save(data: meals, fileName: MealStore.fileName)
     }
 
-    func deleteMeal(meal: Meal) {
+    func deleteMeal(meal: Meal) throws {
         meals = meals.filter {
             $0.id != meal.id
         }
-        JsonUtils.save(data: meals, fileName: MealStore.fileName)
-        photoStore.deleteImage(mealID: meal.id)
+        try JsonUtils.save(data: meals, fileName: MealStore.fileName)
+        try photoStore.deleteImage(mealID: meal.id)
     }
 
-    func updateMealUpdateDate(event: Event) {
+    func updateMealUpdateDate(event: Event) throws {
         let meal = meals.first {
             $0.id == event.meal_id
         }
         guard let meal = meal else {
             return
         }
-        updateMeal(meal: Meal(
+        try updateMeal(meal: Meal(
                 id: meal.id,
                 name: meal.name,
                 description: meal.description,
