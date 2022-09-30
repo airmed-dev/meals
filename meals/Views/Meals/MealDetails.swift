@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct MealDetails: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    var metricStore: MetricStore
+    @EnvironmentObject var eventStore: EventStore
+    @EnvironmentObject var mealStore: MealStore
+
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
+    var image: UIImage?
     
     @State var showLogMeal: Bool = false
     @State var hours: Int = 3
@@ -20,48 +24,17 @@ struct MealDetails: View {
     
     func drawGlucoseAggs() -> some View {
         // Calculate ranges and step sizes
-        HStack {
-            ValueStats(eventSamples: glucoseSamples,
-                       hoursAhead: hours,
-                       dateStepSizeMinutes: hours < 5 ? 30 : 60,
-                       valueMin: 75 ,
-                       valueStepSize: 25,
-                       valueMax: 300,
-                       valueColor: { value in
-                if value < 70 {
-                    return .black
-                } else if value  <  180 {
-                    return  .green
-                } else if value < 250 {
-                    return  .red
-                } else {
-                    return  .black
-                }
-            }
-            )
-        }
-        .frame(height:250)
+        Text("Not implemented")
+            .frame(height:250)
     }
     
     func drawInsulinAggs() -> some View {
-        // Calculate ranges and step sizes
-        // TODO: Calculate IOBs
-        HStack {
-            ValueStats(eventSamples: insulinSamples,
-                       hoursAhead: hours,
-                       valueAxisEvery: 2,
-                       dateStepSizeMinutes: hours < 5 ? 30 : 60,
-                       valueMin: 0 ,
-                       valueStepSize: 0.5,
-                       valueMax: 3,
-                       valueColor: { _ in Color.accentColor }
-            )
-        }
-        .frame(height:250)
+        Text("Not implemented")
+            .frame(height:250)
     }
     
     var noData: some View {
-        return VStack(alignment: .center) {
+        VStack(alignment: .center) {
             Image(systemName: "tray.fill")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -83,7 +56,7 @@ struct MealDetails: View {
     
     func statistics(events: [Event]) -> some View {
         VStack(alignment: .leading) {
-            HStack() {
+            HStack {
                 Text("Glucose statistics")
                     .font(.headline)
                     .padding()
@@ -96,7 +69,7 @@ struct MealDetails: View {
                 noData
             }
             
-            HStack() {
+            HStack {
                 Text("Insulin statistics")
                     .font(.headline)
                     .padding()
@@ -118,7 +91,7 @@ struct MealDetails: View {
     
     func eventsList(events: [Event]) -> some View {
         VStack(alignment: .leading) {
-            HStack() {
+            HStack {
                 Text("Meal events")
                     .font(.headline)
                     .padding()
@@ -128,8 +101,13 @@ struct MealDetails: View {
             if events.count > 0 {
                 ForEach(events, id: \.id) { event in
                     NavigationLink(destination: {
-                        MetricView(meal: meal, event: event)
-                            .environmentObject(viewModel)
+                        MetricView(
+                            metricStore: metricStore,
+                            meal: meal,
+                                event: event,
+                                image: image
+                            )
+                            .environmentObject(eventStore)
                     }) {
                         HStack {
                             Text(formatDate(date: event.date))
@@ -138,7 +116,7 @@ struct MealDetails: View {
                         }
                         .padding()
                     }
-                    MetricGraph(event: event, dataType: .Glucose, hours: hours)
+                    MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
                         .frame(height: 200)
                 }
             } else {
@@ -152,14 +130,14 @@ struct MealDetails: View {
     }
     
     var body: some View {
-        let mealEvents = viewModel.getEvents(mealId: meal.id)
+        let mealEvents = eventStore.getEvents(mealId: meal.id)
         return NavigationView {
             GeometryReader { geo in
                 ScrollView {
                     MealCard(
                         font: .largeTitle,
                         meal: meal,
-                        image: viewModel.loadImage(meal: meal)
+                        image: image
                     )
                     .frame(width: geo.size.width, height: geo.size.height/2)
                     
@@ -186,7 +164,7 @@ struct MealDetails: View {
                 GeometryReader { _ in
                     VStack {
                         Spacer()
-                        HStack() {
+                        HStack {
                             Spacer()
                             Button(action: {showLogMeal.toggle() }) {
                                 HStack {
@@ -194,13 +172,12 @@ struct MealDetails: View {
                                         .resizable()
                                         .frame(width: 15, height: 15)
                                         .foregroundColor(.white)
-                                    Text("Log event")
+                                    Text("Event")
                                         .foregroundColor(.white)
                                 }
                                 .padding(15)
                                 .background(.primary)
                                 .cornerRadius(15)
-                                //                    .clipShape(Circle())
                             }
                             .shadow(radius: 5)
                             .padding()
@@ -214,23 +191,20 @@ struct MealDetails: View {
                     NavigationLink("Edit"){
                         MealEditor(
                             meal: meal,
-                            image: viewModel.loadImage(meal: meal),
+                            image: image,
                             onEdit: {
                                 presentationMode.wrappedValue.dismiss()
                             }
                         )
+                                .environmentObject(mealStore)
                     }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(.gray.opacity(0.2))
-            .alert(isPresented: $showLogMeal) {
-                let date = Date()
-                return Alert(title: Text("Enter meal event at: \(formatDate(date:date))"),
-                             primaryButton: .default(Text("Yes")){
-                    createEvent(date: date)
-                    loadSamples(events: viewModel.getEvents(mealId: meal.id))
-                }, secondaryButton: .cancel())
+            .bottomSheet(isPresented: $showLogMeal, detents: [.medium()]) {
+                MealEventLogger(meal: meal)
+                        .environmentObject(eventStore)
             }
             .onAppear {
                 loadSamples(events: mealEvents)
@@ -241,22 +215,20 @@ struct MealDetails: View {
     
     func formatDate(date: Date) -> String {
         let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "EEEE, yyyy-MM-dd hh:mm"
+        dateFormatter.dateFormat = "EEEE, yyyy-MM-dd hh:mm"
         return dateFormatter.string(from: date)
         
     }
     
-    func createEvent(date: Date){
-        let event = Event(meal_id: meal.id, id: 0, date: date)
-        viewModel.saveEvent(event: event)
-    }
-    
+
     func loadSamples(events: [Event]) {
         glucoseSamples = [:]
         insulinSamples = [:]
         // TODO: Overlaps?
         events.forEach{ event in
-            HealthKitUtils().getGlucoseSamples(event: event, hours: TimeInterval(hours*60*60)) { result in
+            let start = event.date
+            let end = event.date.advanced(by: TimeInterval(hours * 60 * 60))
+            metricStore.getGlucoseSamples(start: start,end: end) { result in
                 switch result {
                 case .success(let samples):
                     glucoseSamples[event.id] = (event.date, samples)
@@ -265,10 +237,10 @@ struct MealDetails: View {
                 }
                 
             }
-            HealthKitUtils().getInsulinSamples(
-                start: event.date,
-                end: event.date.advanced(by: TimeInterval(hours*60*60))
-            ) { result in
+            metricStore.getInsulinSamples(
+                start: start,
+                end: end
+            ){ result in
                 switch result {
                 case .success(let samples):
                     insulinSamples[event.id] = (event.date, samples)
@@ -277,22 +249,66 @@ struct MealDetails: View {
                 }
             }
         }
-        
     }
+}
+
+struct MealEventLogger: View {
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var eventStore: EventStore
+    @State var date: Date = Date.now
+    var meal: Meal
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Log an event")
+                    .font(.largeTitle)
+            HStack {
+                Text("Log an event for")
+                Text(meal.name)
+                        .fontWeight(.heavy)
+            }
+                    .font(.subheadline)
+            DatePicker("Event date", selection: $date, displayedComponents: [.date])
+            DatePicker("Event time", selection: $date, displayedComponents: [.hourAndMinute])
+            Spacer()
+            HStack {
+                Button("Save") {
+                    let event = Event(meal_id: meal.id, id: 0, date: date)
+                    eventStore.saveEvent(event: event)
+                    presentationMode.wrappedValue.dismiss()
+                }
+                        .padding()
+                Spacer()
+                Button("Cancel", role:.cancel){
+                    presentationMode.wrappedValue.dismiss()
+                }
+                        .padding()
+            }
+        }
+                .padding()
+    }
+
 }
 
 struct MealDetails_Previews: PreviewProvider {
     static var previews: some View {
+        let exampleMeal: Meal = Meal(
+                id: 1,
+                name: "Example meal",
+                description: "Description"
+        )
         let mealID = 1
-        MealDetails(meal: MealStore.exampleMeal)
-            .environmentObject(ContentViewViewModel(
-                meals: [MealStore.exampleMeal],
+        let store = Store(
+                meals: [exampleMeal],
                 events: [
                     Event(meal_id: mealID),
                     Event(meal_id: mealID),
                     Event(meal_id: mealID),
                     Event(meal_id: mealID)
-                ]
-            ))
+                ],
+                settings: Settings(dataSourceType: .HealthKit)
+            )
+        MealDetails(metricStore: store.metricStore, meal: exampleMeal)
+            .environmentObject(store)
     }
 }

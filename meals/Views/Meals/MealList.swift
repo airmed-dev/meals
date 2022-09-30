@@ -6,144 +6,181 @@
 //
 
 import SwiftUI
-import Alamofire
 
 struct MealList: View {
-    @EnvironmentObject var viewModel: ContentViewViewModel
-    
+    var metricStore: MetricStore
+    @EnvironmentObject var mealStore: MealStore
+    @EnvironmentObject var eventStore: EventStore
+    @EnvironmentObject var photoStore: PhotoStore
+
     @State var displayMealEditor: Bool = false
     @State var displayMealDetails: Bool = false
-    
+
     @State var selectedMeal: Meal?
-    
-    
-    var mealGrid: some View {
+    @State var textFilter: String = ""
+
+
+    func mealGrid(textFilter: String) -> some View {
         let twoColumns = [GridItem(.flexible()), GridItem(.flexible())]
-        return LazyVGrid (columns: twoColumns){
-            ForEach(viewModel.meals, id: \.hashValue) { meal in
+        var meals = textFilter == ""
+                ? mealStore.meals
+                : mealStore.meals.filter {
+            $0.name.contains(textFilter) || $0.description.contains(textFilter)
+        }
+        meals.sort {
+            $0.updatedAt.compare($1.updatedAt) == .orderedDescending
+        }
+        return LazyVGrid(columns: twoColumns) {
+            ForEach(meals, id: \.hashValue) { meal in
                 HStack {
-                    withAnimation(.easeInOut(duration: 10.0)){
+                    withAnimation(.easeInOut(duration: 10.0)) {
                         Button(action: {
-                            withAnimation(.easeInOut){
+                            withAnimation(.easeInOut) {
                                 selectedMeal = meal
                                 displayMealDetails = true
                             }
-                        }){
+                        }) {
                             MealCard(
-                                font: .headline,
-                                meal: meal,
-                                image: viewModel.loadImage(meal: meal)
+                                    font: .headline,
+                                    meal: meal,
+                                    image: photoStore.loadImage(mealID: meal.id)
                             )
-                            .frame(
-                                width: 150,
-                                height: 150
-                            )
-                            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                                    .frame(
+                                            width: 150,
+                                            height: 150
+                                    )
+                                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
                         }
                     }
                 }
             }
         }
     }
-    
+
     var noMeals: some View {
-        return GeometryReader { geo in
+        GeometryReader { geo in
             VStack(alignment: .center) {
                 Image(systemName: "tray.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .font(.system(size: 30, weight: .ultraLight))
-                    .frame(width: 80)
-            
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(.secondary.opacity(0.5))
+                        .font(.system(size: 30, weight: .ultraLight))
+                        .frame(width: 80)
+
                 Text("No meals")
-                    .font(.title)
-            
-                HStack(alignment: .center){
+                        .font(.title)
+
+                HStack(alignment: .center) {
                     Spacer()
                     Text("Click on the plus button")
-                        .font(.body)
+                            .font(.body)
                     Spacer()
                 }
             }
-            .position(
-                x: geo.frame(in: .local).midX,
-                y: geo.frame(in: .local).midY
-            )
+                    .position(
+                            x: geo.frame(in: .local).midX,
+                            y: geo.frame(in: .local).midY
+                    )
         }
-        
+
     }
-    
+
     var body: some View {
-        ScrollView {
-            if viewModel.meals.count == 0 {
-                noMeals
-            } else {
-                mealGrid
-            }
-        }
-        .overlay {
-            // FAB: TODO: Perhaps add the button to both views?
-            VStack(alignment: .trailing) {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {displayMealEditor.toggle() }) {
+        NavigationView {
+            ScrollView {
+                if mealStore.meals.count == 0 {
+                    noMeals
+                } else {
+                    if textFilter != "" {
                         HStack {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 15, height: 15)
-                                .foregroundColor(.white)
-                            Text("Meal")
-                                .foregroundColor(.white)
+                            Text("Searching for")
+                            Text(textFilter)
+                                    .bold()
                         }
-                        .padding(15)
-                        .background(.primary)
-                        .cornerRadius(15)
-        //                    .clipShape(Circle())
                     }
-                    .padding(10)
+                    mealGrid(textFilter: textFilter)
                 }
             }
+                    .searchable(text: $textFilter)
+                    .navigationTitle("Meals")
         }
-        .bottomSheet(isPresented: $displayMealEditor, detents: [.large()]){
-            MealEditor()
-                .environmentObject(viewModel)
-        }
-        .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
-            MealDetails(meal: selectedMeal!)
-                .environmentObject(viewModel)
-        }
+                .overlay {
+                    // FAB: TODO: Perhaps add the button to both views?
+                    VStack(alignment: .trailing) {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Button(action: { displayMealEditor.toggle() }) {
+                                HStack {
+                                    Image(systemName: "plus")
+                                            .resizable()
+                                            .frame(width: 15, height: 15)
+                                            .foregroundColor(.white)
+                                    Text("Meal")
+                                            .foregroundColor(.white)
+                                }
+                                        .padding(15)
+                                        .background(.primary)
+                                        .cornerRadius(15)
+                                //                    .clipShape(Circle())
+                            }
+                                    .padding(10)
+                        }
+                    }
+                }
+                .bottomSheet(isPresented: $displayMealEditor, detents: [.large()]) {
+                    MealEditor()
+                            .environmentObject(mealStore)
+                }
+                .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
+                    MealDetails(
+                            metricStore: metricStore,
+                            meal: selectedMeal!,
+                            image: photoStore.loadImage(mealID: selectedMeal!.id)
+                    )
+                            .environmentObject(eventStore)
+                            .environmentObject(mealStore)
+                }
     }
 }
 
 struct MealList_Previews: PreviewProvider {
     static var previews: some View {
-        let mealTemplates = (1...3).map{value in
-            return Meal(id: value, name: "blueberry pie", description: "delicious blueberry")
+        let mealTemplates = (1...3).map { value in
+            Meal(id: value, name: "blueberry pie", description: "delicious blueberry")
         }
+        let noMeals = Store(
+                meals: mealTemplates,
+                events: [],
+                settings: Settings(dataSourceType: .Debug)
+        )
+        let someMeals = Store(
+                meals: mealTemplates,
+                events: [],
+                settings: Settings(dataSourceType: .Debug)
+        )
+        let skeleton = Store(
+                meals: [],
+                events: [],
+                settings: Settings(dataSourceType: .Debug)
+        )
         Group {
             // No meals
-            MealList()
-                .environmentObject(ContentViewViewModel(
-                    meals: mealTemplates,
-                    events: [])
-                )
-            
+            MealList(metricStore: noMeals.metricStore)
+                    .environmentObject(noMeals.photoStore)
+                    .environmentObject(noMeals.mealStore)
+                    .environmentObject(noMeals.eventStore)
+
             // Some meals
-            MealList()
-                .environmentObject(ContentViewViewModel(
-                    meals: mealTemplates,
-                    events: [])
-                )
-            
+            MealList(metricStore: someMeals.metricStore)
+                    .environmentObject(someMeals.photoStore)
+                    .environmentObject(someMeals.mealStore)
+                    .environmentObject(someMeals.eventStore)
             // Skeleton
-            MealList()
-                .environmentObject(ContentViewViewModel(
-                    meals: [],
-                    events: [])
-                )
-            
+            MealList(metricStore: skeleton.metricStore)
+                    .environmentObject(someMeals.photoStore)
+                    .environmentObject(someMeals.mealStore)
+                    .environmentObject(someMeals.eventStore)
         }
     }
 }

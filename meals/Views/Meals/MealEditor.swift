@@ -11,12 +11,11 @@ import SwiftUI
 struct MealEditor: View {
     static var placeholderDescription = "Enter a description"
     
-    @EnvironmentObject var viewModel: ContentViewViewModel
+    @EnvironmentObject var mealStore: MealStore
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State var meal: Meal = Meal(id:0, name: "", description: MealEditor.placeholderDescription)
 
-    
     // Photo
     @State var imageWasSelected = false
     @State var image: UIImage? = nil
@@ -199,7 +198,7 @@ struct MealEditor: View {
     
     func save(meal: Meal, image: UIImage?) {
         saveButtonStatus = .Clicked
-        viewModel.saveMeal(meal: meal, image: image)
+        mealStore.saveMeal(meal: meal, image: image)
         saveButtonStatus = .Saved
         showSuccessAlert = true
         successMessage = "Saved '\(meal.name)'"
@@ -208,7 +207,7 @@ struct MealEditor: View {
     
     func delete(meal: Meal){
         deleteButtonStatus = .Clicked
-        viewModel.deleteMeal(meal: meal)
+        mealStore.deleteMeal(meal: meal)
         deleteButtonStatus = .Saved
         showSuccessAlert = true
         successMessage = "Delete \(meal.name)"
@@ -229,7 +228,8 @@ struct MealEditor_Previews: PreviewProvider {
                     name: "A delicious meal",
                     description: "Some desciprtion for the meal"
                 ),
-                image: ContentViewViewModel.loadImage(meal: Meal(id:0, name:"dummy", description: "dummy"))
+                    // TODO: Load from assets?
+                image: nil
             )
         }
     }

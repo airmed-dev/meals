@@ -12,8 +12,10 @@ import Foundation
 import Foundation
 
 func calculateIOB(insulinDelivery: [MetricSample], start: Date, end: Date) -> [MetricSample] {
+    if insulinDelivery.isEmpty {
+        return []
+    }
     // Calculate iob for every 5 minute sample between start and end
-    
     // Prepare insulin model. right now just for humalog
     // values are copied from LoopKit
     let activeDuration: TimeInterval = 360 * 60
