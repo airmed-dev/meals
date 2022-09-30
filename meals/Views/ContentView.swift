@@ -47,7 +47,9 @@ struct ContentView: View {
             }
         }
         .alert(isPresented: $showErrorAlert){
-            Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .cancel())
+            Alert(title: Text("Error"), message: Text(errorMessage+"\nRestart the app"), dismissButton: .cancel(Text("Exit"), action: {
+                exit(-1)
+            }))
         }
     }
 }
