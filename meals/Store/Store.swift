@@ -20,7 +20,7 @@ import Combine
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
 
-    init() {
+    init(){
         let photoStore = PhotoStore(documentsUrl: Store.documentsUrl)
         let mealStore = MealStore(photoStore: photoStore)
         let settingsStore = SettingsStore()
@@ -44,6 +44,9 @@ import Combine
         self.settingsStore = settingsStore
         metricStore = Store.createMetricStore(settings: settingsStore.settings)
     }
+    
+    func load(){
+    }
 
 
     private static func createMetricStore(settings: Settings) -> MetricStore {
@@ -61,7 +64,7 @@ import Combine
 
 // TODO: Movee this one as well to JSONStore
 class JsonUtils {
-    static func save<T: Encodable>(data: T, fileName: String) {
+    static func save<T: Encodable>(data: T, fileName: String) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(dateFormatter)
         do {
@@ -74,11 +77,11 @@ class JsonUtils {
             ).appendingPathComponent(fileName)
             try data.write(to: url)
         } catch {
-            return
+            throw MealsError.generalError("Failed saving JSON file \(fileName)")
         }
     }
 
-    static func load<T: Decodable>(fileName: String) -> T? {
+    static func load<T: Decodable>(fileName: String) throws -> T? {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
 
@@ -90,14 +93,10 @@ class JsonUtils {
                     create: false
             ).appendingPathComponent(fileName)
 
-            guard let file = try? FileHandle(forReadingFrom: url) else {
-                return nil
-            }
+            let file = try FileHandle(forReadingFrom: url)
             return try decoder.decode(T.self, from: file.availableData)
-
         } catch {
-            print("Error: \(error)")
-            return nil
+            throw MealsError.generalError("Failed loading JSON file \(fileName)")
         }
     }
 

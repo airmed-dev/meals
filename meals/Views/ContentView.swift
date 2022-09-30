@@ -10,6 +10,10 @@ import HealthKit
 
 struct ContentView: View {
     @ObservedObject var store = Store()
+    
+    // Loading error alert
+    @State var showErrorAlert = false
+    @State var errorMessage = ""
 
     var body: some View {
         TabView {
@@ -33,6 +37,19 @@ struct ContentView: View {
                     }
                     .environmentObject(store.settingsStore)
 
+        }
+        .onAppear {
+            do {
+                try self.store.mealStore.load()
+                try self.store.eventStore.load()
+                try self.store.settingsStore.load()
+            } catch {
+                showErrorAlert = true
+                errorMessage = "Failed loading settings: \(error)"
+            }
+        }
+        .alert(isPresented: $showErrorAlert){
+            Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .cancel())
         }
     }
 }

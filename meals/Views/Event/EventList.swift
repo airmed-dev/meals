@@ -55,7 +55,7 @@ struct EventList: View {
                 ? mealStore.getMeal(event: selectedEvent!)
                 : nil
         let image = meal != nil
-                ? photoStore.loadImage(mealID: meal!.id)
+                ? try? photoStore.loadImage(mealID: meal!.id)
                 : nil
 
         return HStack {
@@ -196,7 +196,7 @@ struct EventList: View {
             MealCard(
                     font: .caption,
                     meal: meal,
-                    image: photoStore.loadImage(mealID: meal.id)
+                    image: try? photoStore.loadImage(mealID: meal.id)
             )
                     .clipShape(
                             RoundedRectangle(

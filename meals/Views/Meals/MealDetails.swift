@@ -257,6 +257,9 @@ struct MealEventLogger: View {
     @EnvironmentObject var eventStore: EventStore
     @State var date: Date = Date.now
     var meal: Meal
+    
+    @State var showErrorAlert:Bool = false
+    @State var errorMessage: String = ""
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -274,8 +277,14 @@ struct MealEventLogger: View {
             HStack {
                 Button("Save") {
                     let event = Event(meal_id: meal.id, id: 0, date: date)
-                    eventStore.saveEvent(event: event)
-                    presentationMode.wrappedValue.dismiss()
+                    do {
+                        try eventStore.saveEvent(event: event)
+                        presentationMode.wrappedValue.dismiss()
+                    } catch {
+                        showErrorAlert = true
+                        errorMessage = "Failed saving event: \(error)"
+                    }
+                    
                 }
                         .padding()
                 Spacer()
@@ -286,6 +295,9 @@ struct MealEventLogger: View {
             }
         }
                 .padding()
+        .alert(isPresented: $showErrorAlert) {
+            Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .cancel())
+        }
     }
 
 }

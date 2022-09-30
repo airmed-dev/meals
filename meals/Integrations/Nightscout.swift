@@ -16,11 +16,11 @@ class Nightscout: MetricStore {
     }
     
     func getInsulinSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void) {
-        completion(.failure(MealsError.generalError))
+        completion(.failure(MealsError.generalError("Not implemented")))
     }
     
     func getGlucoseSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {
-        completion(.failure(MealsError.generalError))
+        completion(.failure(MealsError.generalError("Not implemented")))
     }
 }
 

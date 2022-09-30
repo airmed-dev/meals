@@ -185,9 +185,7 @@ struct MealEditor: View {
             )
         }
         .alert(errorMessage, isPresented: $showErrorAlert){
-            Button("Ok", role: .cancel){
-                presentationMode.wrappedValue.dismiss()
-            }
+            Button("Ok", role: .cancel){}
         }
         .alert(successMessage, isPresented: $showSuccessAlert) {
             Button("Ok", role: .cancel){
@@ -198,20 +196,32 @@ struct MealEditor: View {
     
     func save(meal: Meal, image: UIImage?) {
         saveButtonStatus = .Clicked
-        mealStore.saveMeal(meal: meal, image: image)
-        saveButtonStatus = .Saved
-        showSuccessAlert = true
-        successMessage = "Saved '\(meal.name)'"
-        onEdit()
+        do {
+            try mealStore.saveMeal(meal: meal, image: image)
+            saveButtonStatus = .Saved
+            showSuccessAlert = true
+            successMessage = "Saved '\(meal.name)'"
+            onEdit()
+        } catch {
+            self.errorMessage = "Failed saving: \(error)"
+            self.showErrorAlert = true
+            saveButtonStatus = .Initial
+        }
     }
     
     func delete(meal: Meal){
         deleteButtonStatus = .Clicked
-        mealStore.deleteMeal(meal: meal)
-        deleteButtonStatus = .Saved
-        showSuccessAlert = true
-        successMessage = "Delete \(meal.name)"
-        onEdit()
+        do {
+            try mealStore.deleteMeal(meal: meal)
+            deleteButtonStatus = .Saved
+            showSuccessAlert = true
+            successMessage = "Delete \(meal.name)"
+            onEdit()
+        } catch {
+            self.errorMessage = "Failed deleting: \(error)"
+            self.showErrorAlert = true
+            deleteButtonStatus = .Initial
+        }
     }
 }
 

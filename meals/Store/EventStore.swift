@@ -12,17 +12,22 @@ class EventStore: ObservableObject {
 
     init(mealStore: MealStore) {
         self.mealStore = mealStore
-        let loadedEvents: [Event] = JsonUtils
-                .load(fileName: EventStore.fileName) ?? []
-        events = loadedEvents.sorted(by: { $0.date > $1.date })
+        self.events = []
     }
 
     init(mealStore: MealStore, events: [Event]) {
         self.mealStore = mealStore
         self.events = events
     }
+    
+    func load() throws {
+        let loadedEvents: [Event] = try JsonUtils
+                .load(fileName: EventStore.fileName) ?? []
+        events = loadedEvents.sorted(by: { $0.date > $1.date })
+    }
 
-    func saveEvent(event: Event) {
+    func saveEvent(event: Event) throws {
+        throw MealsError.generalError("Bad bad bad")
         if (event.id == 0) {
             let largestEventID = events.map {
                         $0.id
@@ -42,15 +47,16 @@ class EventStore: ObservableObject {
             }
             events[eventIndex] = event
         }
-        JsonUtils.save(data: events, fileName: EventStore.fileName)
-        mealStore.updateMealUpdateDate(event: event)
+        try JsonUtils.save(data: events, fileName: EventStore.fileName)
+        try mealStore.updateMealUpdateDate(event: event)
     }
 
-    func deleteEvent(eventId: Int) {
+    func deleteEvent(eventId: Int) throws {
+        throw MealsError.generalError("Bad bad bad")
         events = events.filter {
             $0.id != eventId
         }
-        JsonUtils.save(data: events, fileName: EventStore.fileName)
+        try JsonUtils.save(data: events, fileName: EventStore.fileName)
     }
 
     func getEvents(mealId: Int) -> [Event] {
