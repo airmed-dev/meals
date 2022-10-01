@@ -143,15 +143,6 @@ struct MetricGraph: View {
 
     }
 
-    func glucoseColors(point: GraphPoint) -> Color {
-        if dataType == .Glucose {
-            if point.value > 180 || point.value < 70 {
-                return Color.red
-            }
-        }
-        return Color.white
-    }
-
     func range(samples: [MetricSample], min: Double, max: Double) -> (Double, Double) {
         if samples.count == 0 {
             return (min, max)

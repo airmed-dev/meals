@@ -101,7 +101,7 @@ struct MealDetails: View {
             if events.count > 0 {
                 ForEach(events, id: \.id) { event in
                     NavigationLink(destination: {
-                        MetricView(
+                        EventView(
                             metricStore: metricStore,
                             meal: meal,
                                 event: event,
