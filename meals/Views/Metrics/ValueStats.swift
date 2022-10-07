@@ -22,6 +22,7 @@ struct ValueStats: View {
     var start:Date
     var end:Date
     var dateStepSizeMinutes:Double
+    var dateAxisResolution:Int =  1
     
     var valueMin: Double
     var valueStepSize: Double
@@ -31,8 +32,54 @@ struct ValueStats: View {
     
     @State var selectedIdx: Int? = nil
     
+    // Views
+    var body: some View {
+        let valueBuckets = aggregate(samples: eventSamples)
+        
+        VStack {
+            // Glucose Axis
+            GeometryReader { geo in
+                if valueBuckets.count == 0 {
+                    noData
+                } else {
+                    // Date axis and labels
+                    dateAxisLabels(size: geo.size)
+                    dateAxisGrid(size: geo.size)
+                    
+                    valueAxisLabels(size: geo.size, valueBuckets: valueBuckets)
+                    valueAxisGrid(size: geo.size, valueBuckets: valueBuckets)
+                    
+                    // Capsules
+                    capsules(valueBuckets: valueBuckets, width: geo.size.width, height: geo.size.height)
+                }
+            }
+        }
+        .padding()
+    }
+    
+    func dateAxisGrid(size: CGSize) -> some View {
+        ForEach(Array(getDateAxisValues().enumerated()), id: \.element.self){ idx, _ in
+            Path { line in
+                let minutePixels = minutesToPixels(
+                    minutes: Double(idx) * dateStepSizeMinutes,
+                    width: size.width
+                )
+                line.move(to: CGPoint(x: minutePixels, y: 0))
+                line.addLine(to: CGPoint(x: minutePixels, y: size.height))
+            }
+            .strokedPath(StrokeStyle.init(lineWidth: 2))
+            .foregroundColor(.black.opacity(0.1))
+        }
+    }
+    
     func dateAxisLabels(size: CGSize) -> some View {
-        let values = Array ( getDateAxisValues().enumerated())
+        let dateAxisValues = Array(getDateAxisValues().enumerated())
+        let values = dateAxisValues
+            .filter { offset, _ in
+                let edgeAxis = offset == 0 || offset == dateAxisValues.count-1
+                let middleAxis = offset % dateAxisResolution == 0
+                return edgeAxis || middleAxis
+            }
         return ForEach(values, id: \.element.self){ idx, axisValue in
             Text(formatTime(interval: TimeInterval(axisValue*60)))
                 .position(
@@ -71,53 +118,17 @@ struct ValueStats: View {
     
     func valueSteps(valueBuckets: [ValueBucket]) -> [Double]{
         let max = getTrueMax(valueBuckets: valueBuckets)
-        let bucketCount = max / valueStepSize
-        let stepSize = bucketCount > 5 ? valueStepSize * 2 : valueStepSize
+        let min:Double = getTrueMin(buckets: valueBuckets)
+        let bucketCount = (max-min) / valueStepSize
 
         return Array(stride(
-            from: 0,
-            through: getTrueMax(valueBuckets: valueBuckets),
-            by: stepSize
+            from: min,
+            through: max,
+            by: valueStepSize
         ))
     }
     
-    func dateAxisGrid(size: CGSize) -> some View {
-        ForEach(Array(getDateAxisValues().enumerated()), id: \.element.self){ idx, _ in
-            Path { line in
-                let minutePixels = minutesToPixels(
-                    minutes: Double(idx) * dateStepSizeMinutes,
-                    width: size.width
-                )
-                line.move(to: CGPoint(x: minutePixels, y: 0))
-                line.addLine(to: CGPoint(x: minutePixels, y: size.height))
-            }
-            .strokedPath(StrokeStyle.init(lineWidth: 2))
-            .foregroundColor(.black.opacity(0.1))
-        }
-    }
-    
-    
-    var noData: some View {
-        return VStack(alignment: .center) {
-            Spacer()
-            Image(systemName: "tray.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .foregroundColor(.secondary.opacity(0.5))
-                .font(.system(size: 30, weight: .ultraLight))
-                .frame(width: 80)
-            
-            HStack(alignment: .center){
-                Spacer()
-                Text("No data")
-                    .font(.title)
-                Spacer()
-            }
-            Spacer()
-        }
-        
-    }
-    
+
     func capsules(valueBuckets: [ValueBucket], width: CGFloat, height: CGFloat) -> some View {
         let e = Array(valueBuckets.enumerated())
         return ForEach(e, id: \.offset) { index, valueBucket  in
@@ -185,31 +196,28 @@ struct ValueStats: View {
         }
     }
     
-    
-    var body: some View {
-        let valueBuckets = aggregate(samples: eventSamples)
-        
-        VStack {
-            // Glucose Axis
-            GeometryReader { geo in
-                if valueBuckets.count == 0 {
-                    noData
-                } else {
-                    // Date axis and labels
-                    dateAxisLabels(size: geo.size)
-                    dateAxisGrid(size: geo.size)
-                    
-                    valueAxisLabels(size: geo.size, valueBuckets: valueBuckets)
-                    valueAxisGrid(size: geo.size, valueBuckets: valueBuckets)
-                    
-                    // Capsules
-                    capsules(valueBuckets: valueBuckets, width: geo.size.width, height: geo.size.height)
-                }
+    var noData: some View {
+        return VStack(alignment: .center) {
+            Spacer()
+            Image(systemName: "tray.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(.secondary.opacity(0.5))
+                .font(.system(size: 30, weight: .ultraLight))
+                .frame(width: 80)
+            
+            HStack(alignment: .center){
+                Spacer()
+                Text("No data")
+                    .font(.title)
+                Spacer()
             }
+            Spacer()
         }
-        .padding()
+        
     }
     
+    // Helpers
     func aggregate(samples: [Int:(Date,[MetricSample])]) -> [ValueBucket] {
         // Map from [EventID : (EventDate, [Samples])
         // to (offset, samples)
@@ -292,7 +300,6 @@ struct ValueStats: View {
         return stepDifference * valueStepSize
     }
     
-    
     func valueRangeGradient(valueBucket: ValueBucket) -> LinearGradient{
         // 0 -> 70: Black to Red.
         // 70 -> 150 -> green
@@ -325,7 +332,18 @@ struct ValueStats_Previews: PreviewProvider {
             end: end
         )
         
-        return VStack {
+        return Group {
+            VStack(alignment:.leading) {
+                ValueStats(eventSamples: [0: (start, glucoseSamples)],
+                           start: start,
+                           end: end,
+                           dateStepSizeMinutes: 15,
+                           valueMin: 75 ,
+                           valueStepSize: 25,
+                           valueMax: 300,
+                           valueColor: { _ in Color.green})
+                .frame(height: 150)
+            }
             VStack(alignment:.leading) {
                 Text("Step size: 30")
                     .font(.title)

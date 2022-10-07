@@ -57,38 +57,56 @@ struct MetricGraph: View {
             if loading {
                 ProgressView()
             } else {
-                let start = event.date
-                let end = event.date.advanced(by: TimeInterval(hours) * 60 * 60)
+                let stepSize:TimeInterval = 15*60
+                let stepCount: Int = (hours*60*60) / Int(stepSize)
+                let indexFormatter = timeIndexFormatter(stepSize: stepSize)
+                let chartData: [ChartData] = Dictionary(grouping: samples.map {
+                    ChartData(
+                        index: ceil($0.date.timeIntervalSince(event.date) / stepSize),
+                        valueMin: $0.value,
+                        valueMax: $0.value
+                    )
+                }, by: \.index)
+                    .values
+                    .reduce([], { result, elements in
+                        var newResult: [ChartData] = Array(result)
+                        newResult.append(
+                            elements.reduce(elements[0], {x,y in
+                                ChartData(
+                                    index: x.index,
+                                    valueMin: min(x.valueMin, y.valueMin),
+                                    valueMax: max(x.valueMax, y.valueMax)
+                                )
+                            })
+                        )
+                        return newResult
+                    })
+                
+                
+                
                 switch dataType {
                 case .Insulin:
-                    ValueStats(eventSamples: [event.id: (event.date, samples)],
-                            start: start,
-                            end: end,
-                            dateStepSizeMinutes: 30,
-                            valueMin: 0,
-                            valueStepSize: 0.5,
-                            valueMax: 3,
-                            valueColor: { _ in Color.accentColor }
-                    )
+                    Chart(
+                        data: chartData,
+                        startIndex: 0, endIndex: stepCount, indexStepSize: 3,
+                        indexFormatter: indexFormatter,
+                        startValue: 0, endValue: 5, valueStepSize: 1,
+                        color: .blue)
+                    .padding(.leading)
+                    .frame(height: 200)
                 case .Glucose:
-                    ValueStats(eventSamples: [event.id: (event.date, samples)],
-                            start: start,
-                            end: end,
-                            dateStepSizeMinutes: 30,
-                            valueMin: 75,
-                            valueStepSize: 25,
-                            valueMax: 300,
-                            valueColor: { value in
-                                if value < 70 {
-                                    return .red
-                                } else if value < 180 {
-                                    return .green
-                                } else if value < 250 {
-                                    return .red
-                                } else {
-                                    return Color(hex: 0x600000)
-                                }
-                            })
+                    let endValue = max(
+                        300,
+                        chartData.max(by: { $0.valueMax > $1.valueMax })?.valueMax ?? 0
+                    )
+                    Chart(
+                        data: chartData,
+                        startIndex: 0, endIndex: stepCount, indexStepSize: 3,
+                        indexFormatter: indexFormatter,
+                        startValue: 50, endValue: endValue, valueStepSize: 50,
+                        color: .green)
+                    .padding(.leading)
+                    .frame(height: 200)
                 }
             }
         }
@@ -103,6 +121,22 @@ struct MetricGraph: View {
                 }
     }
 
+    func timeIndexFormatter(stepSize: TimeInterval) -> (Int) -> String {
+        return { index in
+            if index == 0 {
+                return "0:00"
+            }
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute]
+            formatter.unitsStyle = .positional
+            let formatted = formatter.string(from: Double(index)*stepSize)!
+            if formatted.count < 3 {
+                return "0:\(formatted)"
+            }
+            return formatted
+        }
+    }
+                        
     func loadSamples(event: Event, hours: Int) {
         if debug {
             return
@@ -123,11 +157,9 @@ struct MetricGraph: View {
                 loading = false
             }
         case .Insulin:
-            // We would like to fetch all insulin delivery which might be still
-            // active
-            let insulinActiveTime: TimeInterval = hoursInSeconds
-            let start = event.date.advanced(by: -1 * insulinActiveTime)
-            let end = event.date.advanced(by: insulinActiveTime)
+//          let insulinActiveTime: TimeInterval = hoursInSeconds
+            let start = event.date
+            let end = event.date.advanced(by: hoursInSeconds)
 
             metricStore.getInsulinSamples(start: start, end: end) { result in
                 switch result {

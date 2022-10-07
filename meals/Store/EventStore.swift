@@ -51,7 +51,6 @@ class EventStore: ObservableObject {
     }
 
     func deleteEvent(eventId: Int) throws {
-        throw MealsError.generalError("Bad bad bad")
         events = events.filter {
             $0.id != eventId
         }
