@@ -32,6 +32,7 @@ struct InsulinStatisticsChart: UIViewRepresentable {
     func getModel() -> AAChartModel {
         let categories = getCategories()
         return AAChartModel()
+            .title("Insulin")
             .categories(categories)
             .colorsTheme(["#ffd9a8", "#fe9711"])
             .legendEnabled(false)
