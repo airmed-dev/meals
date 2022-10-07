@@ -24,12 +24,18 @@ struct MealDetails: View {
     
     func drawGlucoseAggs() -> some View {
         // Calculate ranges and step sizes
-        Text("Not implemented")
+        let samples = glucoseSamples.map {
+            $0.value
+        }
+        return GlucoseStatisticsChart(samples: samples)
             .frame(height:250)
     }
     
     func drawInsulinAggs() -> some View {
-        Text("Not implemented")
+        let samples = insulinSamples.map {
+            $0.value
+        }
+        return InsulinStatisticsChart(samples: samples)
             .frame(height:250)
     }
     

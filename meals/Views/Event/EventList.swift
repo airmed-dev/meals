@@ -32,7 +32,7 @@ struct EventList: View {
     var body: some View {
         VStack {
             if let selectedEvent = selectedEvent {
-//                header
+                header
                 statistics(event: selectedEvent, title: "Glucose", type: .Glucose)
                 statistics(event: selectedEvent, title: "Insulin", type: .Insulin)
                 timeline

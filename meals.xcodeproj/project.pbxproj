@@ -39,6 +39,11 @@
 		DF9375792830156500CBE618 /* MetricGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375782830156500CBE618 /* MetricGraph.swift */; };
 		DFA0E56B2847DE1100323B35 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0E56A2847DE1100323B35 /* EventList.swift */; };
 		DFA4A414285346BC00D67202 /* ColorFromHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA4A413285346BC00D67202 /* ColorFromHex.swift */; };
+		DFAB190628F045A400E4AB00 /* InsulinStatisticsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */; };
+		DFDEC41228EFF63600E0410C /* AAInfographics in Frameworks */ = {isa = PBXBuildFile; productRef = DFDEC41128EFF63600E0410C /* AAInfographics */; };
+		DFDEC41428F006A200E0410C /* GlucoseChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDEC41328F006A200E0410C /* GlucoseChart.swift */; };
+		DFDEC41628F006BC00E0410C /* InsulinChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDEC41528F006BC00E0410C /* InsulinChart.swift */; };
+		DFDEC41828F0073300E0410C /* GlucoseStatisticsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDEC41728F0073300E0410C /* GlucoseStatisticsChart.swift */; };
 		DFE8279B28B10EEF004F29FF /* MealsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE8279A28B10EEF004F29FF /* MealsApp.swift */; };
 		DFE8D35C2840CA5400937CAB /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */; };
 		DFEFD43B286EC77600200B24 /* Insulin.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEFD43A286EC77600200B24 /* Insulin.swift */; };
@@ -79,6 +84,10 @@
 		DF9375782830156500CBE618 /* MetricGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricGraph.swift; sourceTree = "<group>"; };
 		DFA0E56A2847DE1100323B35 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
 		DFA4A413285346BC00D67202 /* ColorFromHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorFromHex.swift; sourceTree = "<group>"; };
+		DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsulinStatisticsChart.swift; sourceTree = "<group>"; };
+		DFDEC41328F006A200E0410C /* GlucoseChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseChart.swift; sourceTree = "<group>"; };
+		DFDEC41528F006BC00E0410C /* InsulinChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsulinChart.swift; sourceTree = "<group>"; };
+		DFDEC41728F0073300E0410C /* GlucoseStatisticsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseStatisticsChart.swift; sourceTree = "<group>"; };
 		DFE8279A28B10EEF004F29FF /* MealsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealsApp.swift; sourceTree = "<group>"; };
 		DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		DFEFD43A286EC77600200B24 /* Insulin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insulin.swift; sourceTree = "<group>"; };
@@ -90,6 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFDEC41228EFF63600E0410C /* AAInfographics in Frameworks */,
 				DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */,
 				DF12302C28784216007156DD /* BottomSheet in Frameworks */,
 			);
@@ -157,6 +167,7 @@
 				8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */,
 				DF114AED283223610089BF0B /* Meals */,
 				DFECDE38284B1E7900FCDF35 /* Event */,
+				DF630AF328E8231400F8B990 /* Chart */,
 				DF114AEE283223750089BF0B /* Metrics */,
 				DF282F742838C26D0044C1EF /* Helpers */,
 			);
@@ -227,6 +238,17 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		DF630AF328E8231400F8B990 /* Chart */ = {
+			isa = PBXGroup;
+			children = (
+				DFDEC41328F006A200E0410C /* GlucoseChart.swift */,
+				DFDEC41528F006BC00E0410C /* InsulinChart.swift */,
+				DFDEC41728F0073300E0410C /* GlucoseStatisticsChart.swift */,
+				DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */,
+			);
+			path = Chart;
+			sourceTree = "<group>";
+		};
 		DFECDE38284B1E7900FCDF35 /* Event */ = {
 			isa = PBXGroup;
 			children = (
@@ -255,6 +277,7 @@
 			name = meals;
 			packageProductDependencies = (
 				DF12302B28784216007156DD /* BottomSheet */,
+				DFDEC41128EFF63600E0410C /* AAInfographics */,
 			);
 			productName = meals;
 			productReference = DF07B3172826933700C164AB /* meals.app */;
@@ -287,6 +310,7 @@
 			packageReferences = (
 				DF38A93D286EE71B0041F304 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */,
+				DFDEC41028EFF63600E0410C /* XCRemoteSwiftPackageReference "AAChartKit-Swift" */,
 			);
 			productRefGroup = DF07B3182826933700C164AB /* Products */;
 			projectDirPath = "";
@@ -316,7 +340,10 @@
 			files = (
 				DFE8279B28B10EEF004F29FF /* MealsApp.swift in Sources */,
 				DF937573283012DA00CBE618 /* Event.swift in Sources */,
+				DFAB190628F045A400E4AB00 /* InsulinStatisticsChart.swift in Sources */,
+				DFDEC41828F0073300E0410C /* GlucoseStatisticsChart.swift in Sources */,
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
+				DFDEC41428F006A200E0410C /* GlucoseChart.swift in Sources */,
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
 				DF2083D9288B071200100694 /* ValueStats.swift in Sources */,
@@ -342,6 +369,7 @@
 				8FFA330E49738C2FB106E80A /* Store.swift in Sources */,
 				8FFA3F2607F2938D6DD3BA22 /* MealStore.swift in Sources */,
 				8FFA336FC60D5D29940DB80E /* EventStore.swift in Sources */,
+				DFDEC41628F006BC00E0410C /* InsulinChart.swift in Sources */,
 				8FFA310A5ED6DEA4868EF241 /* PhotoStore.swift in Sources */,
 				8FFA3269810852D27719C3F5 /* SettingsStore.swift in Sources */,
 				8FFA362D05719805CFF50452 /* Integrations.swift in Sources */,
@@ -574,6 +602,14 @@
 				kind = branch;
 			};
 		};
+		DFDEC41028EFF63600E0410C /* XCRemoteSwiftPackageReference "AAChartKit-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AAChartModel/AAChartKit-Swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -581,6 +617,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */;
 			productName = BottomSheet;
+		};
+		DFDEC41128EFF63600E0410C /* AAInfographics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFDEC41028EFF63600E0410C /* XCRemoteSwiftPackageReference "AAChartKit-Swift" */;
+			productName = AAInfographics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
