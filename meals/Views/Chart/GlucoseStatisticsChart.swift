@@ -10,6 +10,7 @@ import SwiftUI
 import AAInfographics
 
 struct GlucoseStatisticsChart: UIViewRepresentable {
+    let stepSize: TimeInterval = 60
     var samples: [(Date, [MetricSample])]
     
     init(samples: [(Date, [MetricSample])]){
@@ -32,6 +33,7 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
     func getModel() -> AAChartModel {
         let categories = getCategories()
         return AAChartModel()
+                .title("Glucose")
             .categories(categories)
             .colorsTheme(["#6fc7fc", "#ced8de"])
             .legendEnabled(false)
@@ -53,11 +55,10 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
     }
     
     func get100th() -> [[Double]]{
-        let stepSize: TimeInterval = 60*60
         let samplesFromStart = samples.flatMap { eventSamples in
             eventSamples.1.map { sample in
                 (
-                    sample.date.timeIntervalSince(eventSamples.0) / stepSize
+                    round(sample.date.timeIntervalSince(eventSamples.0) / stepSize)
                     , sample.value )
             }
         }
@@ -78,11 +79,10 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
     }
     
     func get50th() -> [[Double]] {
-        let stepSize: TimeInterval = 60*60
         let samplesFromStart = samples.flatMap { eventSamples in
             eventSamples.1.map { sample in
                 (
-                    sample.date.timeIntervalSince(eventSamples.0) / stepSize
+                    round(sample.date.timeIntervalSince(eventSamples.0) / stepSize)
                     , sample.value )
             }
         }
