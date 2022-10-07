@@ -14,7 +14,7 @@ Meals supports the following datasources for
 
 ## Screenshots
 
-![Events page]("/Screenshots/Events page.png" "Events page")
+![Events page](https://raw.github.com/airmed-dev/meals/docs/readme/Screenshots/Events%20page.png)
 
 
 ## Privacy
