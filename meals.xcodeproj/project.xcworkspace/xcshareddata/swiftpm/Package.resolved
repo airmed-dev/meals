@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "aachartkit-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AAChartModel/AAChartKit-Swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "bb2d80dad8604e9256b99301fd72af33d495bff0"
+      }
+    },
+    {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire.git",

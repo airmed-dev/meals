@@ -15,7 +15,7 @@ enum HealthkitError: Error {
 
 let threeHours: Double = 3 * 60 * 60
 
-struct MetricView: View {
+struct EventView: View {
     var metricStore: MetricStore
     @EnvironmentObject var eventStore: EventStore
     @Environment(\.presentationMode) var presentationMode
@@ -174,30 +174,30 @@ struct MetricView: View {
 
 }
 
-struct MetricView_Previews: PreviewProvider {
+struct EventView_Previews: PreviewProvider {
     static var previews: some View {
         let mealID: Int = 0
         let metricStore = Debug()
         Group {
-            MetricView(
+            EventView(
                     metricStore: metricStore,
                     meal: Meal( id: mealID, name: "Blueberries", description: "Yummy meal"),
                     event: Event(meal_id: mealID, id: 3, date: Date.now)
             )
-            MetricView(
+            EventView(
                     metricStore: metricStore,
                     meal: Meal(id: mealID, name: "Blueberries and a lot of delicious", description: "Yummy meal"),
                     event: Event(meal_id: mealID, id: 3, date: Date.now),
                     showDeleteConfirmation: true,
                     showEditSheet: false
             )
-            MetricView(metricStore: metricStore,
+            EventView(metricStore: metricStore,
                     meal: Meal(id: mealID, name: "Blueberries", description: "Yummy meal"),
                     event: Event(meal_id: mealID, id: 3, date: Date.now),
                     showDeleteConfirmation: false,
                     showEditSheet: true
             )
-            MetricView(metricStore: metricStore,
+            EventView(metricStore: metricStore,
                     meal: Meal(id: mealID, name: "Blueberries", description: "Yummy meal"),
                     event: Event(meal_id: mealID, id: 3, date: Date.now),
                     showDeleteConfirmation: false,

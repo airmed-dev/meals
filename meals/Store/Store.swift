@@ -29,7 +29,7 @@ import Combine
         self.mealStore = mealStore
         self.settingsStore = settingsStore
         eventStore = EventStore(mealStore: mealStore)
-        metricStore = Store.createMetricStore(settings: settingsStore.settings)
+        metricStore = Debug()
     }
 
     init(meals: [Meal], events: [Event], settings: Settings) {
@@ -49,6 +49,7 @@ import Combine
         try mealStore.load()
         try eventStore.load()
         try settingsStore.load()
+        metricStore = Store.createMetricStore(settings: settingsStore.settings)
     }
 
 

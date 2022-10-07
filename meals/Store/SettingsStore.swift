@@ -17,8 +17,18 @@ class SettingsStore: ObservableObject {
     }
     
     func load() throws {
-         settings = try JsonUtils.load(fileName: SettingsStore.fileName)
-                ?? Settings(dataSourceType: .HealthKit)
+       let url = try FileManager.default.url(
+                for: .documentDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: false
+       ).appendingPathComponent(SettingsStore.fileName)
+       if FileManager.default.fileExists(atPath: url.path) {
+           settings = try JsonUtils.load(fileName: SettingsStore.fileName) ?? Settings(dataSourceType: .HealthKit)
+       } else {
+           try saveSettings(settings: settings)
+       }
+
     }
 
     func saveSettings(settings: Settings) throws {

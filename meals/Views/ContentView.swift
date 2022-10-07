@@ -17,13 +17,6 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            MealList(metricStore: store.metricStore)
-                    .tabItem {
-                        Label("Meals", systemImage: "circle.hexagongrid.circle")
-                    }
-                    .environmentObject(store.mealStore)
-                    .environmentObject(store.photoStore)
-                    .environmentObject(store.eventStore)
             EventList(metricStore: store.metricStore)
                     .tabItem {
                         Label("Events", systemImage: "calendar.day.timeline.leading")
@@ -31,6 +24,14 @@ struct ContentView: View {
                     .environmentObject(store.mealStore)
                     .environmentObject(store.photoStore)
                     .environmentObject(store.eventStore)
+            MealList(metricStore: store.metricStore)
+                    .tabItem {
+                        Label("Meals", systemImage: "circle.hexagongrid.circle")
+                    }
+                    .environmentObject(store.mealStore)
+                    .environmentObject(store.photoStore)
+                    .environmentObject(store.eventStore)
+
             SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")

@@ -27,7 +27,6 @@ class EventStore: ObservableObject {
     }
 
     func saveEvent(event: Event) throws {
-        throw MealsError.generalError("Bad bad bad")
         if (event.id == 0) {
             let largestEventID = events.map {
                         $0.id
@@ -52,7 +51,6 @@ class EventStore: ObservableObject {
     }
 
     func deleteEvent(eventId: Int) throws {
-        throw MealsError.generalError("Bad bad bad")
         events = events.filter {
             $0.id != eventId
         }

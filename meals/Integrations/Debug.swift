@@ -18,7 +18,7 @@ class Debug: MetricStore {
     
     
     func getGlucoseSamples(start: Date, end: Date) -> [MetricSample] {
-        let startPoint = 50 + 100 * Double.random(in:1...3)
+        let startPoint = 50 + 100 * Double.random(in:0...2)
         return stride(
                 from: start.timeIntervalSince1970,
                 to: end.timeIntervalSince1970,
