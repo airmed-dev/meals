@@ -108,7 +108,7 @@ struct MetricGraph: View {
             metricStore.getInsulinSamples(start: start, end: end) { result in
                 switch result {
                 case .success(let samples):
-                    self.samples = samples
+                    self.samples = calculateIOB(insulinDelivery: samples, start: start, end: end)
                     self.error = nil
                 case .failure(let error):
                     self.error = error

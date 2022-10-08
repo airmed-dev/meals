@@ -233,14 +233,12 @@ struct EventList: View {
     }
 
     // Event handler
-
     func onMealTap(meal: Meal) {
         showLogEventAlert = true
         mealToLog = meal
     }
 
     // Helpers
-
     func isSameDay(date1: Date, date2: Date) -> Bool {
         Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
     }
