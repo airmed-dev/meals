@@ -8,10 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		8FFA310A5ED6DEA4868EF241 /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3E26C8FF5EEC5BDA501E /* PhotoStore.swift */; };
+		8FFA31139F73232981DCD7B2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3C2CEEEFC1BF376F7967 /* Color.swift */; };
 		8FFA3269810852D27719C3F5 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3DBA90B90F55058508D4 /* SettingsStore.swift */; };
 		8FFA330E49738C2FB106E80A /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA39E0C6D7684725AB59DB /* Store.swift */; };
 		8FFA336FC60D5D29940DB80E /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA32311003343798A2F424 /* EventStore.swift */; };
+		8FFA3567C2B9C90968230486 /* Insulin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */; };
 		8FFA362D05719805CFF50452 /* Integrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA355B431669898CA34CCF /* Integrations.swift */; };
+		8FFA37B3B7031523D3EE7BF7 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3DBE52A31B60B727A8EF /* Statistics.swift */; };
 		8FFA38A56F641618F18F3FCB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */; };
 		8FFA3D2FE88188B3EAE96929 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA308383EF0D723E2774E8 /* Settings.swift */; };
 		8FFA3F036412E2B7F2D8358D /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA380A8AA3D9B675C7CFC3 /* README.md */; };
@@ -39,7 +42,6 @@
 		DF9375772830137200CBE618 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375762830137200CBE618 /* EventView.swift */; };
 		DF9375792830156500CBE618 /* MetricGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375782830156500CBE618 /* MetricGraph.swift */; };
 		DFA0E56B2847DE1100323B35 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0E56A2847DE1100323B35 /* EventList.swift */; };
-		DFA4A414285346BC00D67202 /* ColorFromHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA4A413285346BC00D67202 /* ColorFromHex.swift */; };
 		DFAB190628F045A400E4AB00 /* InsulinStatisticsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */; };
 		DFDEC41228EFF63600E0410C /* AAInfographics in Frameworks */ = {isa = PBXBuildFile; productRef = DFDEC41128EFF63600E0410C /* AAInfographics */; };
 		DFDEC41428F006A200E0410C /* GlucoseChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDEC41328F006A200E0410C /* GlucoseChart.swift */; };
@@ -47,7 +49,6 @@
 		DFDEC41828F0073300E0410C /* GlucoseStatisticsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDEC41728F0073300E0410C /* GlucoseStatisticsChart.swift */; };
 		DFE8279B28B10EEF004F29FF /* MealsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE8279A28B10EEF004F29FF /* MealsApp.swift */; };
 		DFE8D35C2840CA5400937CAB /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */; };
-		DFEFD43B286EC77600200B24 /* Insulin.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEFD43A286EC77600200B24 /* Insulin.swift */; };
 		DFF2DFCE28813E88008251DC /* LoadingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF2DFCD28813E88008251DC /* LoadingButton.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,12 +56,15 @@
 		8FFA308383EF0D723E2774E8 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		8FFA312F6D9B14F5F8A89498 /* MealStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MealStore.swift; sourceTree = "<group>"; };
 		8FFA32311003343798A2F424 /* EventStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
+		8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Insulin.swift; sourceTree = "<group>"; };
 		8FFA355B431669898CA34CCF /* Integrations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Integrations.swift; sourceTree = "<group>"; };
 		8FFA3615549B73CF0DCB6D79 /* EventListSkeleton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventListSkeleton.swift; sourceTree = "<group>"; };
 		8FFA380A8AA3D9B675C7CFC3 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8FFA39E0C6D7684725AB59DB /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		8FFA3C2CEEEFC1BF376F7967 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8FFA3DBA90B90F55058508D4 /* SettingsStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		8FFA3DBE52A31B60B727A8EF /* Statistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
 		8FFA3E26C8FF5EEC5BDA501E /* PhotoStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
 		DF07B3172826933700C164AB /* meals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = meals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF07B31C2826933700C164AB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -85,14 +89,12 @@
 		DF9375762830137200CBE618 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
 		DF9375782830156500CBE618 /* MetricGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricGraph.swift; sourceTree = "<group>"; };
 		DFA0E56A2847DE1100323B35 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
-		DFA4A413285346BC00D67202 /* ColorFromHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorFromHex.swift; sourceTree = "<group>"; };
 		DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsulinStatisticsChart.swift; sourceTree = "<group>"; };
 		DFDEC41328F006A200E0410C /* GlucoseChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseChart.swift; sourceTree = "<group>"; };
 		DFDEC41528F006BC00E0410C /* InsulinChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsulinChart.swift; sourceTree = "<group>"; };
 		DFDEC41728F0073300E0410C /* GlucoseStatisticsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseStatisticsChart.swift; sourceTree = "<group>"; };
 		DFE8279A28B10EEF004F29FF /* MealsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealsApp.swift; sourceTree = "<group>"; };
 		DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
-		DFEFD43A286EC77600200B24 /* Insulin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insulin.swift; sourceTree = "<group>"; };
 		DFF2DFCD28813E88008251DC /* LoadingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,6 +122,16 @@
 				8FFA3DBA90B90F55058508D4 /* SettingsStore.swift */,
 			);
 			path = Store;
+			sourceTree = "<group>";
+		};
+		8FFA393E241D9C25D43CB3DA /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8FFA3C2CEEEFC1BF376F7967 /* Color.swift */,
+				8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */,
+				8FFA3DBE52A31B60B727A8EF /* Statistics.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		DF07B30E2826933700C164AB = {
@@ -151,6 +163,7 @@
 				DF07B3322826943B00C164AB /* Models */,
 				DF07B3312826942C00C164AB /* Views */,
 				DF07B3202826933800C164AB /* Preview Content */,
+				8FFA393E241D9C25D43CB3DA /* Utils */,
 			);
 			path = meals;
 			sourceTree = "<group>";
@@ -233,9 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */,
-				DFEFD43A286EC77600200B24 /* Insulin.swift */,
 				DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */,
-				DFA4A413285346BC00D67202 /* ColorFromHex.swift */,
 				DFF2DFCD28813E88008251DC /* LoadingButton.swift */,
 			);
 			path = Helpers;
@@ -359,14 +370,12 @@
 				DF9375772830137200CBE618 /* EventView.swift in Sources */,
 				DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */,
 				DF07B31D2826933700C164AB /* ContentView.swift in Sources */,
-				DFEFD43B286EC77600200B24 /* Insulin.swift in Sources */,
 				DFE8D35C2840CA5400937CAB /* PhotoPicker.swift in Sources */,
 				DF9375792830156500CBE618 /* MetricGraph.swift in Sources */,
 				DF937575283012E100CBE618 /* Metric.swift in Sources */,
 				DF123030287955F1007156DD /* Nightscout.swift in Sources */,
 				DFF2DFCE28813E88008251DC /* LoadingButton.swift in Sources */,
 				DF8A73A228DF38E60095E9FF /* Error.swift in Sources */,
-				DFA4A414285346BC00D67202 /* ColorFromHex.swift in Sources */,
 				8FFA3FBEC18E8E8FFF166875 /* EventListSkeleton.swift in Sources */,
 				8FFA38A56F641618F18F3FCB /* SettingsView.swift in Sources */,
 				8FFA330E49738C2FB106E80A /* Store.swift in Sources */,
@@ -378,6 +387,9 @@
 				8FFA362D05719805CFF50452 /* Integrations.swift in Sources */,
 				8FFA3D2FE88188B3EAE96929 /* Settings.swift in Sources */,
 				8FFA3F036412E2B7F2D8358D /* README.md in Sources */,
+				8FFA31139F73232981DCD7B2 /* Color.swift in Sources */,
+				8FFA3567C2B9C90968230486 /* Insulin.swift in Sources */,
+				8FFA37B3B7031523D3EE7BF7 /* Statistics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
