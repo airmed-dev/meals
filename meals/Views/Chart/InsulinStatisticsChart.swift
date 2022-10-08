@@ -10,125 +10,90 @@ import SwiftUI
 import AAInfographics
 
 struct InsulinStatisticsChart: UIViewRepresentable {
+    let stepSize: TimeInterval = 15 * 60
     var samples: [(Date, [MetricSample])]
-    
-    init(samples: [(Date, [MetricSample])]){
+
+    init(samples: [(Date, [MetricSample])]) {
         self.samples = samples
     }
-    
+
     func updateUIView(_ uiView: UIViewType, context: Context) {
         if let chartView = uiView as? AAChartView {
             let aaChartModel = getModel()
             chartView.aa_drawChartWithChartModel(aaChartModel)
         }
     }
+
     func makeUIView(context: Context) -> some UIView {
         let aaChartView = AAChartView()
         let aaChartModel = getModel()
         aaChartView.aa_drawChartWithChartModel(aaChartModel)
         return aaChartView
     }
-    
+
     func getModel() -> AAChartModel {
         let categories = getCategories()
+        let statisticsBuckets = getStatistics()
+        let percentiles25to75 = statisticsBuckets.map { [$0.index, $0.percentile25, $0.percentile75] }
+        let minMaxs = statisticsBuckets.map { [$0.index, $0.min, $0.max] }
         return AAChartModel()
-            .title("Insulin")
-            .categories(categories)
-            .colorsTheme(["#ffd9a8", "#fe9711"])
-            .legendEnabled(false)
-            .series([
-                AASeriesElement()
-                    .type(.areasplinerange)
-                    .name("50%")
-                    .data(get50th())
-                    .marker(AAMarker().radius(0))
-                    .zIndex(1),
-                AASeriesElement()
-                    .type(.arearange)
-                    .name("100%")
-                    .lineWidth(5)
-                    .marker(AAMarker().radius(0))
-                    .data(get100th())
-                    .zIndex(0)
-        ])
+                .title("Insulin")
+                .categories(categories)
+                .colorsTheme(["#ffd9a8", "#fe9711"])
+                .legendEnabled(false)
+                .series([
+                    AASeriesElement()
+                            .type(.areasplinerange)
+                            .name("50%")
+                            .data(percentiles25to75)
+                            .marker(AAMarker().radius(0))
+                            .zIndex(1),
+                    AASeriesElement()
+                            .type(.arearange)
+                            .name("100%")
+                            .lineWidth(5)
+                            .marker(AAMarker().radius(0))
+                            .data(minMaxs)
+                            .zIndex(0)
+                ])
     }
-    
-    func get100th() -> [[Double]]{
-        let stepSize: TimeInterval = 60*60
-        let samplesFromStart = samples.flatMap { eventSamples in
-            eventSamples.1.map { sample in
-                (
-                    sample.date.timeIntervalSince(eventSamples.0) / stepSize
-                    , sample.value )
-            }
+
+    func getStatistics() -> [StatisticsBucket] {
+        let range = 3 * 60 * TimeInterval(60) // 3 hours hard coded for now
+        let iobNormalized = samples.map { date, samples in
+            (
+                    date,
+                    calculateIOB(insulinDelivery: samples ,
+                            start: date,
+                            end: date.addingTimeInterval(range)
+                    ))
         }
-        
-        let grouppedByDate = Dictionary(grouping: samplesFromStart, by: {
-            $0.0
-        })
-        
-        let ranges = grouppedByDate.map { r in
-            [
-                r.key,
-                r.value.min(by: { $0.1 > $1.1})!.1,
-                r.value.max(by: { $0.1 > $1.1})!.1
-            ]
-        }.sorted(by: { $0[0] > $1[0] })
-        
-        return ranges
+        return calculatePercentiles(relativeSamples: iobNormalized, interval: stepSize)
     }
-    
-    func get50th() -> [[Double]] {
-        let stepSize: TimeInterval = 60*60
-        let samplesFromStart = samples.flatMap { eventSamples in
-            eventSamples.1.map { sample in
-                (
-                    sample.date.timeIntervalSince(eventSamples.0) / stepSize
-                    , sample.value )
-            }
-        }
-        
-        let grouppedByDate = Dictionary(grouping: samplesFromStart, by: {
-            $0.0
-        })
-        
-       
-        let ranges:[[Double]] = grouppedByDate.map { r in
-            let sorted = r.value.map{ $0.1 }.sorted()
-            let percentile25 = Int(0.25 * Double(r.value.count))
-            let percentile75 = Int(0.75 * Double(r.value.count))
-            return [
-                r.key,
-                sorted[percentile25],
-                sorted[percentile75],
-            ]
-        }.sorted(by: { $0[0] > $1[0] })
-        
-        return ranges
-    }
-    
+
     func getCategories() -> [String] {
+        // TODO: Calculate this too
         return ["+00:00", "+01:00", "+02:00", "+03:00"]
     }
 }
 
 struct InsulinStatisticsChart_Previews: PreviewProvider {
     static var previews: some View {
-        
+
         let start = Date.now.addingTimeInterval(TimeInterval(3 * 60 * 60) * -1)
         let end = Date.now
         let debug = Debug()
         let samples = (1...5).map { _ in
             return (start, debug.getInsulinSamples(
-                start: start,
-                end: end
+                    start: start,
+                    end: end
             ))
         }
-        return  VStack {
-            GlucoseStatisticsChart(samples:samples)
+        return VStack {
+            GlucoseStatisticsChart(samples: samples)
         }
-        .background(.black)
-        .frame(height: 200)
+                .background(.black)
+                .frame(height: 200)
     }
 }
 

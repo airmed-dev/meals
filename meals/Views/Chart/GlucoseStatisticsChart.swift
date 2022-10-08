@@ -10,7 +10,7 @@ import SwiftUI
 import AAInfographics
 
 struct GlucoseStatisticsChart: UIViewRepresentable {
-    let stepSize: TimeInterval = 60
+    let stepSize: TimeInterval = 15*60
     var samples: [(Date, [MetricSample])]
     
     init(samples: [(Date, [MetricSample])]){
@@ -32,6 +32,9 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
     
     func getModel() -> AAChartModel {
         let categories = getCategories()
+        let statisticsBuckets = getStatistics()
+        let percentiles25to75 = statisticsBuckets.map { [$0.index, $0.percentile25, $0.percentile75] }
+        let minMaxs = statisticsBuckets.map { [$0.index, $0.min, $0.max] }
         return AAChartModel()
                 .title("Glucose")
             .categories(categories)
@@ -41,7 +44,7 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
                 AASeriesElement()
                     .type(.areasplinerange)
                     .name("50%")
-                    .data(get50th())
+                    .data(percentiles25to75)
                     .marker(AAMarker().radius(0))
                     .zIndex(1),
                 AASeriesElement()
@@ -49,11 +52,15 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
                     .name("100%")
                     .lineWidth(5)
                     .marker(AAMarker().radius(0))
-                    .data(get100th())
+                    .data(minMaxs)
                     .zIndex(0)
         ])
     }
-    
+
+    func getStatistics() -> [StatisticsBucket] {
+       calculatePercentiles(relativeSamples: samples, interval: stepSize)
+    }
+
     func get100th() -> [[Double]]{
         let samplesFromStart = samples.flatMap { eventSamples in
             eventSamples.1.map { sample in
@@ -73,7 +80,7 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
                 r.value.min(by: { $0.1 > $1.1})!.1,
                 r.value.max(by: { $0.1 > $1.1})!.1
             ]
-        }.sorted(by: { $0[0] > $1[0] })
+        }.sorted(by: { $0[0] < $1[0] })
         
         return ranges
     }
@@ -101,7 +108,7 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
                 sorted[percentile25],
                 sorted[percentile75],
             ]
-        }.sorted(by: { $0[0] > $1[0] })
+        }.sorted(by: { $0[0] < $1[0] })
         
         return ranges
     }
