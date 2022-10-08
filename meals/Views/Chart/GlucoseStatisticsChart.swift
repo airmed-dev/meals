@@ -46,7 +46,7 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
         return AAChartModel()
                 .title("Glucose")
                 .categories(categories)
-                .colorsTheme(["blue","#6fc7fc", "#ced8de"])
+                .colorsTheme(["#009dff","#6fc7fc", "#ced8de"])
                 .legendEnabled(false)
                 .series([
                     AASeriesElement()
