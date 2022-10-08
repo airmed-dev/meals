@@ -4,14 +4,14 @@
 
 import Foundation
 
-// Take a list of samples and their relative start date and an interval
-// and calculate the percentile for each interval
-func calculatePercentiles(relativeSamples: [(Date, [MetricSample])], interval: TimeInterval) -> [StatisticsBucket] {
+// Take a list of samples and their relative start date and a resolution
+// and calculate the percentile for each step
+func calculatePercentiles(relativeSamples: [(Date, [MetricSample])], resolution: TimeInterval) -> [StatisticsBucket] {
     // Calculate the samples offset from their start date
     let offsetFromDate: [(Double, Double)] = relativeSamples.flatMap { date, samples in
         samples.map { sample in
             (
-                    sample.date.timeIntervalSince(date) / interval,
+                    sample.date.timeIntervalSince(date) / resolution,
                     sample.value
             )
         }

@@ -24,19 +24,25 @@ struct MealDetails: View {
 
     func drawGlucoseAggs() -> some View {
         // Calculate ranges and step sizes
+        let resolution = TimeInterval(15 * 60)
+        let range = TimeInterval(hours * 60 * 60)
         let samples = glucoseSamples.map {
             $0.value
         }
-        return GlucoseStatisticsChart(samples: samples)
-                .frame(height: 250)
+        return GlucoseStatisticsChart(range: range, resolution: resolution, samples: samples)
     }
 
     func drawInsulinAggs() -> some View {
+        let resolution = TimeInterval(15 * 60)
+        let range = TimeInterval(hours * 60 * 60)
         let samples = insulinSamples.map {
-            $0.value
+            ($0.value.0, calculateIOB(
+                    insulinDelivery: $0.value.1,
+                    start: $0.value.0,
+                    end: $0.value.0.addingTimeInterval(range)
+            ))
         }
-        return InsulinStatisticsChart(samples: samples)
-                .frame(height: 250)
+        return InsulinStatisticsChart( range: range, resolution: resolution, samples: samples)
     }
 
     var noData: some View {
@@ -72,7 +78,9 @@ struct MealDetails: View {
             }
             if events.count > 0 {
                 drawGlucoseAggs()
+                        .frame(height: 250)
                 drawInsulinAggs()
+                        .frame(height: 250)
             } else {
                 noData
             }

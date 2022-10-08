@@ -16,7 +16,9 @@
 		8FFA362D05719805CFF50452 /* Integrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA355B431669898CA34CCF /* Integrations.swift */; };
 		8FFA37B3B7031523D3EE7BF7 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3DBE52A31B60B727A8EF /* Statistics.swift */; };
 		8FFA38A56F641618F18F3FCB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */; };
+		8FFA39889B04E4B4FC6F09D0 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA35F0C982E26FE8ED1FFF /* Date.swift */; };
 		8FFA3D2FE88188B3EAE96929 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA308383EF0D723E2774E8 /* Settings.swift */; };
+		8FFA3DEBF580CF33630BFD21 /* StatisticsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA38EDFC069DF4F72498C3 /* StatisticsChart.swift */; };
 		8FFA3F036412E2B7F2D8358D /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA380A8AA3D9B675C7CFC3 /* README.md */; };
 		8FFA3F2607F2938D6DD3BA22 /* MealStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA312F6D9B14F5F8A89498 /* MealStore.swift */; };
 		8FFA3FBEC18E8E8FFF166875 /* EventListSkeleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3615549B73CF0DCB6D79 /* EventListSkeleton.swift */; };
@@ -58,8 +60,10 @@
 		8FFA32311003343798A2F424 /* EventStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
 		8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Insulin.swift; sourceTree = "<group>"; };
 		8FFA355B431669898CA34CCF /* Integrations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Integrations.swift; sourceTree = "<group>"; };
+		8FFA35F0C982E26FE8ED1FFF /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		8FFA3615549B73CF0DCB6D79 /* EventListSkeleton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventListSkeleton.swift; sourceTree = "<group>"; };
 		8FFA380A8AA3D9B675C7CFC3 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8FFA38EDFC069DF4F72498C3 /* StatisticsChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsChart.swift; sourceTree = "<group>"; };
 		8FFA39E0C6D7684725AB59DB /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		8FFA3C2CEEEFC1BF376F7967 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -130,6 +134,7 @@
 				8FFA3C2CEEEFC1BF376F7967 /* Color.swift */,
 				8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */,
 				8FFA3DBE52A31B60B727A8EF /* Statistics.swift */,
+				8FFA35F0C982E26FE8ED1FFF /* Date.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -259,6 +264,7 @@
 				DFDEC41528F006BC00E0410C /* InsulinChart.swift */,
 				DFDEC41728F0073300E0410C /* GlucoseStatisticsChart.swift */,
 				DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */,
+				8FFA38EDFC069DF4F72498C3 /* StatisticsChart.swift */,
 			);
 			path = Chart;
 			sourceTree = "<group>";
@@ -390,6 +396,8 @@
 				8FFA31139F73232981DCD7B2 /* Color.swift in Sources */,
 				8FFA3567C2B9C90968230486 /* Insulin.swift in Sources */,
 				8FFA37B3B7031523D3EE7BF7 /* Statistics.swift in Sources */,
+				8FFA39889B04E4B4FC6F09D0 /* Date.swift in Sources */,
+				8FFA3DEBF580CF33630BFD21 /* StatisticsChart.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
