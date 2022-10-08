@@ -33,8 +33,7 @@ struct EventList: View {
         VStack {
             if let selectedEvent = selectedEvent {
                 header
-                statistics(event: selectedEvent, title: "Glucose", type: .Glucose)
-                statistics(event: selectedEvent, title: "Insulin", type: .Insulin)
+                statistics(event: selectedEvent)
                 timeline
             } else {
                 EventListSkeleton()
@@ -60,75 +59,82 @@ struct EventList: View {
 
         return HStack {
             if let selectedEvent = selectedEvent, let meal = meal {
-                // Photo
-                HStack {
-                    if let image = image {
-                        Image(uiImage: image).resizable()
-                    } else {
-                        LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
+                ZStack {
+                    // Photo
+                    HStack {
+                        if let image = image {
+                            Image(uiImage: image).resizable().scaledToFill()
+                        } else {
+                            LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
+                        }
                     }
+                            .frame(height: 120)
+                    VStack(alignment: .trailing) {
+                        Spacer()
+                        HStack {
+                            Text(meal.name)
+                                    .font(.largeTitle)
+                            Spacer()
+                        }
+                        HStack {
+                            Text("\(DateUtils.dateAndTimeFormat(date: selectedEvent.date))")
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(
+                                    .linearGradient(
+                                            colors: [.black, .black.opacity(0)],
+                                            startPoint: .bottom,
+                                            endPoint: .top)
+                            )
+                            .padding([.leading, .trailing], 5)
                 }
-                        .animation(.spring())
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .padding(.leading, 5)
 
-                // Texts
-                VStack {
-                    HStack {
-                        Text(meal.name)
-                                .font(.headline)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("\(formatDate(date: selectedEvent.date)) at \(formatTime(date: selectedEvent.date))")
-                        Spacer()
-                    }
-                }
             } else {
-                VStack {
-                    Spacer()
-                    Circle()
-                            .fill(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
-                            .frame(width: 100, height: 100)
-                    Spacer()
-                }
-                VStack {
-                    Spacer()
+                ZStack {
+                    LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
                     HStack {
-                        Text("No event is selected")
-                                .font(.headline)
-                                .frame(height: 30)
+                        VStack(alignment: .leading) {
+                            Text("No event is selected")
+                                    .font(.headline)
+                                    .frame(height: 30)
+                            Text("Select an event in the timeline")
+                                    .font(.caption)
+                                    .frame(height: 10)
+                        }
+                        Spacer()
                     }
-                    HStack {
-                        Text("Select an event in the timeline")
-                                .font(.caption)
-                                .frame(height: 10)
-                    }
-                    Spacer()
+                            .padding()
                 }
-                Spacer()
             }
         }
-                .padding([.top, .bottom], 5)
-                .background(.white)
-                .cornerRadius(15)
-                .padding([.leading, .trailing], 5)
+                .frame(height: 100)
     }
 
-    func statistics(event: Event, title: String, type: DataType) -> some View {
+    func statistics(event: Event) -> some View {
         VStack {
             HStack {
-                Text(title)
+                Text("Statistics")
                         .font(.headline)
                         .padding([.leading, .top], 10)
                 Spacer()
             }
-            MetricGraph(metricStore: metricStore, event: event, dataType: type, hours: hours)
+            VStack {
+                Text("Glucose")
+                MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
+            }
+            VStack {
+                Text("Insulin")
+                MetricGraph(metricStore: metricStore, event: event, dataType: .Insulin, hours: hours)
+            }
+            Spacer()
         }
                 .background(Color(uiColor: .systemBackground))
                 .cornerRadius(15)
-                .padding([.leading, .trailing], 5)
+                .padding([.leading, .trailing, .bottom], 5)
     }
 
     var timeline: some View {
@@ -171,7 +177,7 @@ struct EventList: View {
                     }
                 }
             }
-            Spacer()
+                    .padding(.bottom, 10)
         }
                 .background(Color(uiColor: .systemBackground))
                 .cornerRadius(15)
@@ -182,13 +188,12 @@ struct EventList: View {
         VStack {
             HStack {
                 if firstInDay {
-                    Text(formatDate(date: event.date))
+                    Text(DateUtils.formatDateWithRelativeDay(date: event.date))
                 }
                 Spacer()
             }
-            Spacer()
             HStack {
-                Text(formatTime(date: event.date))
+                Text(DateUtils.formatTime(date: event.date))
                         .font(.caption)
                         .padding(0)
                 Spacer()
@@ -241,26 +246,6 @@ struct EventList: View {
     // Helpers
     func isSameDay(date1: Date, date2: Date) -> Bool {
         Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
-    }
-
-    func formatTime(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: date)
-    }
-
-    func formatDate(date: Date) -> String {
-        if Calendar.current.isDateInToday(date) {
-            return "Today"
-        }
-        if Calendar.current.isDateInYesterday(date) {
-            return "Yesterday"
-        }
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-
-        return formatter.string(from: date)
     }
 
     func getTimelineEvents() -> [TimelineEvent] {
