@@ -36,12 +36,20 @@ struct InsulinStatisticsChart: UIViewRepresentable {
         let statisticsBuckets = getStatistics()
         let percentiles25to75 = statisticsBuckets.map { [$0.index, $0.percentile25, $0.percentile75] }
         let minMaxs = statisticsBuckets.map { [$0.index, $0.min, $0.max] }
+        let medians = statisticsBuckets.map { [$0.index, $0.median] }
         return AAChartModel()
                 .title("Insulin")
                 .categories(categories)
-                .colorsTheme(["#ffd9a8", "#fe9711"])
+                .colorsTheme(["#ffa700","#fccb6f", "#fae0af"])
                 .legendEnabled(false)
                 .series([
+                    AASeriesElement()
+                            .type(.spline)
+                            .name("median")
+                            .lineWidth(0)
+                            .marker(AAMarker().radius(3))
+                            .data(medians)
+                            .zIndex(2),
                     AASeriesElement()
                             .type(.areasplinerange)
                             .name("50%")

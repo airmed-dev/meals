@@ -53,7 +53,7 @@ struct GlucoseStatisticsChart: UIViewRepresentable {
                             .type(.spline)
                             .name("median")
                             .lineWidth(0)
-                            .marker(AAMarker().radius(5))
+                            .marker(AAMarker().radius(3))
                             .data(medians)
                             .zIndex(2),
                     AASeriesElement()
