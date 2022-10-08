@@ -67,7 +67,9 @@ struct MetricGraph: View {
                     )
                 case .Glucose:
                     GlucoseChart(start: event.date,
-                                 end: event.date.advanced(by: TimeInterval(hours*60*60)), samples: samples)
+                                 end: event.date.advanced(by: TimeInterval(hours*60*60)),
+                                 samples: samples
+                    )
                 }
             }
         }

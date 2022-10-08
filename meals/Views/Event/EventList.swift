@@ -28,6 +28,7 @@ struct EventList: View {
     // Event statistics
     @State var selectedEvent: Event? = nil
     @State var hours = 3
+    let hourOptions = [3, 6]
 
     var body: some View {
         VStack {
@@ -74,6 +75,7 @@ struct EventList: View {
                         HStack {
                             Text(meal.name)
                                     .font(.largeTitle)
+                                    .minimumScaleFactor(0.01)
                             Spacer()
                         }
                         HStack {
@@ -119,9 +121,14 @@ struct EventList: View {
             HStack {
                 Text("Statistics")
                         .font(.headline)
-                        .padding([.leading, .top], 10)
                 Spacer()
+                Picker("Hours", selection: $hours) {
+                    ForEach(hourOptions, id: \.self) { hour in
+                        Text("\(hour) hours")
+                    }
+                }
             }
+                    .padding([.leading, .top, .trailing], 10)
             VStack {
                 Text("Glucose")
                 MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
@@ -143,13 +150,9 @@ struct EventList: View {
             HStack {
                 Text("Timeline")
                         .font(.headline)
-                        .padding(.bottom, 5)
-                        .padding(.top, 5)
-                        .padding(.leading, 10)
                 Spacer()
             }
-                    .frame(height: 30)
-                    .padding(.trailing, 10)
+                    .padding([.leading, .top, .trailing], 10)
 
             HStack {
                 if eventStore.events.isEmpty {
