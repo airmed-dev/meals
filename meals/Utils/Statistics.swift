@@ -35,7 +35,7 @@ func calculatePercentiles(relativeSamples: [(Date, [MetricSample])], interval: T
         // 1,2,3,4,5
         let middlePoint = Int(ceil(Double(sorted.count / 2)))
         let median = sorted.count % 2 == 0
-                ? (sorted[middlePoint] + sorted[middlePoint - 1])
+                ? (sorted[middlePoint] + sorted[middlePoint - 1]) / 2
                 : sorted[middlePoint]
         return StatisticsBucket(
                 index: offset,
