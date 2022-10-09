@@ -34,7 +34,7 @@ class DateUtils {
         formatRelativeDayOfWeek(date: date) ?? formatDate(date: date)
     }
 
-    static func dateAndTimeFormat(date: Date) -> String {
+    static func formatDateAndTime(date: Date) -> String {
         let dateSection = formatRelativeDayOfWeek(date: date) ??
                 "\(formatDayOfTheWeek(date: date)), \(formatDate(date: date))"
         return "\(dateSection) at \(formatTime(date: date))"

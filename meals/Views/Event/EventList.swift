@@ -60,6 +60,7 @@ struct EventList: View {
 
         return HStack {
             if let selectedEvent = selectedEvent, let meal = meal {
+                // Todo: Maybe this should be it's own component "MealHeader" ?
                 ZStack {
                     // Photo
                     HStack {
@@ -79,7 +80,7 @@ struct EventList: View {
                             Spacer()
                         }
                         HStack {
-                            Text("\(DateUtils.dateAndTimeFormat(date: selectedEvent.date))")
+                            Text("\(DateUtils.formatDateAndTime(date: selectedEvent.date))")
                             Spacer()
                         }
                         Spacer()
