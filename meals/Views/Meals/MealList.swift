@@ -12,7 +12,6 @@ struct MealList: View {
     @EnvironmentObject var mealStore: MealStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
-    @Namespace var animationNamespace
 
     @State var displayMealEditor: Bool = false
     @State var displayMealDetails: Bool = false
@@ -131,7 +130,6 @@ struct MealList: View {
                 }
                 .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
                     MealDetails(
-                        animationNamespace: animationNamespace,
                         metricStore: metricStore,
                         meal: selectedMeal!,
                         image: try? photoStore.loadImage(mealID: selectedMeal!.id)

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MealDetails: View {
-    var animationNamespace: Namespace.ID?
     var metricStore: MetricStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var mealStore: MealStore
