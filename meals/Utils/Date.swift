@@ -31,7 +31,7 @@ class DateUtils {
     }
 
     static func formatDateWithRelativeDay(date: Date) -> String {
-        formatRelativeDayOfWeek(date: date) ?? formatDate(date: date)
+        formatRelativeDayOfWeek(date: date) ?? formatDayMonth(date: date)
     }
 
     static func formatDateAndTime(date: Date) -> String {
@@ -43,6 +43,12 @@ class DateUtils {
     static func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
+    }
+    
+    static func formatDayMonth(date: Date) -> String {
+         let formatter = DateFormatter()
+        formatter.dateFormat = "d MMMM"
         return formatter.string(from: date)
     }
 

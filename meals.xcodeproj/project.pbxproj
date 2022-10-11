@@ -35,6 +35,7 @@
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
 		DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */; };
 		DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37D5E828354573007BEFE3 /* HealthKit.swift */; };
+		DF37E6E028F2EC06002696CB /* PlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37E6DF28F2EC06002696CB /* PlaygroundView.swift */; };
 		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
 		DF59D90328E2C93800A7333E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF07B3212826933800C164AB /* Preview Assets.xcassets */; };
 		DF8A73A028DF32C50095E9FF /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8A739F28DF32C50095E9FF /* Debug.swift */; };
@@ -85,6 +86,7 @@
 		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
 		DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerRadiusModifier.swift; sourceTree = "<group>"; };
 		DF37D5E828354573007BEFE3 /* HealthKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKit.swift; sourceTree = "<group>"; };
+		DF37E6DF28F2EC06002696CB /* PlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundView.swift; sourceTree = "<group>"; };
 		DF3D07C2282FFB8D003E36BD /* MealDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetails.swift; sourceTree = "<group>"; };
 		DF8A739F28DF32C50095E9FF /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		DF8A73A128DF38E60095E9FF /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 		DF07B3312826942C00C164AB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF37E6DF28F2EC06002696CB /* PlaygroundView.swift */,
 				DF07B31C2826933700C164AB /* ContentView.swift */,
 				8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */,
 				DF114AED283223610089BF0B /* Meals */,
@@ -362,6 +365,7 @@
 				DF937573283012DA00CBE618 /* Event.swift in Sources */,
 				DFAB190628F045A400E4AB00 /* InsulinStatisticsChart.swift in Sources */,
 				DFDEC41828F0073300E0410C /* GlucoseStatisticsChart.swift in Sources */,
+				DF37E6E028F2EC06002696CB /* PlaygroundView.swift in Sources */,
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
 				DFDEC41428F006A200E0410C /* GlucoseChart.swift in Sources */,
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,

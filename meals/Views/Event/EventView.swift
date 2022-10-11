@@ -51,11 +51,15 @@ struct EventView: View {
                     if let image = image {
                         Image(uiImage: image)
                                 .resizable()
-                                .scaledToFill()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height:200, alignment: .center)
+                                .clipped()
                     } else {
                         Image(systemName: "photo.fill")
                                 .resizable()
                                 .scaledToFill()
+                                .clipped()
+                                .frame(height: 200)
                     }
 
                     // Overlapping card

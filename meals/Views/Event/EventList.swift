@@ -189,6 +189,7 @@ struct EventList: View {
                     }
                 }
             }
+            .background(.gray.opacity(0.03))
             .padding(.bottom, 10)
         }
         .background(Color(uiColor: .systemBackground))
@@ -198,27 +199,33 @@ struct EventList: View {
     
     func timelineCard(meal: Meal, event: Event, firstInDay: Bool) -> some View {
         VStack {
-            HStack {
-                if firstInDay {
-                    Text(DateUtils.formatDateWithRelativeDay(date: event.date))
+            VStack {
+                HStack {
+                    if firstInDay {
+                        Text(DateUtils.formatDateWithRelativeDay(date: event.date))
+                    }
+                    Spacer()
                 }
-                Spacer()
             }
-            HStack {
-                Text(DateUtils.formatTime(date: event.date))
-                    .font(.caption)
-                    .padding(0)
-                Spacer()
+            .frame(height: 30)
+            VStack {
+                HStack {
+                    Text(DateUtils.formatTime(date: event.date))
+                        .font(.caption)
+                    Spacer()
+                }
+                .padding(5)
+                MealCard(
+                    font: .title3,
+                    displayBelow: true,
+                    meal: meal,
+                    image: try? photoStore.loadImage(mealID: meal.id)
+                )
+                .frame(width: 100, height: 100)
             }
-            MealCard(
-                font: .caption,
-                meal: meal,
-                image: try? photoStore.loadImage(mealID: meal.id)
-            )
-            .clipShape(
-                RoundedRectangle(
-                    cornerSize: CGSize(width: 10, height: 10)))
-            .frame(width: 100, height: 100)
+            .background(.white)
+            .cornerRadius(5)
+            .shadow(color: .gray.opacity(0.2), radius: 2)
         }
         .padding(.leading, 10)
     }

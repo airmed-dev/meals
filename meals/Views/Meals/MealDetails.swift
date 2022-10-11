@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MealDetails: View {
+    var animationNamespace: Namespace.ID?
     var metricStore: MetricStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var mealStore: MealStore
@@ -124,7 +125,9 @@ struct MealDetails: View {
                     if let image = image {
                         Image(uiImage: image)
                             .resizable()
-                            .scaledToFill()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height:200, alignment: .center)
+                            .clipped()
                     } else {
                         ZStack {
                             LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
@@ -136,19 +139,17 @@ struct MealDetails: View {
                         }
                     }
                 }
-                
-                
                 // Titles
                 VStack(alignment: .trailing) {
                     Spacer()
                     HStack {
                         Text(meal.name)
                             .font(.largeTitle)
-                            .minimumScaleFactor(0.01)
+                            .minimumScaleFactor(0.001)
                         Spacer()
                     }
                 }
-                .padding([.leading, .trailing], 5)
+                .padding([.leading, .trailing,.bottom], 5)
                 .foregroundColor(.white)
                 .background(
                     .linearGradient(
@@ -200,6 +201,15 @@ struct MealDetails: View {
         return InsulinStatisticsChart(range: range, resolution: resolution, samples: samples)
     }
     
+    var hoursPicker: some View {
+        Picker("Hours", selection: $hours) {
+            ForEach(hourOptions, id: \.self) { hour in
+                Text("\(hour) hours")
+            }
+        }
+        .pickerStyle(.menu)
+    }
+    
     func statistics(events: [Event]) -> some View {
         VStack(alignment: .leading) {
             HStack {
@@ -209,11 +219,7 @@ struct MealDetails: View {
                 Text("total events: \(events.count)")
                     .font(.subheadline)
                 Spacer()
-                Picker("Hours", selection: $hours) {
-                    ForEach(hourOptions, id: \.self) { hour in
-                        Text("\(hour) hours")
-                    }
-                }
+                hoursPicker
             }
             .padding([.leading, .top, .trailing], 10)
             if events.count > 0 {
@@ -233,11 +239,14 @@ struct MealDetails: View {
             HStack {
                 Text("Meal events")
                     .font(.headline)
-                    .padding()
                 Spacer()
                 Text("total events: \(events.count)")
                     .font(.subheadline)
-            }
+                Spacer()
+                hoursPicker
+           
+            }.padding([.leading, .top, .trailing], 10)
+
             if events.count > 0 {
                 Divider()
                 ForEach(events, id: \.id) { event in
@@ -260,6 +269,8 @@ struct MealDetails: View {
                     MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
                         .frame(height: 100)
                     Divider()
+                        .frame(maxHeight: 15)
+                        .background(.gray)
                 }
             } else {
                 noData
@@ -270,6 +281,7 @@ struct MealDetails: View {
         .background(Color(uiColor: UIColor.systemBackground))
         .cornerRadius(15)
     }
+    
     
     func loadSamples(events: [Event], hours: Int) {
         glucoseSamples = [:]
