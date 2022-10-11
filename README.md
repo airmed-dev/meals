@@ -12,6 +12,11 @@ Meals supports the following datasources for
 - Apple HealthKit
 - NightScout
 
+## Project Status
+The project is currently in a very experimental stage. It hasn't been tested by anyone other then me. And requires a lot of fine tuning to the UI, and the data layers.
+
+The roadmap is still not done, I'm working on creating a tasks list in the Github Project https://github.com/users/airmed-dev/projects/1
+
 ## Screenshots
 
 ### Main pages
