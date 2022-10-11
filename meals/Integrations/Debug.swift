@@ -18,7 +18,9 @@ class Debug: MetricStore {
 
 
     func getGlucoseSamples(start: Date, end: Date) -> [MetricSample] {
-        let startPoint = 50 + 100 * Double.random(in: 0...2)
+        var minValue = 50.0
+        var maxValue = 500.0
+        let startPoint = minValue + 100 * Double.random(in: 0...2)
         var point = startPoint
         var samples: [MetricSample] = []
         stride(
@@ -29,7 +31,7 @@ class Debug: MetricStore {
             samples.append(MetricSample(
                     Date(timeIntervalSince1970: date), point
             ))
-            point += Double.random(in: -15...15)
+            point = max(min(point + Double.random(in: -15...15), maxValue), minValue)
         }
 
         return samples
