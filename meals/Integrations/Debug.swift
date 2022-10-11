@@ -36,19 +36,9 @@ class Debug: MetricStore {
     }
 
     func getInsulinSamples(start: Date, end: Date) -> [MetricSample] {
-        return stride(
-                from: start.timeIntervalSince1970,
-                to: end.timeIntervalSince1970,
-                by: 5 * 60
-        ).map { date in
-            let bolus: Double = Double.random(in: 3...5)
-            let insulinValue =
-                    bolus *
-                            ((end.timeIntervalSince1970 - date) /
-                                    (end.timeIntervalSince1970 - start.timeIntervalSince1970))
-            return MetricSample(
-                    Date(timeIntervalSince1970: date), insulinValue)
-        }
+       [
+           MetricSample(start, Double.random(in: 1...5))
+       ]
     }
 }
 

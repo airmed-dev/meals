@@ -1,5 +1,5 @@
 //
-//  ColorFromHex.swift
+//  Color.swift
 //  meals
 //
 //  Created by aclowkey on 10/06/2022.

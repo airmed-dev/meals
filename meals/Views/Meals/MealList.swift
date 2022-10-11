@@ -12,6 +12,7 @@ struct MealList: View {
     @EnvironmentObject var mealStore: MealStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
+    @Namespace var animationNamespace
 
     @State var displayMealEditor: Bool = false
     @State var displayMealDetails: Bool = false
@@ -32,29 +33,25 @@ struct MealList: View {
         }
         return LazyVGrid(columns: twoColumns) {
             ForEach(meals, id: \.hashValue) { meal in
-                HStack {
-                    withAnimation(.easeInOut(duration: 10.0)) {
-                        Button(action: {
-                            withAnimation(.easeInOut) {
-                                selectedMeal = meal
-                                displayMealDetails = true
-                            }
-                        }) {
-                            MealCard(
-                                    font: .headline,
-                                    meal: meal,
-                                    image: try? photoStore.loadImage(mealID: meal.id)
-                            )
-                                    .frame(
-                                            width: 150,
-                                            height: 150
-                                    )
-                                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+                    Button(action: {
+                        withAnimation(.easeInOut) {
+                            selectedMeal = meal
+                            displayMealDetails = true
                         }
+                    }) {
+                        MealCard(
+                            font: .headline,
+                            meal: meal,
+                            image: try? photoStore.loadImage(mealID: meal.id)
+                        )
+                        .frame(
+                            width: 150,
+                            height: 150
+                        ).cornerRadius(10)
                     }
-                }
             }
         }
+        .padding(.leading, 10)
     }
 
     var noMeals: some View {
@@ -134,12 +131,13 @@ struct MealList: View {
                 }
                 .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
                     MealDetails(
-                            metricStore: metricStore,
-                            meal: selectedMeal!,
-                            image: try? photoStore.loadImage(mealID: selectedMeal!.id)
+                        animationNamespace: animationNamespace,
+                        metricStore: metricStore,
+                        meal: selectedMeal!,
+                        image: try? photoStore.loadImage(mealID: selectedMeal!.id)
                     )
-                            .environmentObject(eventStore)
-                            .environmentObject(mealStore)
+                    .environmentObject(eventStore)
+                    .environmentObject(mealStore)
                 }
     }
 }

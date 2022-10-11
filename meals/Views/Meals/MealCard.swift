@@ -9,39 +9,44 @@ import SwiftUI
 
 struct MealCard: View {
     var font: Font = Font.caption
+    var displayBelow = false
     @State var meal: Meal
     @State var image: UIImage?
-    @Namespace private var animation
     
     var body: some View {
         ZStack(alignment: .bottomLeading){
             GeometryReader { geo in
-                if let image = image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .frame(width: geo.size.width, height: geo.size.height)
-                        .cornerRadius(10)
-                        .matchedGeometryEffect(id: meal.id, in: animation, anchor: .center)
-                } else {
-                    renderNoimage()
+                VStack {
+                    if let image = image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .frame(width: geo.size.width, height: geo.size.height)
+                            .cornerRadius(10)
+                    } else {
+                        renderNoimage()
+                    }
                 }
             }
-            
-            HStack(alignment: .firstTextBaseline) {
-                Text(meal.name)
-                    .font(font)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.leading, 2)
-                    .padding(.trailing, 2)
-                    .padding(.bottom, 2)
-                    .background(
-                        .linearGradient(
-                            colors: [.black, .black.opacity(0)],
-                            startPoint: .bottom,
-                            endPoint: .top)
-                    )
+            if !displayBelow {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(meal.name)
+                        .font(font)
+                        .fontWeight(.bold)
+                        .minimumScaleFactor(0.001)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding([.leading, .trailing, .bottom], 2)
+                        .background(
+                            .linearGradient(
+                                stops:[
+                                    Gradient.Stop(color: .black, location: 0),
+                                    Gradient.Stop(color: .black.opacity(0.2), location: 0.9)
+                                ],
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
+                        )
+                }
             }
         }
     }
@@ -61,8 +66,15 @@ struct MealCard: View {
 
 struct MealCard_Previews: PreviewProvider {
     static var previews: some View {
-        MealCard(meal: Meal(id:0, name: "Name", description: "Description"))
-            .frame(width:200,height:200)
-            .background(.red)
+        Group {
+            MealCard(meal: Meal(id:0, name: "Name", description: "Description"))
+                .frame(width:200,height:200)
+                .background(.red)
+            MealCard(font: .largeTitle, meal: Meal(id:0, name: "Super long name for a meal", description: "Description"))
+                .frame(width:200,height:200)
+                .background(.red)
+            MealCard(displayBelow: true, meal: Meal(id:0, name: "Name", description: "Description"))
+                .frame(width:200,height:200)
+        }
     }
 }
