@@ -154,7 +154,6 @@ struct EventList: View {
     }
     
     var timeline: some View {
-        let timelineEvents = getTimelineEvents()
         return VStack {
             HStack {
                 Text("Timeline")
@@ -162,74 +161,21 @@ struct EventList: View {
                 Spacer()
             }
             .padding([.leading, .top, .trailing], 10)
-            
-            HStack {
-                if eventStore.events.isEmpty {
-                    noData
-                } else {
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(Array(timelineEvents.enumerated()), id: \.1.hashValue) { index, timelineEvent in
-                                timelineCard(
-                                    meal: mealStore.getMeal(event: timelineEvent.event)!,
-                                    event: timelineEvent.event,
-                                    firstInDay:
-                                        index == 0 || !isSameDay(
-                                            date1: timelineEvents[index - 1].event.date,
-                                            date2: timelineEvent.event.date
-                                        )
-                                )
-                                .onTapGesture {
-                                    withAnimation {
-                                        selectedEvent = timelineEvent.event
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            .background(.gray.opacity(0.03))
-            .padding(.bottom, 10)
+            TimelineView(
+                cardWidth: 130,
+                events: eventStore.events,
+                selectedEvent: $selectedEvent
+            )
+                .environmentObject(mealStore)
+                .frame(height: 200)
+                .background(.white)
+                .cornerRadius(5)
         }
         .background(Color(uiColor: .systemBackground))
         .cornerRadius(15)
         .padding([.leading, .trailing], 5)
     }
-    
-    func timelineCard(meal: Meal, event: Event, firstInDay: Bool) -> some View {
-        VStack {
-            VStack {
-                HStack {
-                    if firstInDay {
-                        Text(DateUtils.formatDateWithRelativeDay(date: event.date))
-                    }
-                    Spacer()
-                }
-            }
-            .frame(height: 30)
-            VStack {
-                HStack {
-                    Text(DateUtils.formatTime(date: event.date))
-                        .font(.caption)
-                    Spacer()
-                }
-                .padding(5)
-                MealCard(
-                    font: .title3,
-                    displayBelow: true,
-                    meal: meal,
-                    image: try? photoStore.loadImage(mealID: meal.id)
-                )
-                .frame(width: 100, height: 100)
-            }
-            .background(.white)
-            .cornerRadius(5)
-            .shadow(color: .gray.opacity(0.2), radius: 2)
-        }
-        .padding(.leading, 10)
-    }
-    
+
     var noData: some View {
         HStack(alignment: .center) {
             Spacer()
@@ -260,25 +206,6 @@ struct EventList: View {
     func onMealTap(meal: Meal) {
         showLogEventAlert = true
         mealToLog = meal
-    }
-    
-    // Helpers
-    func isSameDay(date1: Date, date2: Date) -> Bool {
-        Calendar.current.isDate(date1, equalTo: date2, toGranularity: .day)
-    }
-    
-    func getTimelineEvents() -> [TimelineEvent] {
-        eventStore.events.compactMap {
-            // This really shouldn't happen...
-            // right now it happens because of bad deletion of meals but not related events
-            guard let meal = mealStore.getMeal(event: $0) else {
-                return nil
-            }
-            return TimelineEvent(
-                event: $0,
-                mealUpdatedAt: meal.updatedAt
-            )
-        }
     }
     
 }

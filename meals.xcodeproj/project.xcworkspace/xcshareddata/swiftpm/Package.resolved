@@ -26,6 +26,15 @@
         "revision" : "0e6db002eeb5e3ba402e94dfe6a120f78b5a64df",
         "version" : "0.2.4"
       }
+    },
+    {
+      "identity" : "trackable-scroll-view",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/maxnatchanon/trackable-scroll-view",
+      "state" : {
+        "branch" : "master",
+        "revision" : "4b094575c2370c3341d0b377a27b46bda4f937f7"
+      }
     }
   ],
   "version" : 2

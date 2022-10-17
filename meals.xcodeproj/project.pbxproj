@@ -34,6 +34,7 @@
 		DF2083D9288B071200100694 /* ValueStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2083D8288B071200100694 /* ValueStats.swift */; };
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
 		DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */; };
+		DF30479528F92A33007E2CC6 /* SwiftUITrackableScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = DF30479428F92A33007E2CC6 /* SwiftUITrackableScrollView */; };
 		DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37D5E828354573007BEFE3 /* HealthKit.swift */; };
 		DF37E6E028F2EC06002696CB /* PlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37E6DF28F2EC06002696CB /* PlaygroundView.swift */; };
 		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
@@ -44,6 +45,7 @@
 		DF937575283012E100CBE618 /* Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937574283012E100CBE618 /* Metric.swift */; };
 		DF9375772830137200CBE618 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375762830137200CBE618 /* EventView.swift */; };
 		DF9375792830156500CBE618 /* MetricGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9375782830156500CBE618 /* MetricGraph.swift */; };
+		DF98888728FBCC9D001B0D92 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF98888628FBCC9D001B0D92 /* TimelineView.swift */; };
 		DFA0E56B2847DE1100323B35 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0E56A2847DE1100323B35 /* EventList.swift */; };
 		DFAB190628F045A400E4AB00 /* InsulinStatisticsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */; };
 		DFDEC41228EFF63600E0410C /* AAInfographics in Frameworks */ = {isa = PBXBuildFile; productRef = DFDEC41128EFF63600E0410C /* AAInfographics */; };
@@ -94,6 +96,7 @@
 		DF937574283012E100CBE618 /* Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metric.swift; sourceTree = "<group>"; };
 		DF9375762830137200CBE618 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
 		DF9375782830156500CBE618 /* MetricGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricGraph.swift; sourceTree = "<group>"; };
+		DF98888628FBCC9D001B0D92 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		DFA0E56A2847DE1100323B35 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
 		DFAB190528F045A400E4AB00 /* InsulinStatisticsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsulinStatisticsChart.swift; sourceTree = "<group>"; };
 		DFDEC41328F006A200E0410C /* GlucoseChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseChart.swift; sourceTree = "<group>"; };
@@ -109,6 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF30479528F92A33007E2CC6 /* SwiftUITrackableScrollView in Frameworks */,
 				DFDEC41228EFF63600E0410C /* AAInfographics in Frameworks */,
 				DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */,
 				DF12302C28784216007156DD /* BottomSheet in Frameworks */,
@@ -278,6 +282,7 @@
 				DF9375762830137200CBE618 /* EventView.swift */,
 				DFA0E56A2847DE1100323B35 /* EventList.swift */,
 				8FFA3615549B73CF0DCB6D79 /* EventListSkeleton.swift */,
+				DF98888628FBCC9D001B0D92 /* TimelineView.swift */,
 			);
 			path = Event;
 			sourceTree = "<group>";
@@ -301,6 +306,7 @@
 			packageProductDependencies = (
 				DF12302B28784216007156DD /* BottomSheet */,
 				DFDEC41128EFF63600E0410C /* AAInfographics */,
+				DF30479428F92A33007E2CC6 /* SwiftUITrackableScrollView */,
 			);
 			productName = meals;
 			productReference = DF07B3172826933700C164AB /* meals.app */;
@@ -334,6 +340,7 @@
 				DF38A93D286EE71B0041F304 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */,
 				DFDEC41028EFF63600E0410C /* XCRemoteSwiftPackageReference "AAChartKit-Swift" */,
+				DF30479328F92A33007E2CC6 /* XCRemoteSwiftPackageReference "trackable-scroll-view" */,
 			);
 			productRefGroup = DF07B3182826933700C164AB /* Products */;
 			projectDirPath = "";
@@ -362,6 +369,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DFE8279B28B10EEF004F29FF /* MealsApp.swift in Sources */,
+				DF98888728FBCC9D001B0D92 /* TimelineView.swift in Sources */,
 				DF937573283012DA00CBE618 /* Event.swift in Sources */,
 				DFAB190628F045A400E4AB00 /* InsulinStatisticsChart.swift in Sources */,
 				DFDEC41828F0073300E0410C /* GlucoseStatisticsChart.swift in Sources */,
@@ -622,6 +630,14 @@
 				minimumVersion = 0.2.4;
 			};
 		};
+		DF30479328F92A33007E2CC6 /* XCRemoteSwiftPackageReference "trackable-scroll-view" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/maxnatchanon/trackable-scroll-view";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		DF38A93D286EE71B0041F304 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -645,6 +661,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */;
 			productName = BottomSheet;
+		};
+		DF30479428F92A33007E2CC6 /* SwiftUITrackableScrollView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF30479328F92A33007E2CC6 /* XCRemoteSwiftPackageReference "trackable-scroll-view" */;
+			productName = SwiftUITrackableScrollView;
 		};
 		DFDEC41128EFF63600E0410C /* AAInfographics */ = {
 			isa = XCSwiftPackageProductDependency;
