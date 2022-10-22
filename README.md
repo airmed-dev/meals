@@ -27,7 +27,7 @@ There are also a few technical requiresments. Right now It's just one big that h
 1. Automated testing
 
 
-## Screenshots
+## 🖼️ Screenshots
 
 ### Main pages
 <p>
