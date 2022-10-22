@@ -1,7 +1,7 @@
 # 🥣 Meals
 Meals is a meal tracker and analyzer for type 1 diabetics.
 
-## Features
+## ⭐ Features
 - Manage meal data
 - Visualize statistical data for the meals (Insulin, Glucose)
 - Visualize the meal timeline
@@ -15,7 +15,17 @@ Meals supports the following datasources for
 ## Project Status
 The project is currently in a very experimental stage. It hasn't been tested by anyone other then me. And requires a lot of fine tuning to the UI, and the data layers.
 
-The roadmap is still not done, I'm working on creating a tasks list in the Github Project https://github.com/users/airmed-dev/projects/1
+### M1
+The first mile stone of the app is due by 1.1.2023. 
+The primary focus of the app are the features:
+
+1. Managing meals photos and descriptions.
+2. Tracking meal events
+3. Analyzing the metrics of insulin and carbohydrates
+
+There are also a few technical requiresments. Right now It's just one big that has been skipped throughout the project.
+1. Automated testing
+
 
 ## Screenshots
 
@@ -47,11 +57,3 @@ The roadmap is still not done, I'm working on creating a tasks list in the Githu
 Meals cares about your privacy and safety. All the meal data is stored on the device itself. 
 Health metrics are stored in external data sources. 
 Meals doesn't take any data outside your device.
-
-
-## Project Roadmap
-The goal of the app is to provide a tool for type 1 diabetics to get to know their meals better.
-All the project features are geared towards that goal. It is meant to provide a pleasant experience
-around tracking the meals, and also analyzing their data.
-
-### TBD
