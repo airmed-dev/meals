@@ -53,7 +53,7 @@ There are also a few technical requiresments. Right now It's just one big that h
 </p>
 
 
-## Privacy
+## 🔐 Privacy
 Meals cares about your privacy and safety. All the meal data is stored on the device itself. 
 Health metrics are stored in external data sources. 
 Meals doesn't take any data outside your device.
