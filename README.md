@@ -12,7 +12,7 @@ Meals supports the following datasources for
 - Apple HealthKit
 - NightScout
 
-## Project Status
+## 🚧 Project Status
 The project is currently in a very experimental stage. It hasn't been tested by anyone other then me. And requires a lot of fine tuning to the UI, and the data layers.
 
 ### M1
