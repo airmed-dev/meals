@@ -30,11 +30,11 @@ struct MealDetails: View {
                 VStack(alignment: .leading) {
                     header
                     description
-                    statistics(events: mealEvents)
-                    eventsList(events: mealEvents)
+                    metrics(events: mealEvents)
                 }
                 .navigationBarTitle(Text("Meal details"), displayMode: .inline)
             }
+            .background(.gray.opacity(0.2))
             .overlay {
                 eventsActionButton
             }
@@ -52,7 +52,6 @@ struct MealDetails: View {
                     }
                 }
             }
-            .background(.gray.opacity(0.2))
             .bottomSheet(isPresented: $showLogMeal, detents: [.medium()]) {
                 MealEventLogger(meal: meal)
                     .environmentObject(eventStore)
@@ -67,7 +66,7 @@ struct MealDetails: View {
         
     }
     
-    var noData: some View {
+    var noEvents: some View {
         VStack(alignment: .center) {
             Image(systemName: "tray.fill")
                 .resizable()
@@ -76,16 +75,17 @@ struct MealDetails: View {
                 .font(.system(size: 30, weight: .ultraLight))
                 .frame(width: 80)
             
-            Text("No data")
+            Text("No events")
                 .font(.title)
             
             HStack(alignment: .center) {
                 Spacer()
-                Text("Log an event")
+                Text("Create an event")
                     .font(.body)
                 Spacer()
             }
         }
+        .padding()
     }
     
     var eventsActionButton: some View {
@@ -175,6 +175,7 @@ struct MealDetails: View {
         .padding()
         .background(Color(uiColor: UIColor.systemBackground))
         .cornerRadius(15)
+        .padding([.leading, .trailing], 5)
     }
     
     var glucoseStatistics: some View {
@@ -209,10 +210,10 @@ struct MealDetails: View {
         .pickerStyle(.menu)
     }
     
-    func statistics(events: [Event]) -> some View {
+    func metrics(events: [Event]) -> some View {
         VStack(alignment: .leading) {
             HStack {
-                Text("Statistics")
+                Text("Metrics")
                     .font(.headline)
                 Spacer()
                 Text("total events: \(events.count)")
@@ -220,59 +221,56 @@ struct MealDetails: View {
                 Spacer()
                 hoursPicker
             }
-            .padding([.leading, .top, .trailing], 10)
+                .padding([.leading, .top, .trailing], 10)
+            
             if events.count > 0 {
+                Divider()
+                Text("Statistics")
+                    .font(.subheadline)
+                    .padding([.leading, .top, .trailing], 10)
                 glucoseStatistics.frame(height: 200)
                 insulinStatistics.frame(height: 200)
+                
+                Divider()
+                Text("Meal events")
+                    .padding([.leading, .top, .trailing], 10)
+                eventsList(events: events)
             } else {
-                noData
+                noEvents
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
         .background(Color(uiColor: UIColor.systemBackground))
         .cornerRadius(15)
+        .padding([.leading, .trailing], 5)
+
     }
     
     func eventsList(events: [Event]) -> some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text("Meal events")
-                    .font(.headline)
-                Spacer()
-                Text("total events: \(events.count)")
-                    .font(.subheadline)
-                Spacer()
-                hoursPicker
-           
-            }.padding([.leading, .top, .trailing], 10)
-
-            if events.count > 0 {
-                Divider()
-                ForEach(events, id: \.id) { event in
-                    NavigationLink(destination: {
-                        EventView(
-                            metricStore: metricStore,
-                            meal: meal,
-                            event: event,
-                            image: image
-                        )
-                        .environmentObject(eventStore)
-                    }) {
-                        HStack {
-                            Text(DateUtils.formatDateAndTime(date: event.date))
-                            Spacer()
-                            Image(systemName: "arrow.forward.circle")
-                        }
-                        .padding()
+            Divider()
+            ForEach(events, id: \.id) { event in
+                NavigationLink(destination: {
+                    EventView(
+                        metricStore: metricStore,
+                        meal: meal,
+                        event: event,
+                        image: image
+                    )
+                    .environmentObject(eventStore)
+                }) {
+                    HStack {
+                        Text(DateUtils.formatDateAndTime(date: event.date))
+                        Spacer()
+                        Image(systemName: "arrow.forward.circle")
                     }
-                    MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
-                        .frame(height: 100)
-                    Divider()
-                        .frame(maxHeight: 15)
-                        .background(.gray)
+                    .padding()
                 }
-            } else {
-                noData
+                MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
+                    .frame(height: 100)
+                Divider()
+                    .frame(maxHeight: 15)
+                    .background(.gray)
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
@@ -372,7 +370,7 @@ struct MealDetails_Previews: PreviewProvider {
             description: "Description"
         )
         let mealID = 1
-        let store = Store(
+        let storeWithData = Store(
             meals: [exampleMeal],
             events: [
                 Event(meal_id: mealID),
@@ -382,11 +380,26 @@ struct MealDetails_Previews: PreviewProvider {
             ],
             settings: Settings(dataSourceType: .Debug)
         )
-        MealDetails(
-            metricStore: store.metricStore,
-            meal: exampleMeal
+        let storeWitouthData = Store(
+            meals: [exampleMeal],
+            events: [],
+            settings: Settings(dataSourceType: .Debug)
         )
-        .environmentObject(store.mealStore)
-        .environmentObject(store.eventStore)
+        Group {
+            MealDetails(
+                metricStore: storeWithData.metricStore,
+                meal: exampleMeal
+            )
+            .environmentObject(storeWithData.mealStore)
+            .environmentObject(storeWithData.eventStore)
+            
+            MealDetails(
+                metricStore: storeWitouthData.metricStore,
+                meal: exampleMeal
+            )
+            .environmentObject(storeWitouthData.mealStore)
+            .environmentObject(storeWitouthData.eventStore)
+
+        }
     }
 }
