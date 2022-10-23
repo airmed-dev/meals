@@ -14,16 +14,39 @@ struct InsulinStatisticsChart: View {
     let range: TimeInterval
     let resolution: TimeInterval
     var samples: [(Date, [MetricSample])]
-
+    
     var body: some View {
-       StatisticsChart(
-               title: "Insulin",
-               colors: colors,
-               samples: samples,
-               range: range,
-               resolution: resolution)
+        let pointCount = samples.map{$1.count}.reduce(0, +)
+        if pointCount > 0 {
+            StatisticsChart(
+                title: "Insulin",
+                colors: colors,
+                samples: samples,
+                range: range,
+                resolution: resolution)
+        } else {
+            VStack {
+                Spacer()
+                HStack(alignment: .center) {
+                    Spacer()
+                    VStack(alignment: .center) {
+                        Image(systemName: "tray.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.secondary.opacity(0.5))
+                            .font(.system(size: 30, weight: .ultraLight))
+                            .frame(width: 50)
+                        
+                        Text("No data")
+                            .font(.subheadline)
+                    }
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
     }
-
+    
 }
 
 struct InsulinStatisticsChart_Previews: PreviewProvider {
@@ -35,14 +58,14 @@ struct InsulinStatisticsChart_Previews: PreviewProvider {
         let debug = Debug()
         let samples = (1...5).map { _ in
             (start, debug.getInsulinSamples(
-                    start: start,
-                    end: end
+                start: start,
+                end: end
             ))
         }
         return VStack {
             InsulinStatisticsChart(range: range, resolution: resolution, samples: samples)
         }
-                .background(.black)
-                .frame(height: 200)
+        .background(.black)
+        .frame(height: 200)
     }
 }

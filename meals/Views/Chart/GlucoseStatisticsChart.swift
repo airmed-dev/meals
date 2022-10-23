@@ -27,12 +27,35 @@ struct GlucoseStatisticsChart: View {
     var samples: [(Date, [MetricSample])]
 
     var body: some View {
-        StatisticsChart(
-                title: "Glucose",
-                colors: colors,
-                samples: samples,
-                range: range,
-                resolution: resolution)
+        let pointCount = samples.map{$1.count}.reduce(0, +)
+        if pointCount > 0 {
+            StatisticsChart(
+                    title: "Glucose",
+                    colors: colors,
+                    samples: samples,
+                    range: range,
+                    resolution: resolution)
+        } else {
+            VStack {
+                Spacer()
+                HStack(alignment: .center) {
+                    Spacer()
+                    VStack(alignment: .center) {
+                        Image(systemName: "tray.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.secondary.opacity(0.5))
+                            .font(.system(size: 30, weight: .ultraLight))
+                            .frame(width: 50)
+                        
+                        Text("No data")
+                            .font(.subheadline)
+                    }
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
     }
 
 }
