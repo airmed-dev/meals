@@ -57,19 +57,39 @@ struct MetricGraph: View {
             
             if loading {
                 ProgressView()
-            } else {
-                switch dataType {
-                case .Insulin:
-                    InsulinChart(
-                        start: event.date,
-                        end: event.date.addingTimeInterval(TimeInterval(60*60*hours)),
-                        samples: samples
-                    )
+            } else if !samples.isEmpty {
+            switch dataType {
+            case .Insulin:
+                InsulinChart(
+                    start: event.date,
+                    end: event.date.addingTimeInterval(TimeInterval(60*60*hours)),
+                    samples: samples
+                )
                 case .Glucose:
                     GlucoseChart(start: event.date,
                                  end: event.date.advanced(by: TimeInterval(hours*60*60)),
                                  samples: samples
                     )
+                }
+            } else {
+                VStack {
+                    Spacer()
+                    HStack(alignment: .center) {
+                        Spacer()
+                        VStack(alignment: .center) {
+                            Image(systemName: "tray.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(.secondary.opacity(0.5))
+                                .font(.system(size: 30, weight: .ultraLight))
+                                .frame(width: 50)
+                            
+                            Text("No data")
+                                .font(.subheadline)
+                        }
+                        Spacer()
+                    }
+                    Spacer()
                 }
             }
         }
