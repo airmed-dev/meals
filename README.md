@@ -1,5 +1,5 @@
 # 🥣 Meals
-Meals is a meal tracker and analyzer for type 1 diabetics.
+Meals is a meal tracker and analyzer for people with type 1 diabetes.
 
 ## ⭐ Features
 - Manage meal data
