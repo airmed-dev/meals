@@ -40,7 +40,7 @@ struct StatisticsChart: UIViewRepresentable {
 
     func getModel() -> AAChartModel {
         let categories = getCategories()
-        let statisticsBuckets = calculatePercentiles(relativeSamples: samples, resolution: resolution)
+        let statisticsBuckets = calculatePercentiles(eventSamples: samples, resolution: resolution)
         let percentiles25to75 = statisticsBuckets.map {
             [$0.index, $0.percentile25, $0.percentile75]
         }
@@ -52,12 +52,14 @@ struct StatisticsChart: UIViewRepresentable {
         }
         return AAChartModel()
                 .title(title)
+                .xAxisTickInterval(2)
                 .categories(categories)
                 .colorsTheme(colors)
                 .legendEnabled(false)
+                .dataLabelsEnabled(false)
                 .series([
                     AASeriesElement()
-                            .type(.spline)
+                            .type(.line)
                             .name("median")
                             .lineWidth(0)
                             .marker(AAMarker().radius(3))

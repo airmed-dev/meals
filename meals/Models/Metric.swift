@@ -18,3 +18,23 @@ struct MetricSample: Identifiable {
         self.value = value
     }
 }
+
+struct RelativeMetricSample: Hashable {
+    var offset: TimeInterval
+    var value: Double
+    
+    init(_ offset: TimeInterval, _ value: Double){
+        self.offset = offset
+        self.value = value
+    }
+}
+
+
+struct StatisticsBucket {
+    var index: Double
+    var min: Double
+    var max: Double
+    var percentile25: Double
+    var percentile75: Double
+    var median: Double
+}
