@@ -180,7 +180,7 @@ struct MealDetails: View {
     
     var glucoseStatistics: some View {
         // Calculate ranges and step sizes
-        let resolution = TimeInterval(15 * 60)
+        let resolution = TimeInterval(30 * 60)
         let range = TimeInterval(hours * 60 * 60)
         let samples = glucoseSamples.map {
             $0.value
