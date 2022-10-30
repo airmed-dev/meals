@@ -55,12 +55,13 @@ struct InsulinChart: UIViewRepresentable {
     }
     
     func getData() -> [Double] {
-        samples.map { $0.value }
+        samples.map { rounded($0.value, toPlaces: 2) }
     }
     
     func getCategories() -> [String] {
         samples.map { formatTime(date: $0.date)}
     }
+    
     
     func formatTime(date: Date) -> String{
         let dateFormatter = DateFormatter()

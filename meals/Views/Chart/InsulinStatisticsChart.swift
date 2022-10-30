@@ -16,7 +16,8 @@ struct InsulinStatisticsChart: View {
     var samples: [(Date, [MetricSample])]
     
     var body: some View {
-        let pointCount = samples.map{$1.count}.reduce(0, +)
+        let pointCount = samples
+            .map{$1.count}.reduce(0, +)
         if pointCount > 0 {
             StatisticsChart(
                 title: "Insulin",
