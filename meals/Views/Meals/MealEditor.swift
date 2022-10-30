@@ -13,9 +13,9 @@ struct MealEditor: View {
     
     @EnvironmentObject var mealStore: MealStore
     @Environment(\.presentationMode) var presentationMode
-
+    
     @State var meal: Meal = Meal(id:0, name: "", description: MealEditor.placeholderDescription)
-
+    
     // Photo
     @State var imageWasSelected = false
     @State var image: UIImage? = nil
@@ -43,110 +43,17 @@ struct MealEditor: View {
     @State var showErrorAlert: Bool = false
     @State var errorMessage: String = ""
     
+    @FocusState var isTextFocused: Bool
+    @State var textEditingMode: Bool = false
     
     var body: some View {
         VStack {
-            // Image editor
-            GeometryReader { geo in
-                ZStack(alignment: .bottomTrailing) {
-                    VStack {
-                        if imageWasSelected {
-                            Image(uiImage: imageDraft)
-                                .resizable()
-                        } else if let image = image{
-                            Image(uiImage: image)
-                                .resizable()
-                        } else {
-                            VStack {
-                               Image(systemName: "photo.circle")
-                                    .resizable()
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.white)
-                            }
-                            .frame(width: geo.size.width, height: geo.size.height)
-                            .background(LinearGradient(
-                                colors: [Color(hex: 0xffd89b), Color(hex: 0x19547b)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ))
-                            .opacity(0.5)
-                        }
-                    }
-                    
-                    Button(action: {showPhotoPickerMenu.toggle() }) {
-                        HStack {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 15, height: 15)
-                                .foregroundColor(.white)
-                            Text("Photo")
-                                .foregroundColor(.white)
-                        }
-                        .padding(15)
-                        .background(.primary)
-                        .cornerRadius(15)
-                    }
-                    .padding()
-                }
-
+            if !textEditingMode {
+                photoEditor
             }
-            
-            // Meal fields
-            List {
-                HStack {
-                    Text("Name")
-                        .bold()
-                    Spacer()
-                    TextField("Enter meal name", text: $meal.name)
-                }
-                VStack(alignment: .leading) {
-                    Text("Description")
-                        .bold()
-                    TextEditor(text: $meal.description)
-                        .foregroundColor(
-                            meal.description == MealEditor.placeholderDescription
-                            ? .gray
-                            : .primary
-                        )
-                        .onTapGesture {
-                            if meal.description == MealEditor.placeholderDescription {
-                                meal.description = ""
-                            }
-                        }
-                }
-            }
-            .listStyle(.inset)
-//            .cornerRadius(5, corners:[.topLeft, .topRight])
-//            .offset(y: -10)
-            
+            mealFields
             Spacer()
-            
-            // Buttons
-            HStack(alignment: .firstTextBaseline){
-                LoadingButton(status: saveButtonStatus,
-                              label: "Save",
-                              loadingLabel: "Saving..",
-                              doneLabel: "Saved"){
-                    var photo: UIImage? = nil
-                    if imageWasSelected {
-                        photo = imageDraft
-                    } else if let image = image {
-                        photo = image
-                    }
-                    save(meal: meal, image: photo)
-                }
-                if meal.id != 0{
-                    Spacer()
-                    LoadingButton(status: deleteButtonStatus,
-                                  role: .destructive,
-                                  label: "Delete",
-                                  loadingLabel: "Deleting..",
-                                  doneLabel: "Deleted"){
-                        showDeleteMenu = true
-                    }
-                }
-            }
-            .padding()
+            buttons
         }
         .confirmationDialog("Select a source", isPresented: $showPhotoPickerMenu, titleVisibility: .visible) {
             Button("Photo library"){
@@ -192,6 +99,132 @@ struct MealEditor: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
+        .onChange(of: isTextFocused) { bool in
+            withAnimation(.easeInOut(duration: 0.4)) {
+                textEditingMode = bool
+            }
+        }
+        .gesture(
+            DragGesture(minimumDistance: 10, coordinateSpace: .local)
+                .onEnded { value in
+                    if(textEditingMode && value.translation.height > 0 ){
+                       // Swiped down
+                        withAnimation(.spring()) {
+                           textEditingMode = false
+                        }
+                    }
+                }
+        )
+        
+    }
+    
+    var photoEditor: some View {
+        ZStack(alignment: .bottomTrailing) {
+            photo
+            Button(action: {showPhotoPickerMenu.toggle() }) {
+                HStack {
+                    Image(systemName: "plus")
+                        .resizable()
+                        .frame(width: 15, height: 15)
+                        .foregroundColor(.white)
+                    Text("Photo")
+                        .foregroundColor(.white)
+                }
+                .padding(15)
+                .background(.primary)
+                .cornerRadius(15)
+            }
+            .padding()
+        }
+       
+    }
+    
+    var photo: some View {
+        VStack {
+            if imageWasSelected {
+                Image(uiImage: imageDraft)
+                    .resizable()
+            } else if let image = image{
+                Image(uiImage: image)
+                    .resizable()
+            } else {
+                GeometryReader { geo in
+                    VStack {
+                        Image(systemName: "photo.circle")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .background(LinearGradient(
+                        colors: [Color(hex: 0xffd89b), Color(hex: 0x19547b)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .opacity(0.5)
+                }
+            }
+        }
+    }
+    
+    var mealFields: some View {
+        // Meal fields
+        VStack {
+            HStack {
+                Text("Name")
+                    .bold()
+                Spacer()
+                TextField("Enter meal name", text: $meal.name)
+                    .focused($isTextFocused)
+            }
+            Divider()
+            VStack(alignment: .leading) {
+                Text("Description")
+                    .bold()
+                TextEditor(text: $meal.description)
+                    .foregroundColor(
+                        meal.description == MealEditor.placeholderDescription
+                        ? .gray
+                        : .primary
+                    )
+                    .focused($isTextFocused)
+                    .onTapGesture {
+                        if meal.description == MealEditor.placeholderDescription {
+                            meal.description = ""
+                        }
+                    }
+            }
+        }
+        .padding()
+    }
+    
+    var buttons: some View {
+        // Buttons
+        HStack(alignment: .firstTextBaseline){
+            LoadingButton(status: saveButtonStatus,
+                          label: "Save",
+                          loadingLabel: "Saving..",
+                          doneLabel: "Saved"){
+                var photo: UIImage? = nil
+                if imageWasSelected {
+                    photo = imageDraft
+                } else if let image = image {
+                    photo = image
+                }
+                save(meal: meal, image: photo)
+            }
+            if meal.id != 0{
+                Spacer()
+                LoadingButton(status: deleteButtonStatus,
+                              role: .destructive,
+                              label: "Delete",
+                              loadingLabel: "Deleting..",
+                              doneLabel: "Deleted"){
+                    showDeleteMenu = true
+                }
+            }
+        }
+        .padding()
     }
     
     func save(meal: Meal, image: UIImage?) {
@@ -236,9 +269,11 @@ struct MealEditor_Previews: PreviewProvider {
                 meal: Meal(
                     id: 1,
                     name: "A delicious meal",
-                    description: "Some desciprtion for the meal"
+                    description: """
+Some desciprtion for the meal
+Some desciprtion for the meal
+"""
                 ),
-                    // TODO: Load from assets?
                 image: nil
             )
         }
