@@ -274,9 +274,7 @@ Some desciprtion for the meal
 Some desciprtion for the meal
 """
                 ),
-                // TODO: Load from assets?
-                image: nil,
-                textEditingMode:true
+                image: nil
             )
         }
     }
