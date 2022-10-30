@@ -38,6 +38,7 @@
 		DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37D5E828354573007BEFE3 /* HealthKit.swift */; };
 		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
 		DF59D90328E2C93800A7333E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF07B3212826933800C164AB /* Preview Assets.xcassets */; };
+		DF7C9EDB290E6455000BA6C7 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7C9EDA290E6455000BA6C7 /* Math.swift */; };
 		DF8A73A028DF32C50095E9FF /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8A739F28DF32C50095E9FF /* Debug.swift */; };
 		DF8A73A228DF38E60095E9FF /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8A73A128DF38E60095E9FF /* Error.swift */; };
 		DF937573283012DA00CBE618 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF937572283012DA00CBE618 /* Event.swift */; };
@@ -88,6 +89,7 @@
 		DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerRadiusModifier.swift; sourceTree = "<group>"; };
 		DF37D5E828354573007BEFE3 /* HealthKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKit.swift; sourceTree = "<group>"; };
 		DF3D07C2282FFB8D003E36BD /* MealDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetails.swift; sourceTree = "<group>"; };
+		DF7C9EDA290E6455000BA6C7 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		DF8A739F28DF32C50095E9FF /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		DF8A73A128DF38E60095E9FF /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		DF937572283012DA00CBE618 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */,
 				8FFA3DBE52A31B60B727A8EF /* Statistics.swift */,
 				8FFA35F0C982E26FE8ED1FFF /* Date.swift */,
+				DF7C9EDA290E6455000BA6C7 /* Math.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -382,6 +385,7 @@
 				DF07B32C2826939F00C164AB /* MealList.swift in Sources */,
 				DF12303328795D6F007156DD /* MetricStore.swift in Sources */,
 				DF9375772830137200CBE618 /* EventView.swift in Sources */,
+				DF7C9EDB290E6455000BA6C7 /* Math.swift in Sources */,
 				DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */,
 				DF07B31D2826933700C164AB /* ContentView.swift in Sources */,
 				DFE8D35C2840CA5400937CAB /* PhotoPicker.swift in Sources */,

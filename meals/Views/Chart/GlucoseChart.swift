@@ -47,7 +47,6 @@ struct GlucoseChart: UIViewRepresentable {
             .xAxisTickInterval(5)
             .dataLabelsEnabled(false)
             .legendEnabled(false)
-            .tooltipEnabled(false)
             .series([
                 AASeriesElement()
                     .lineWidth(0)

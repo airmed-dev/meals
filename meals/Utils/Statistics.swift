@@ -13,23 +13,22 @@ func calculatePercentiles(eventSamples: [(Date, [MetricSample])], resolution: Ti
         calculateRelativeSamples(eventSamples: $0)
     }
     
-    let roundedRelativeSamples:[RelativeMetricSample] = relativeSamples
+    let roundedIntervalRelativeSamples:[RelativeMetricSample] = relativeSamples
         .map {
-            roundToNearest(samples: $0, resolution: resolution)
+            roundToNearestInterval(samples: $0, resolution: resolution)
         }.flatMap {
             $0
         }
     
-    
     // Group the samples by their offset
-    let groupedByOffset = Dictionary(grouping: roundedRelativeSamples) {
+    let groupedByOffset = Dictionary(grouping: roundedIntervalRelativeSamples) {
         $0.offset
     }
     
     // Calculate the statistics
     return groupedByOffset.map { offset, samples in
         let sorted = samples
-            .map { $0.value }
+            .map { rounded($0.value, toPlaces: 2)}
             .sorted()
         let min = sorted.first!
         let max = sorted.last!
@@ -61,7 +60,7 @@ func calculateRelativeSamples(eventSamples: (Date, [MetricSample])) -> [Relative
     }
 }
 
-func roundToNearest(samples: [RelativeMetricSample], resolution: TimeInterval) -> [RelativeMetricSample] {
+func roundToNearestInterval(samples: [RelativeMetricSample], resolution: TimeInterval) -> [RelativeMetricSample] {
     samples.map {
         RelativeMetricSample(
             resolution * round($0.offset / resolution),
