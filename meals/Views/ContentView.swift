@@ -17,20 +17,22 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            EventList(metricStore: store.metricStore)
+            EventList()
                     .tabItem {
                         Label("Events", systemImage: "calendar.day.timeline.leading")
                     }
                     .environmentObject(store.mealStore)
                     .environmentObject(store.photoStore)
                     .environmentObject(store.eventStore)
-            MealList(metricStore: store.metricStore)
+                    .environmentObject(store.settingsStore)
+            MealList()
                     .tabItem {
                         Label("Meals", systemImage: "circle.hexagongrid.circle")
                     }
                     .environmentObject(store.mealStore)
                     .environmentObject(store.photoStore)
                     .environmentObject(store.eventStore)
+                    .environmentObject(store.settingsStore)
 
             SettingsView()
                     .tabItem {
@@ -53,6 +55,7 @@ struct ContentView: View {
             }))
         }
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {

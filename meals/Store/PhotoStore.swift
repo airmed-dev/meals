@@ -8,9 +8,23 @@ import Foundation
 class PhotoStore: ObservableObject {
     private var documentsUrl: URL
     private var imageCache: [Int: UIImage] = [:]
+    private var directoryName = "photos"
 
     init(documentsUrl: URL) {
         self.documentsUrl = documentsUrl
+
+    }
+    
+    func load() throws {
+        let url = try FileManager.default.url(
+                 for: .documentDirectory,
+                 in: .userDomainMask,
+                 appropriateFor: nil,
+                 create: false
+        ).appendingPathComponent(directoryName)
+        if !FileManager.default.fileExists(atPath: url.path) {
+           try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+       }
     }
 
     func saveImage(mealID: Int, image: UIImage) throws {

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct MealList: View {
-    var metricStore: MetricStore
     @EnvironmentObject var mealStore: MealStore
+    @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
 
@@ -130,12 +130,12 @@ struct MealList: View {
                 }
                 .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
                     MealDetails(
-                        metricStore: metricStore,
                         meal: selectedMeal!,
                         image: try? photoStore.loadImage(mealID: selectedMeal!.id)
                     )
                     .environmentObject(eventStore)
                     .environmentObject(mealStore)
+                    .environmentObject(settingsStore)
                 }
     }
 }
@@ -162,18 +162,18 @@ struct MealList_Previews: PreviewProvider {
         )
         Group {
             // No meals
-            MealList(metricStore: noMeals.metricStore)
+            MealList()
                     .environmentObject(noMeals.photoStore)
                     .environmentObject(noMeals.mealStore)
                     .environmentObject(noMeals.eventStore)
 
             // Some meals
-            MealList(metricStore: someMeals.metricStore)
+            MealList()
                     .environmentObject(someMeals.photoStore)
                     .environmentObject(someMeals.mealStore)
                     .environmentObject(someMeals.eventStore)
             // Skeleton
-            MealList(metricStore: skeleton.metricStore)
+            MealList()
                     .environmentObject(someMeals.photoStore)
                     .environmentObject(someMeals.mealStore)
                     .environmentObject(someMeals.eventStore)

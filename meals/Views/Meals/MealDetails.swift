@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct MealDetails: View {
-    var metricStore: MetricStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var mealStore: MealStore
+    @EnvironmentObject var settingsStore: SettingsStore
     
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
@@ -252,7 +252,7 @@ struct MealDetails: View {
             ForEach(events, id: \.id) { event in
                 NavigationLink(destination: {
                     EventView(
-                        metricStore: metricStore,
+                        metricStore: getMetricStore(),
                         meal: meal,
                         event: event,
                         image: image
@@ -266,7 +266,7 @@ struct MealDetails: View {
                     }
                     .padding()
                 }
-                MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
+                MetricGraph(metricStore: getMetricStore(), event: event, dataType: .Glucose, hours: hours)
                     .frame(height: 100)
                 Divider()
                     .frame(maxHeight: 15)
@@ -279,8 +279,13 @@ struct MealDetails: View {
         .cornerRadius(15)
     }
     
+    func getMetricStore() -> MetricStore {
+        Store.createMetricStore(settings: settingsStore.settings)
+    }
+    
     
     func loadSamples(events: [Event], hours: Int) {
+        let metricStore = getMetricStore()
         glucoseSamples = [:]
         insulinSamples = [:]
         // TODO: Overlaps?
@@ -387,14 +392,12 @@ struct MealDetails_Previews: PreviewProvider {
         )
         Group {
             MealDetails(
-                metricStore: storeWithData.metricStore,
                 meal: exampleMeal
             )
             .environmentObject(storeWithData.mealStore)
             .environmentObject(storeWithData.eventStore)
             
             MealDetails(
-                metricStore: storeWitouthData.metricStore,
                 meal: exampleMeal
             )
             .environmentObject(storeWitouthData.mealStore)

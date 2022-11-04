@@ -13,7 +13,6 @@ import Combine
     @Published var eventStore: EventStore
     @Published var settingsStore: SettingsStore
     @Published var photoStore: PhotoStore
-    @Published var metricStore: MetricStore
 
     static var documentsUrl: URL {
         // For Photo: TODO: Encrypted?
@@ -29,7 +28,6 @@ import Combine
         self.mealStore = mealStore
         self.settingsStore = settingsStore
         eventStore = EventStore(mealStore: mealStore)
-        metricStore = Debug()
     }
 
     init(meals: [Meal], events: [Event], settings: Settings) {
@@ -42,18 +40,17 @@ import Combine
         self.photoStore = photoStore
         self.eventStore = eventStore
         self.settingsStore = settingsStore
-        metricStore = Store.createMetricStore(settings: settingsStore.settings)
     }
     
     func load() throws {
         try mealStore.load()
         try eventStore.load()
         try settingsStore.load()
-        metricStore = Store.createMetricStore(settings: settingsStore.settings)
+        try photoStore.load()
     }
 
 
-    private static func createMetricStore(settings: Settings) -> MetricStore {
+    public static func createMetricStore(settings: Settings) -> MetricStore {
         switch settings.dataSourceType {
         case .HealthKit:
             return HealthKitUtils()

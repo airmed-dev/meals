@@ -10,10 +10,10 @@ import Foundation
 import SwiftUI
 
 struct EventList: View {
-    var metricStore: MetricStore
     @EnvironmentObject var mealStore: MealStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
+    @EnvironmentObject var settingsStore: SettingsStore
     @State var ready = false
     
     // Meal event logging
@@ -126,7 +126,10 @@ struct EventList: View {
     }
     
     func statistics(event: Event) -> some View {
-        VStack {
+        let metricStore = Store.createMetricStore(
+            settings: settingsStore.settings
+        )
+        return VStack {
             HStack {
                 Text("Statistics")
                     .font(.headline)
@@ -140,11 +143,20 @@ struct EventList: View {
             .padding([.leading, .top, .trailing], 10)
             VStack {
                 Text("Glucose")
-                MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
+                MetricGraph(
+                    metricStore: metricStore,
+                    event: event, dataType: .Glucose,
+                    hours: hours
+                )
             }
             VStack {
                 Text("Insulin")
-                MetricGraph(metricStore: metricStore, event: event, dataType: .Insulin, hours: hours)
+                MetricGraph(
+                    metricStore: metricStore,
+                    event: event,
+                    dataType: .Insulin,
+                    hours: hours
+                )
             }
             Spacer()
         }
@@ -236,9 +248,10 @@ struct EventList_Previews: PreviewProvider {
             ],
             settings: Settings(dataSourceType: .Debug)
         )
-        EventList(metricStore: store.metricStore)
+        EventList()
             .environmentObject(store.mealStore)
             .environmentObject(store.eventStore)
             .environmentObject(store.photoStore)
+            .environmentObject(store.settingsStore)
     }
 }
