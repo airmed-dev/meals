@@ -128,7 +128,7 @@ struct EventList: View {
         let metricStore = Store.createMetricStore()
         return VStack {
             HStack {
-                Text("Statistics")
+                Text("Metrics")
                     .font(.headline)
                 Spacer()
                 Picker("Hours", selection: $hours) {
