@@ -53,36 +53,32 @@ struct MealList: View {
     }
 
     var noMeals: some View {
-        GeometryReader { geo in
-            VStack(alignment: .center) {
-                Image(systemName: "tray.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.secondary.opacity(0.5))
-                        .font(.system(size: 30, weight: .ultraLight))
-                        .frame(width: 80)
+        VStack {
+            Spacer()
+            Image(systemName: "tray.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .font(.system(size: 30, weight: .ultraLight))
+                    .frame(width: 80)
 
-                Text("No meals")
-                        .font(.title)
+            Text("No meals")
+                    .font(.title)
 
-                HStack(alignment: .center) {
-                    Spacer()
-                    Text("Click on the plus button")
-                            .font(.body)
-                    Spacer()
-                }
+            HStack(alignment: .center) {
+                Spacer()
+                Text("Click on the plus button")
+                        .font(.body)
+                Spacer()
             }
-                    .position(
-                            x: geo.frame(in: .local).midX,
-                            y: geo.frame(in: .local).midY
-                    )
+            Spacer()
         }
 
     }
 
     var body: some View {
         NavigationView {
-            ScrollView {
+            VStack {
                 if mealStore.meals.count == 0 {
                     noMeals
                 } else {
@@ -90,14 +86,17 @@ struct MealList: View {
                         HStack {
                             Text("Searching for")
                             Text(textFilter)
-                                    .bold()
+                                .bold()
                         }
                     }
-                    mealGrid(textFilter: textFilter)
+                    ScrollView {
+                        mealGrid(textFilter: textFilter)
+                    }
+                    .searchable(text: $textFilter)
                 }
             }
-                    .searchable(text: $textFilter)
                     .navigationTitle("Meals")
+                    
         }
                 .overlay {
                     // FAB: TODO: Perhaps add the button to both views?
@@ -144,7 +143,7 @@ struct MealList_Previews: PreviewProvider {
             Meal(id: value, name: "blueberry pie", description: "delicious blueberry")
         }
         let noMeals = Store(
-                meals: mealTemplates,
+                meals: [],
                 events: []
         )
         let someMeals = Store(
@@ -163,11 +162,6 @@ struct MealList_Previews: PreviewProvider {
                     .environmentObject(noMeals.eventStore)
 
             // Some meals
-            MealList()
-                    .environmentObject(someMeals.photoStore)
-                    .environmentObject(someMeals.mealStore)
-                    .environmentObject(someMeals.eventStore)
-            // Skeleton
             MealList()
                     .environmentObject(someMeals.photoStore)
                     .environmentObject(someMeals.mealStore)
