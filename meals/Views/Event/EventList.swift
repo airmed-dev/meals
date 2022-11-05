@@ -13,7 +13,6 @@ struct EventList: View {
     @EnvironmentObject var mealStore: MealStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
-    @EnvironmentObject var settingsStore: SettingsStore
     @State var ready = false
     
     // Meal event logging
@@ -126,9 +125,7 @@ struct EventList: View {
     }
     
     func statistics(event: Event) -> some View {
-        let metricStore = Store.createMetricStore(
-            settings: settingsStore.settings
-        )
+        let metricStore = Store.createMetricStore()
         return VStack {
             HStack {
                 Text("Statistics")
@@ -245,13 +242,11 @@ struct EventList_Previews: PreviewProvider {
                 Event(meal_id: mealID),
                 Event(meal_id: mealID),
                 Event(meal_id: mealID),
-            ],
-            settings: Settings(dataSourceType: .Debug)
+            ]
         )
         EventList()
             .environmentObject(store.mealStore)
             .environmentObject(store.eventStore)
             .environmentObject(store.photoStore)
-            .environmentObject(store.settingsStore)
     }
 }

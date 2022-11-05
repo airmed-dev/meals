@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MealList: View {
     @EnvironmentObject var mealStore: MealStore
-    @EnvironmentObject var settingsStore: SettingsStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
 
@@ -135,7 +134,6 @@ struct MealList: View {
                     )
                     .environmentObject(eventStore)
                     .environmentObject(mealStore)
-                    .environmentObject(settingsStore)
                 }
     }
 }
@@ -147,18 +145,15 @@ struct MealList_Previews: PreviewProvider {
         }
         let noMeals = Store(
                 meals: mealTemplates,
-                events: [],
-                settings: Settings(dataSourceType: .Debug)
+                events: []
         )
         let someMeals = Store(
                 meals: mealTemplates,
-                events: [],
-                settings: Settings(dataSourceType: .Debug)
+                events: []
         )
         let skeleton = Store(
                 meals: [],
-                events: [],
-                settings: Settings(dataSourceType: .Debug)
+                events: []
         )
         Group {
             // No meals

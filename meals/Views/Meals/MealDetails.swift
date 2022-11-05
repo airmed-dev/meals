@@ -10,7 +10,6 @@ import SwiftUI
 struct MealDetails: View {
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var mealStore: MealStore
-    @EnvironmentObject var settingsStore: SettingsStore
     
     @Environment(\.presentationMode) var presentationMode
     @State var meal: Meal
@@ -202,7 +201,7 @@ struct MealDetails: View {
     }
     
     var hoursPicker: some View {
-        Picker("Hours", selection: $hours) {
+        Picker("", selection: $hours) {
             ForEach(hourOptions, id: \.self) { hour in
                 Text("\(hour) hours")
             }
@@ -248,11 +247,12 @@ struct MealDetails: View {
     
     func eventsList(events: [Event]) -> some View {
         VStack(alignment: .leading) {
+            let metricStore = Store.createMetricStore()
             Divider()
             ForEach(events, id: \.id) { event in
                 NavigationLink(destination: {
                     EventView(
-                        metricStore: getMetricStore(),
+                        metricStore: metricStore,
                         meal: meal,
                         event: event,
                         image: image
@@ -266,7 +266,7 @@ struct MealDetails: View {
                     }
                     .padding()
                 }
-                MetricGraph(metricStore: getMetricStore(), event: event, dataType: .Glucose, hours: hours)
+                MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
                     .frame(height: 100)
                 Divider()
                     .frame(maxHeight: 15)
@@ -279,13 +279,8 @@ struct MealDetails: View {
         .cornerRadius(15)
     }
     
-    func getMetricStore() -> MetricStore {
-        Store.createMetricStore(settings: settingsStore.settings)
-    }
-    
-    
     func loadSamples(events: [Event], hours: Int) {
-        let metricStore = getMetricStore()
+        let metricStore = Store.createMetricStore()
         glucoseSamples = [:]
         insulinSamples = [:]
         // TODO: Overlaps?
@@ -382,13 +377,11 @@ struct MealDetails_Previews: PreviewProvider {
                 Event(meal_id: mealID),
                 Event(meal_id: mealID),
                 Event(meal_id: mealID)
-            ],
-            settings: Settings(dataSourceType: .Debug)
+            ]
         )
         let storeWitouthData = Store(
             meals: [exampleMeal],
-            events: [],
-            settings: Settings(dataSourceType: .Debug)
+            events: []
         )
         Group {
             MealDetails(

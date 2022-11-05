@@ -9,10 +9,12 @@ import Foundation
 
 
 class Nightscout: MetricStore {
-    let settings: NightscoutSettings
+    var url: String
+    var token: String
     
-    init(settings: NightscoutSettings){
-        self.settings = settings
+    init(url: String, token: String){
+        self.url = url
+        self.token = token
     }
     
     func getInsulinSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void) {

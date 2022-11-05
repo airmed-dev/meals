@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		8FFA310A5ED6DEA4868EF241 /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3E26C8FF5EEC5BDA501E /* PhotoStore.swift */; };
 		8FFA31139F73232981DCD7B2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3C2CEEEFC1BF376F7967 /* Color.swift */; };
-		8FFA3269810852D27719C3F5 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3DBA90B90F55058508D4 /* SettingsStore.swift */; };
 		8FFA330E49738C2FB106E80A /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA39E0C6D7684725AB59DB /* Store.swift */; };
 		8FFA336FC60D5D29940DB80E /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA32311003343798A2F424 /* EventStore.swift */; };
 		8FFA3567C2B9C90968230486 /* Insulin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */; };
@@ -17,7 +16,6 @@
 		8FFA37B3B7031523D3EE7BF7 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3DBE52A31B60B727A8EF /* Statistics.swift */; };
 		8FFA38A56F641618F18F3FCB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */; };
 		8FFA39889B04E4B4FC6F09D0 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA35F0C982E26FE8ED1FFF /* Date.swift */; };
-		8FFA3D2FE88188B3EAE96929 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA308383EF0D723E2774E8 /* Settings.swift */; };
 		8FFA3DEBF580CF33630BFD21 /* StatisticsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA38EDFC069DF4F72498C3 /* StatisticsChart.swift */; };
 		8FFA3F036412E2B7F2D8358D /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA380A8AA3D9B675C7CFC3 /* README.md */; };
 		8FFA3F2607F2938D6DD3BA22 /* MealStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA312F6D9B14F5F8A89498 /* MealStore.swift */; };
@@ -28,6 +26,7 @@
 		DF07B3342826944600C164AB /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B3332826944600C164AB /* Meal.swift */; };
 		DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF07B33828269A2A00C164AB /* MealEditor.swift */; };
 		DF114AF2283223EC0089BF0B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF114AF1283223EC0089BF0B /* HealthKit.framework */; };
+		DF11C2E92916479F00C18242 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF11C2E82916479F00C18242 /* OnboardingView.swift */; };
 		DF12302C28784216007156DD /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF12302B28784216007156DD /* BottomSheet */; };
 		DF123030287955F1007156DD /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12302F287955F1007156DD /* Nightscout.swift */; };
 		DF12303328795D6F007156DD /* MetricStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12303228795D6F007156DD /* MetricStore.swift */; };
@@ -58,7 +57,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8FFA308383EF0D723E2774E8 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		8FFA312F6D9B14F5F8A89498 /* MealStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MealStore.swift; sourceTree = "<group>"; };
 		8FFA32311003343798A2F424 /* EventStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
 		8FFA33E5F3EA1A6EECF0A486 /* Insulin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Insulin.swift; sourceTree = "<group>"; };
@@ -70,7 +68,6 @@
 		8FFA39E0C6D7684725AB59DB /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		8FFA3C2CEEEFC1BF376F7967 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		8FFA3DBA90B90F55058508D4 /* SettingsStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		8FFA3DBE52A31B60B727A8EF /* Statistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
 		8FFA3E26C8FF5EEC5BDA501E /* PhotoStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
 		DF07B3172826933700C164AB /* meals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = meals.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,6 +79,7 @@
 		DF07B33828269A2A00C164AB /* MealEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEditor.swift; sourceTree = "<group>"; };
 		DF114AEF283223EC0089BF0B /* meals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meals.entitlements; sourceTree = "<group>"; };
 		DF114AF1283223EC0089BF0B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		DF11C2E82916479F00C18242 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		DF12302F287955F1007156DD /* Nightscout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
 		DF12303228795D6F007156DD /* MetricStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricStore.swift; sourceTree = "<group>"; };
 		DF2083D8288B071200100694 /* ValueStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueStats.swift; sourceTree = "<group>"; };
@@ -129,7 +127,6 @@
 				8FFA312F6D9B14F5F8A89498 /* MealStore.swift */,
 				8FFA32311003343798A2F424 /* EventStore.swift */,
 				8FFA3E26C8FF5EEC5BDA501E /* PhotoStore.swift */,
-				8FFA3DBA90B90F55058508D4 /* SettingsStore.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -193,6 +190,7 @@
 			children = (
 				DF07B31C2826933700C164AB /* ContentView.swift */,
 				8FFA3D99577E6C4E575AE0A6 /* SettingsView.swift */,
+				DF11C2E82916479F00C18242 /* OnboardingView.swift */,
 				DF114AED283223610089BF0B /* Meals */,
 				DFECDE38284B1E7900FCDF35 /* Event */,
 				DF630AF328E8231400F8B990 /* Chart */,
@@ -209,7 +207,6 @@
 				DF937572283012DA00CBE618 /* Event.swift */,
 				DF937574283012E100CBE618 /* Metric.swift */,
 				DF8A73A128DF38E60095E9FF /* Error.swift */,
-				8FFA308383EF0D723E2774E8 /* Settings.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -376,6 +373,7 @@
 				DF07B3342826944600C164AB /* Meal.swift in Sources */,
 				DFDEC41428F006A200E0410C /* GlucoseChart.swift in Sources */,
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
+				DF11C2E92916479F00C18242 /* OnboardingView.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
 				DF2083D9288B071200100694 /* ValueStats.swift in Sources */,
 				DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */,
@@ -401,9 +399,7 @@
 				8FFA336FC60D5D29940DB80E /* EventStore.swift in Sources */,
 				DFDEC41628F006BC00E0410C /* InsulinChart.swift in Sources */,
 				8FFA310A5ED6DEA4868EF241 /* PhotoStore.swift in Sources */,
-				8FFA3269810852D27719C3F5 /* SettingsStore.swift in Sources */,
 				8FFA362D05719805CFF50452 /* Integrations.swift in Sources */,
-				8FFA3D2FE88188B3EAE96929 /* Settings.swift in Sources */,
 				8FFA3F036412E2B7F2D8358D /* README.md in Sources */,
 				8FFA31139F73232981DCD7B2 /* Color.swift in Sources */,
 				8FFA3567C2B9C90968230486 /* Insulin.swift in Sources */,
