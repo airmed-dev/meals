@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MealDetails: View {
-    var metricStore: MetricStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var mealStore: MealStore
     
@@ -202,7 +201,7 @@ struct MealDetails: View {
     }
     
     var hoursPicker: some View {
-        Picker("Hours", selection: $hours) {
+        Picker("", selection: $hours) {
             ForEach(hourOptions, id: \.self) { hour in
                 Text("\(hour) hours")
             }
@@ -248,6 +247,7 @@ struct MealDetails: View {
     
     func eventsList(events: [Event]) -> some View {
         VStack(alignment: .leading) {
+            let metricStore = Store.createMetricStore()
             Divider()
             ForEach(events, id: \.id) { event in
                 NavigationLink(destination: {
@@ -279,8 +279,8 @@ struct MealDetails: View {
         .cornerRadius(15)
     }
     
-    
     func loadSamples(events: [Event], hours: Int) {
+        let metricStore = Store.createMetricStore()
         glucoseSamples = [:]
         insulinSamples = [:]
         // TODO: Overlaps?
@@ -377,24 +377,20 @@ struct MealDetails_Previews: PreviewProvider {
                 Event(meal_id: mealID),
                 Event(meal_id: mealID),
                 Event(meal_id: mealID)
-            ],
-            settings: Settings(dataSourceType: .Debug)
+            ]
         )
         let storeWitouthData = Store(
             meals: [exampleMeal],
-            events: [],
-            settings: Settings(dataSourceType: .Debug)
+            events: []
         )
         Group {
             MealDetails(
-                metricStore: storeWithData.metricStore,
                 meal: exampleMeal
             )
             .environmentObject(storeWithData.mealStore)
             .environmentObject(storeWithData.eventStore)
             
             MealDetails(
-                metricStore: storeWitouthData.metricStore,
                 meal: exampleMeal
             )
             .environmentObject(storeWitouthData.mealStore)

@@ -155,10 +155,11 @@ struct MetricGraph_Previews: PreviewProvider {
         MetricSample(Date.init(timeIntervalSinceNow: 50 * 60), 200),
     ]
     static var previews: some View {
+        let metricStore = Debug()
         Group {
             VStack {
                 MetricGraph(
-                    metricStore: Store().metricStore,
+                    metricStore: metricStore,
                     samples: glucoseSamples,
                     event: Event(meal_id: 1),
                     dataType: .Glucose,
@@ -166,7 +167,7 @@ struct MetricGraph_Previews: PreviewProvider {
                 )
                 .frame(width: 300, height: 300)
                 MetricGraph(
-                    metricStore: Store().metricStore,
+                    metricStore: metricStore,
                     samples: insulinSamples,
                     event: Event(meal_id: 1),
                     dataType: .Insulin,

@@ -167,10 +167,9 @@ struct TimelineView: View {
 
 struct TimelineView_Previews: PreviewProvider {
     static let store = Store(
-                    meals: [Meal(id: 0, name: "Dummy meal", description: "")],
-                    events: [],
-                    settings: Settings(dataSourceType: .Debug)
-                )
+            meals: [Meal(id: 0, name: "Dummy meal", description: "")],
+            events: []
+        )
     static let events = [
                     // Day 0
                     Event(meal_id: 0,id:0, date: Date.now.addingTimeInterval(24*60*60*(-5))),

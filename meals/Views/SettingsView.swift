@@ -7,78 +7,61 @@ import Foundation
 import HealthKit
 
 struct SettingsView: View {
-    @EnvironmentObject var settingsStore: SettingsStore
     @State var devClickCount: Int = 0
     var requiredDevClickCount = 7
-
-    var healthKitAuthorized: Bool {
-        HKHealthStore.isHealthDataAvailable()
-    }
+    
     @State var authorizeRequested: Bool = false
     @State var showSuccessAlert:Bool = false
-
+    
     @State var showErrorAlert:Bool = false
     @State var errorMessage: String = ""
     
-    @State
-    var settingsDraft: Settings = Settings(
-            dataSourceType: .HealthKit,
-            nightScoutSettings: NightscoutSettings(URL: "", Token: "")
-    )
+    @State var datasourceType: DatasourceType = .HealthKit
+    @State var developerMode: Bool = false
+    
+    @State var nightscoutURL: String = ""
+    @State var nightscoutToken: String = ""
 
     var body: some View {
         VStack {
             List {
                 Section("Data") {
                     HStack {
-                        Text("Datasource")
-                        Spacer()
-                        Picker("Datasource type", selection: $settingsDraft.dataSourceType) {
+                        Picker("Datasource", selection: $datasourceType) {
                             ForEach(DatasourceType.allCases.filter{
-                                settingsDraft.developerMode || $0 != DatasourceType.Debug
+                                developerMode || $0 != DatasourceType.Debug
                             }) { datasourceType in
                                 Text(datasourceType.rawValue)
-                                        .tag(datasourceType)
+                                    .tag(datasourceType)
                             }
                         }
-                                .pickerStyle(.menu)
-
+                        .pickerStyle(.menu)
                     }
                 }
-                switch settingsDraft.dataSourceType {
+                switch datasourceType {
                 case .HealthKit:
-                    Section("HealthKit") {
-                        HStack {
-                            if healthKitAuthorized {
-                                Toggle(isOn: $authorizeRequested) {
-                                    Text("Authorized")
-                                }
-                            }
-                        }
-                    }
+                    Section("Using health kit for data"){}
                 case .NightScout:
                     Section("NightScout") {
                         TextField(
-                                "URL",
-                                text: $settingsDraft.nightScoutSettings.URL
+                            "URL",
+                            text: $nightscoutURL
                         )
                         TextField(
-                                "Token",
-                                text: $settingsDraft.nightScoutSettings.Token
+                            "Token",
+                            text: $nightscoutToken
                         )
                     }
                 case .Debug:
-                    Section("Debug"){
-                        Text("Debug mode is enabled, all data is random!")
-                    }
-                    
+                    Section("Randomly generating data"){}
                 }
+                
                 Section("About") {
                     HStack {
                         Button(action: {
                             devClickCount+=1
                             if devClickCount >= requiredDevClickCount {
-                                settingsDraft.developerMode = true
+                                developerMode = true
                             }
                         }){
                             Text("Version")
@@ -90,11 +73,22 @@ struct SettingsView: View {
                 }
                 HStack {
                     Button(action: {
-                        do {
-                            try settingsStore.saveSettings(settings: settingsDraft)
-                        } catch {
-                            showErrorAlert = true
-                            errorMessage = "Failed saving settings: \(error)"
+                        let defaults = UserDefaults()
+                        defaults.set(datasourceType.rawValue, forKey: "datasource.type")
+                        switch datasourceType {
+                        case .NightScout:
+                            defaults.set(nightscoutURL, forKey:  "datasource.nightscout.url")
+                            defaults.set(nightscoutToken, forKey: "datasource.nightscout.token")
+                        case .HealthKit:
+                            HealthKitUtils.requestHKAuthorization { wasPresented, error in
+                                authorizeRequested = false
+                                if let error = error {
+                                    showErrorAlert = true
+                                    errorMessage = error.localizedDescription
+                                }
+                            }
+                        case .Debug:
+                            break
                         }
                         showSuccessAlert = true
                     }) {
@@ -103,50 +97,28 @@ struct SettingsView: View {
                     Spacer()
                 }
             }
-                    .listStyle(.insetGrouped)
+            .listStyle(.insetGrouped)
         }
-                .alert(isPresented: $settingsDraft.developerMode){
-                    Alert(title: Text("Developer mode enabled"))
-                }
-                .alert(isPresented: $showSuccessAlert){
-                    Alert(title: Text("Saved"))
-                }
-                .alert(isPresented: $showErrorAlert) {
-                    Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .cancel())
-                }
-                .onAppear {
-                    // When the ViewModel available copy the values to the draft
-                    settingsDraft.dataSourceType = settingsStore.settings.dataSourceType
-                    settingsDraft.nightScoutSettings = settingsStore.settings.nightScoutSettings
-                    settingsDraft.developerMode = settingsStore.settings.developerMode
-                    devClickCount = settingsDraft.developerMode ? requiredDevClickCount : 0
-                }
-
-    }
-
-
-    func authorizeHealthKit(completion: @escaping (Bool, Error?) -> Void) {
-        guard HKHealthStore.isHealthDataAvailable() else {
-            completion(false, HealthkitError.notAvailableOnDevice)
-            return
+        .onAppear {
+            let defaults = UserDefaults()
+            let datasourceTypeRawValue = defaults.string(forKey: "datasource.type") ?? DatasourceType.HealthKit.rawValue
+            datasourceType = DatasourceType(rawValue: datasourceTypeRawValue)!
+            if datasourceType == DatasourceType.NightScout {
+                nightscoutURL = defaults.string(forKey: "datasource.nightscout.url") ?? ""
+                nightscoutToken = defaults.string(forKey: "datasource.nightscout.token") ?? ""
+            }
         }
-
-        guard
-                let dateOfBirth = HKObjectType.characteristicType(forIdentifier: .dateOfBirth),
-                let glucose = HKSampleType.quantityType(forIdentifier: .bloodGlucose),
-                let insulin = HKSampleType.quantityType(forIdentifier: .insulinDelivery)
-        else {
-
-            completion(false, HealthkitError.dataTypeNotAvailable)
-            return
+        .alert(isPresented: $developerMode){
+            Alert(title: Text("Developer mode enabled"))
         }
-
-
-        let healthKitTypesToRead: Set<HKObjectType> = [dateOfBirth, glucose, insulin]
-
-        HKHealthStore().requestAuthorization(toShare: [], read: healthKitTypesToRead) { (success, error) in
-            completion(success, error)
+        .alert(isPresented: $showSuccessAlert){
+            Alert(title: Text("Saved"))
         }
+        .alert(isPresented: $showErrorAlert) {
+            Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .cancel())
+        }
+        
+        
     }
 }
 
@@ -156,9 +128,7 @@ struct SettingsView_Previews: PreviewProvider {
         SettingsView()
             .environmentObject(Store.init(
                 meals: [],
-                events: [],
-                settings: Settings(dataSourceType: .HealthKit)
-            )
-        )
+                events: []
+            ) )
     }
 }

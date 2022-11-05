@@ -22,7 +22,17 @@ class MealStore: ObservableObject {
     }
     
     func load() throws {
-        meals = try JsonUtils.load(fileName: MealStore.fileName) ?? []
+        let url = try FileManager.default.url(
+                 for: .documentDirectory,
+                 in: .userDomainMask,
+                 appropriateFor: nil,
+                 create: false
+        ).appendingPathComponent(MealStore.fileName)
+        if FileManager.default.fileExists(atPath: url.path) {
+            meals = try JsonUtils.load(fileName: MealStore.fileName) ?? []
+        } else {
+            try JsonUtils.save(data: meals,  fileName:MealStore.fileName)
+        }
     }
     
     func getMeal(event: Event) -> Meal? {

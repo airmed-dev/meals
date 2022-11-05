@@ -16,6 +16,29 @@ class HealthKitUtils: MetricStore {
     
     var healthKitStore = HKHealthStore()
     
+    static func requestHKAuthorization(completion: @escaping (Bool, Error?) -> Void) {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            completion(false, HealthkitError.notAvailableOnDevice)
+            return
+        }
+        
+        guard
+            let dateOfBirth = HKObjectType.characteristicType(forIdentifier: .dateOfBirth),
+            let glucose = HKSampleType.quantityType(forIdentifier: .bloodGlucose),
+            let insulin = HKSampleType.quantityType(forIdentifier: .insulinDelivery)
+        else {
+            
+            completion(false, HealthkitError.dataTypeNotAvailable)
+            return
+        }
+        
+        
+        let healthKitTypesToRead: Set<HKObjectType> = [dateOfBirth, glucose, insulin]
+        HKHealthStore().requestAuthorization(toShare: [], read: healthKitTypesToRead) { (success, error) in
+            completion(success, error)
+        }
+    }
+        
     func getGlucoseSamples(start: Date,
                            end: Date,
                            _ completion: @escaping (Result<[MetricSample], Error>) -> Void ) {

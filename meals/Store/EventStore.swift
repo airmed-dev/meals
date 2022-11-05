@@ -21,9 +21,19 @@ class EventStore: ObservableObject {
     }
     
     func load() throws {
-        let loadedEvents: [Event] = try JsonUtils
-                .load(fileName: EventStore.fileName) ?? []
-        events = loadedEvents.sorted(by: { $0.date > $1.date })
+        let url = try FileManager.default.url(
+                 for: .documentDirectory,
+                 in: .userDomainMask,
+                 appropriateFor: nil,
+                 create: false
+        ).appendingPathComponent(EventStore.fileName)
+        if FileManager.default.fileExists(atPath: url.path) {
+            events = try JsonUtils.load(fileName: EventStore.fileName) ?? []
+        } else {
+            try JsonUtils.save(data: events,  fileName:EventStore.fileName)
+        }
+        
+        events = events.sorted(by: { $0.date > $1.date })
     }
 
     func saveEvent(event: Event) throws {

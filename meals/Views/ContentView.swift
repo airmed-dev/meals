@@ -10,6 +10,8 @@ import HealthKit
 
 struct ContentView: View {
     @ObservedObject var store = Store()
+    // Onboarding view
+    @State var showOnBoarding = false
     
     // Loading error alert
     @State var showErrorAlert = false
@@ -17,14 +19,14 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            EventList(metricStore: store.metricStore)
+            EventList()
                     .tabItem {
                         Label("Events", systemImage: "calendar.day.timeline.leading")
                     }
                     .environmentObject(store.mealStore)
                     .environmentObject(store.photoStore)
                     .environmentObject(store.eventStore)
-            MealList(metricStore: store.metricStore)
+            MealList()
                     .tabItem {
                         Label("Meals", systemImage: "circle.hexagongrid.circle")
                     }
@@ -36,23 +38,36 @@ struct ContentView: View {
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")
                     }
-                    .environmentObject(store.settingsStore)
 
         }
         .onAppear {
+            // Load data
             do {
                 try store.load()
             } catch {
                 showErrorAlert = true
                 errorMessage = "Failed loading settings: \(error)"
             }
+            
+            // Check for onboarding
+            let defaults = UserDefaults()
+            showOnBoarding = !defaults.bool(forKey: "onboarding.done")
+        }
+        .sheet(isPresented: $showOnBoarding){
+           OnboardingView()
         }
         .alert(isPresented: $showErrorAlert){
-            Alert(title: Text("Error"), message: Text(errorMessage+"\nRestart the app"), dismissButton: .cancel(Text("Exit"), action: {
-                exit(-1)
-            }))
+            Alert(
+                title: Text("Error"),
+                message: Text(errorMessage+"\nRestart the app"),
+                dismissButton: .cancel(
+                    Text("Exit"),
+                    action: { exit(-1) }
+                )
+            )
         }
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {

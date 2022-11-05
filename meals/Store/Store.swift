@@ -11,9 +11,7 @@ import Combine
 @MainActor class Store: ObservableObject {
     @Published var mealStore: MealStore
     @Published var eventStore: EventStore
-    @Published var settingsStore: SettingsStore
     @Published var photoStore: PhotoStore
-    @Published var metricStore: MetricStore
 
     static var documentsUrl: URL {
         // For Photo: TODO: Encrypted?
@@ -23,42 +21,40 @@ import Combine
     init(){
         let photoStore = PhotoStore(documentsUrl: Store.documentsUrl)
         let mealStore = MealStore(photoStore: photoStore)
-        let settingsStore = SettingsStore()
 
         self.photoStore = photoStore
         self.mealStore = mealStore
-        self.settingsStore = settingsStore
         eventStore = EventStore(mealStore: mealStore)
-        metricStore = Debug()
     }
 
-    init(meals: [Meal], events: [Event], settings: Settings) {
+    init(meals: [Meal], events: [Event]) {
         let photoStore = PhotoStore(documentsUrl: Store.documentsUrl)
         let mealStore = MealStore(photoStore: photoStore, meals: meals)
         let eventStore = EventStore(mealStore: mealStore, events: events)
-        let settingsStore = SettingsStore(settings: settings)
 
         self.mealStore = mealStore
         self.photoStore = photoStore
         self.eventStore = eventStore
-        self.settingsStore = settingsStore
-        metricStore = Store.createMetricStore(settings: settingsStore.settings)
     }
     
     func load() throws {
         try mealStore.load()
         try eventStore.load()
-        try settingsStore.load()
-        metricStore = Store.createMetricStore(settings: settingsStore.settings)
+        try photoStore.load()
     }
 
 
-    private static func createMetricStore(settings: Settings) -> MetricStore {
-        switch settings.dataSourceType {
+    public static func createMetricStore() -> MetricStore {
+        let defaults = UserDefaults()
+        let datasourceTypeRawValue = defaults.string(forKey: "datasource.type") ?? DatasourceType.HealthKit.rawValue
+        let datasourceType: DatasourceType = DatasourceType(rawValue: datasourceTypeRawValue)!
+        switch datasourceType {
         case .HealthKit:
             return HealthKitUtils()
         case .NightScout:
-            return Nightscout(settings: settings.nightScoutSettings)
+            let url = defaults.string(forKey: "datasource.nightscout.url") ?? ""
+            let token = defaults.string(forKey: "datasource.nightscout.token") ?? ""
+            return Nightscout(url: url, token: token)
         case .Debug:
             return Debug()
         }

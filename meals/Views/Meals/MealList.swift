@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MealList: View {
-    var metricStore: MetricStore
     @EnvironmentObject var mealStore: MealStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
@@ -130,7 +129,6 @@ struct MealList: View {
                 }
                 .bottomSheet(isPresented: $displayMealDetails, detents: [.large()]) {
                     MealDetails(
-                        metricStore: metricStore,
                         meal: selectedMeal!,
                         image: try? photoStore.loadImage(mealID: selectedMeal!.id)
                     )
@@ -147,33 +145,30 @@ struct MealList_Previews: PreviewProvider {
         }
         let noMeals = Store(
                 meals: mealTemplates,
-                events: [],
-                settings: Settings(dataSourceType: .Debug)
+                events: []
         )
         let someMeals = Store(
                 meals: mealTemplates,
-                events: [],
-                settings: Settings(dataSourceType: .Debug)
+                events: []
         )
         let skeleton = Store(
                 meals: [],
-                events: [],
-                settings: Settings(dataSourceType: .Debug)
+                events: []
         )
         Group {
             // No meals
-            MealList(metricStore: noMeals.metricStore)
+            MealList()
                     .environmentObject(noMeals.photoStore)
                     .environmentObject(noMeals.mealStore)
                     .environmentObject(noMeals.eventStore)
 
             // Some meals
-            MealList(metricStore: someMeals.metricStore)
+            MealList()
                     .environmentObject(someMeals.photoStore)
                     .environmentObject(someMeals.mealStore)
                     .environmentObject(someMeals.eventStore)
             // Skeleton
-            MealList(metricStore: skeleton.metricStore)
+            MealList()
                     .environmentObject(someMeals.photoStore)
                     .environmentObject(someMeals.mealStore)
                     .environmentObject(someMeals.eventStore)
