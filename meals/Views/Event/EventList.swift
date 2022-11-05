@@ -31,7 +31,9 @@ struct EventList: View {
     
     var body: some View {
         VStack {
-            if let selectedEvent = selectedEvent {
+            if eventStore.events.isEmpty {
+                noData
+            } else if let selectedEvent = selectedEvent {
                 header
                 statistics(event: selectedEvent)
                 timeline
@@ -39,10 +41,8 @@ struct EventList: View {
                 EventListSkeleton()
             }
         }
-        .background(.gray.opacity(0.2))
         .onAppear {
             withAnimation {
-                ready = true
                 selectedEvent = eventStore.events.first
             }
         }
@@ -175,36 +175,40 @@ struct EventList: View {
                 events: eventStore.events,
                 selectedEvent: $selectedEvent
             )
-                .environmentObject(mealStore)
-                .frame(height: 200)
-                .background(.white)
-                .cornerRadius(5)
+            .environmentObject(mealStore)
+            .frame(height: 200)
+            .background(.white)
+            .cornerRadius(5)
         }
         .background(Color(uiColor: .systemBackground))
         .cornerRadius(15)
         .padding([.leading, .trailing], 5)
     }
-
+    
     var noData: some View {
-        HStack(alignment: .center) {
+        VStack {
             Spacer()
-            VStack(alignment: .center) {
-                Image(systemName: "tray.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .font(.system(size: 30, weight: .ultraLight))
-                    .frame(width: 80)
-                
-                Text("No data")
-                    .font(.title)
-                
-                HStack(alignment: .center) {
-                    Spacer()
-                    Text("Log an event")
-                        .font(.body)
-                    Spacer()
+            HStack(alignment: .center) {
+                Spacer()
+                VStack(alignment: .center) {
+                    Image(systemName: "tray.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(.secondary.opacity(0.5))
+                        .font(.system(size: 30, weight: .ultraLight))
+                        .frame(width: 80)
+                    
+                    Text("No events")
+                        .font(.title)
+                    
+                    HStack(alignment: .center) {
+                        Spacer()
+                        Text("Log an event")
+                            .font(.body)
+                        Spacer()
+                    }
                 }
+                Spacer()
             }
             Spacer()
         }
@@ -248,5 +252,18 @@ struct EventList_Previews: PreviewProvider {
             .environmentObject(store.mealStore)
             .environmentObject(store.eventStore)
             .environmentObject(store.photoStore)
+        
+        let emptyStore = Store(
+            meals: [
+                Meal(id: mealID, name: "Test", description: "Test")
+            ],
+            events: [
+            ]
+        )
+        EventList()
+            .environmentObject(emptyStore.mealStore)
+            .environmentObject(emptyStore.eventStore)
+            .environmentObject(emptyStore.photoStore)
+        
     }
 }
