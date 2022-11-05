@@ -41,7 +41,6 @@ struct EventList: View {
                 EventListSkeleton()
             }
         }
-        .background(.gray.opacity(0.2))
         .onAppear {
             withAnimation {
                 selectedEvent = eventStore.events.first
