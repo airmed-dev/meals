@@ -22,6 +22,11 @@ struct MealDetails: View {
     @State var glucoseSamples: [Int: (Date, [MetricSample])] = [:]
     @State var insulinSamples: [Int: (Date, [MetricSample])] = [:]
     
+    @State var glucosePointCount = 0
+    @State var insulinPointCount = 0
+    
+
+    
     var body: some View {
         let mealEvents = eventStore.getEvents(mealId: meal.id)
         return NavigationView {
@@ -63,28 +68,6 @@ struct MealDetails: View {
             }
         }
         
-    }
-    
-    var noEvents: some View {
-        VStack(alignment: .center) {
-            Image(systemName: "tray.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .foregroundColor(.secondary.opacity(0.5))
-                .font(.system(size: 30, weight: .ultraLight))
-                .frame(width: 80)
-            
-            Text("No events")
-                .font(.title)
-            
-            HStack(alignment: .center) {
-                Spacer()
-                Text("Create an event")
-                    .font(.body)
-                Spacer()
-            }
-        }
-        .padding()
     }
     
     var eventsActionButton: some View {
@@ -227,15 +210,22 @@ struct MealDetails: View {
                 Text("Statistics")
                     .font(.subheadline)
                     .padding([.leading, .top, .trailing], 10)
-                glucoseStatistics.frame(height: 200)
-                insulinStatistics.frame(height: 200)
+                if insulinPointCount + glucosePointCount == 0 {
+                    NoDataView(
+                        title: "No health data"
+                    )
+                } else {
+                    glucoseStatistics.frame(height: 200)
+                    insulinStatistics.frame(height: 200)
+                }
                 
-                Divider()
-                Text("Meal events")
-                    .padding([.leading, .top, .trailing], 10)
+                
                 eventsList(events: events)
             } else {
-                noEvents
+                NoDataView(
+                    title: "No events",
+                    prompt: "Create an event"
+                )
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
@@ -248,6 +238,8 @@ struct MealDetails: View {
     func eventsList(events: [Event]) -> some View {
         VStack(alignment: .leading) {
             let metricStore = Store.createMetricStore()
+            Text("Meal events")
+                .padding([.leading, .top, .trailing], 10)
             Divider()
             ForEach(events, id: \.id) { event in
                 NavigationLink(destination: {
@@ -266,7 +258,13 @@ struct MealDetails: View {
                     }
                     .padding()
                 }
-                MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
+                MetricGraph(
+                    metricStore: metricStore,
+                    hideTitle: true,
+                    event: event,
+                    dataType: .Glucose,
+                    hours: hours
+                )
                     .frame(height: 100)
                 Divider()
                     .frame(maxHeight: 15)
@@ -281,8 +279,11 @@ struct MealDetails: View {
     
     func loadSamples(events: [Event], hours: Int) {
         let metricStore = Store.createMetricStore()
+        glucosePointCount = 0
         glucoseSamples = [:]
+        
         insulinSamples = [:]
+        insulinPointCount = 0
         // TODO: Overlaps?
         events.forEach { event in
             let start = event.date
@@ -291,6 +292,7 @@ struct MealDetails: View {
                 switch result {
                 case .success(let samples):
                     glucoseSamples[event.id] = (event.date, samples)
+                    glucosePointCount+=samples.count
                 case .failure(let error):
                     print("Error \(error)")
                 }
@@ -303,6 +305,7 @@ struct MealDetails: View {
                 switch result {
                 case .success(let samples):
                     insulinSamples[event.id] = (event.date, samples)
+                    insulinPointCount += samples.count
                 case .failure(let error):
                     print("Error \(error)")
                 }

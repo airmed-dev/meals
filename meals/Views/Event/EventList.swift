@@ -32,7 +32,10 @@ struct EventList: View {
     var body: some View {
         VStack {
             if eventStore.events.isEmpty {
-                noData
+                NoDataView(
+                    title: "No events",
+                    prompt: "Log an event"
+                )
             } else if let selectedEvent = selectedEvent {
                 header
                 statistics(event: selectedEvent)
@@ -41,6 +44,7 @@ struct EventList: View {
                 EventListSkeleton()
             }
         }
+        .edgesIgnoringSafeArea(.top)
         .onAppear {
             withAnimation {
                 selectedEvent = eventStore.events.first
@@ -51,11 +55,11 @@ struct EventList: View {
     var header: some View {
         let colors = [Color(hex: 0x424242), Color(hex: 0x002266)]
         let meal = selectedEvent != nil
-        ? mealStore.getMeal(event: selectedEvent!)
-        : nil
+            ? mealStore.getMeal(event: selectedEvent!)
+            : nil
         let image = meal != nil
-        ? try? photoStore.loadImage(mealID: meal!.id)
-        : nil
+            ? try? photoStore.loadImage(mealID: meal!.id)
+            : nil
         
         return HStack {
             if let selectedEvent = selectedEvent, let meal = meal {
@@ -138,23 +142,11 @@ struct EventList: View {
                 }
             }
             .padding([.leading, .top, .trailing], 10)
-            VStack {
-                Text("Glucose")
-                MetricGraph(
-                    metricStore: metricStore,
-                    event: event, dataType: .Glucose,
-                    hours: hours
-                )
-            }
-            VStack {
-                Text("Insulin")
-                MetricGraph(
-                    metricStore: metricStore,
-                    event: event,
-                    dataType: .Insulin,
-                    hours: hours
-                )
-            }
+            GlucoseInsulinGraph(
+                metricStore: metricStore,
+                event: event,
+                hours: hours
+            )
             Spacer()
         }
         .background(Color(uiColor: .systemBackground))
@@ -183,36 +175,6 @@ struct EventList: View {
         .background(Color(uiColor: .systemBackground))
         .cornerRadius(15)
         .padding([.leading, .trailing], 5)
-    }
-    
-    var noData: some View {
-        VStack {
-            Spacer()
-            HStack(alignment: .center) {
-                Spacer()
-                VStack(alignment: .center) {
-                    Image(systemName: "tray.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.secondary.opacity(0.5))
-                        .font(.system(size: 30, weight: .ultraLight))
-                        .frame(width: 80)
-                    
-                    Text("No events")
-                        .font(.title)
-                    
-                    HStack(alignment: .center) {
-                        Spacer()
-                        Text("Log an event")
-                            .font(.body)
-                        Spacer()
-                    }
-                }
-                Spacer()
-            }
-            Spacer()
-        }
-        
     }
     
     // Event handler

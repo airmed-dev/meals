@@ -28,21 +28,8 @@ struct InsulinStatisticsChart: View {
         } else {
             VStack {
                 Spacer()
-                HStack(alignment: .center) {
-                    Spacer()
-                    VStack(alignment: .center) {
-                        Image(systemName: "tray.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundColor(.secondary.opacity(0.5))
-                            .font(.system(size: 30, weight: .ultraLight))
-                            .frame(width: 50)
-                        
-                        Text("No data")
-                            .font(.subheadline)
-                    }
-                    Spacer()
-                }
+                Text("Insulin")
+                NoDataView(title:"No data")
                 Spacer()
             }
         }
@@ -63,10 +50,15 @@ struct InsulinStatisticsChart_Previews: PreviewProvider {
                 end: end
             ))
         }
-        return VStack {
-            InsulinStatisticsChart(range: range, resolution: resolution, samples: samples)
+        return Group {
+            VStack {
+                InsulinStatisticsChart(range: range, resolution: resolution, samples: samples)
+            }
+            .background(.black)
+            .frame(height: 200)
+            
+            
+            InsulinStatisticsChart(range: range, resolution: resolution, samples: [])
         }
-        .background(.black)
-        .frame(height: 200)
     }
 }

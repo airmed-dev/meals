@@ -20,7 +20,7 @@ struct EventView: View {
     @EnvironmentObject var eventStore: EventStore
     @Environment(\.presentationMode) var presentationMode
     
-    @State var meal: Meal?
+    @State var meal: Meal
     @State var event: Event
     @State var image: UIImage?
     
@@ -44,125 +44,117 @@ struct EventView: View {
     @State var errorMessage: String = ""
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                if let meal = meal {
-                    // Image section
-                    if let image = image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height:200, alignment: .center)
-                            .clipped()
-                    } else {
-                        Image(systemName: "photo.fill")
-                            .resizable()
-                            .scaledToFill()
-                            .clipped()
-                            .frame(height: 200)
-                    }
+        GeometryReader { geo in
+            ScrollView {
+                VStack(alignment: .leading) {
+                    mealImage
                     
-                    // Overlapping card
                     VStack(alignment: .leading) {
-                        // Meal properties
-                        VStack(alignment: .leading) {
-                            Text(meal.name)
-                                .font(.system(size: 32))
-                                .minimumScaleFactor(1)
-                                .padding()
-                            Text("Consumed at: " + event.date.formatted())
-                                .font(.footnote)
-                                .foregroundColor(.black.opacity(1.00))
-                                .padding(EdgeInsets(top: -15, leading: 10, bottom: 15, trailing: 0))
-                            HStack(alignment: .firstTextBaseline) {
-                                Text(meal.description)
-                                    .padding()
-                            }
-                            Divider()
-                            HStack(alignment: .center) {
-                                Text("Metrics")
-                                    .font(.system(size: 32))
-                                    .minimumScaleFactor(1)
-                                    .padding(3)
-                                
-                                Spacer()
-                                
-                                Picker("Hours", selection: $hours) {
-                                    ForEach(hourOptions, id: \.self) { hour in
-                                        Text("\(hour) hours")
-                                    }
-                                }
-                            }
-                            .padding(3)
-                        }
-                        
-                        VStack {
-                            // Metrics
-                            VStack {
-                                Text("Glucose")
-                                    .font(.system(size: 18))
-                                MetricGraph(metricStore: metricStore, event: event, dataType: .Glucose, hours: hours)
-                                    .frame(height: 200)
-                            }
-                            .padding(5)
-                            .cornerRadius(20)
-                            
-                            VStack {
-                                Text("Insulin")
-                                    .font(.system(size: 18))
-                                MetricGraph(metricStore: metricStore, event: event, dataType: .Insulin, hours: hours)
-                                    .frame(height: 200)
-                            }
-                            .padding(5)
-                            .cornerRadius(10)
-                        }
-                        .cornerRadius(15)
-                        .offset(y: -10)
+                        mealEventPropertiesView
+                        Divider()
+                        metricsView
+                            .frame(height: geo.size.height/2)
                     }
                     .background(.background)
-                    .cornerRadius(30)
-                    .offset(y: -30)
+                    buttonsView
                 }
-                
-                // Menus
-                HStack {
-                    Text("Edit").onTapGesture {
-                        showEditSheet = true
+                .frame(minHeight: geo.size.height)
+                .alert(isPresented: $showDeleteConfirmation) {
+                    Alert(title: Text("Are you sure you want to delete this event?"),
+                          primaryButton: .destructive(Text("Yes")) {
+                        deleteEvent()
+                    }, secondaryButton: .cancel())
+                }
+                .alert(successMessage, isPresented: $showSucessAlert) {
+                    Button("OK", role: .cancel) {
+                        presentationMode.wrappedValue.dismiss()
                     }
-                    .foregroundColor(.accentColor)
-                    
-                    Spacer()
-                    Text("Delete").onTapGesture {
-                        showDeleteConfirmation = true
+                }
+                .alert("Error: \(errorMessage)", isPresented: $showErrorAlert) {
+                    Button("OK", role: .cancel) {
                     }
-                    .foregroundColor(.red)
                 }
-                .padding()
-                .clipShape(RoundedRectangle(cornerRadius: CGFloat(10)))
-                .padding()
-            }
-            .background(Color(.systemGray6))
-            .frame(width: .infinity)
-            .alert(isPresented: $showDeleteConfirmation) {
-                Alert(title: Text("Are you sure you want to delete this event?"),
-                      primaryButton: .destructive(Text("Yes")) {
-                    deleteEvent()
-                }, secondaryButton: .cancel())
-            }
-            .alert(successMessage, isPresented: $showSucessAlert) {
-                Button("OK", role: .cancel) {
-                    presentationMode.wrappedValue.dismiss()
+                .bottomSheet(isPresented: $showEditSheet) {
+                    UpdateEventView(event: $event, newDate: newDate)
+                        .environmentObject(eventStore)
                 }
-            }
-            .alert("Error: \(errorMessage)", isPresented: $showErrorAlert) {
-                Button("OK", role: .cancel) {
-                }
-            }
-            .bottomSheet(isPresented: $showEditSheet) {
-                UpdateEventView(event: $event, newDate: newDate)
-                    .environmentObject(eventStore)
             }
         }
+                .background(Color(.systemGray6))
+    }
+    
+    var mealImage: some View {
+        VStack {
+            if let image = image {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipped()
+            } else {
+                NoPhotoView()
+            }
+        }
+    }
+    
+    var mealEventPropertiesView: some View {
+        VStack(alignment: .leading) {
+            Text(meal.name)
+                .font(.title)
+                .fontWeight(.bold)
+                .minimumScaleFactor(1)
+                .padding(.leading)
+                .padding(.top, 5)
+            
+            Text("Consumed at: " + event.date.formatted())
+                .font(.footnote)
+                .foregroundColor(.black.opacity(1.00))
+                .padding(.leading)
+            
+            Divider()
+            Text(meal.description)
+                .padding(.leading)
+            
+        }
+    }
+    
+    var metricsView: some View {
+        VStack {
+            HStack(alignment: .center) {
+                Text("Metrics")
+                    .font(.title2)
+                    .padding(15)
+                
+                Spacer()
+                
+                Picker("Hours", selection: $hours) {
+                    ForEach(hourOptions, id: \.self) { hour in
+                        Text("\(hour) hours")
+                    }
+                }
+            }
+            GlucoseInsulinGraph(
+                metricStore: metricStore,
+                event: event,
+                hours: hours
+            )
+        }
+        .cornerRadius(15)
+    }
+    
+    var buttonsView: some View {
+        HStack {
+            Text("Edit").onTapGesture {
+                showEditSheet = true
+            }
+            .foregroundColor(.accentColor)
+            
+            Spacer()
+            Text("Delete").onTapGesture {
+                showDeleteConfirmation = true
+            }
+            .foregroundColor(.red)
+        }
+        .padding(15)
     }
     
     func deleteEvent() {
@@ -180,17 +172,62 @@ struct EventView: View {
 
 struct EventView_Previews: PreviewProvider {
     static var previews: some View {
+        let longDescription = """
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+abcdefg
+"""
         let mealID: Int = 0
         let metricStore = Debug()
+        let noDataMetricStore = Debug(noData:true)
         Group {
             EventView(
                 metricStore: metricStore,
-                meal: Meal( id: mealID, name: "Blueberries", description: "Yummy meal"),
+                meal: Meal( id: mealID, name: "Blueberries", description: "short description"),
                 event: Event(meal_id: mealID, id: 3, date: Date.now)
             )
             EventView(
                 metricStore: metricStore,
-                meal: Meal(id: mealID, name: "Blueberries and a lot of delicious", description: "Yummy meal"),
+                meal: Meal( id: mealID, name: "Blueberries", description: longDescription),
+                event: Event(meal_id: mealID, id: 3, date: Date.now)
+            )
+            EventView(
+                metricStore: noDataMetricStore,
+                meal: Meal( id: mealID, name: "Meal without health data and a long name", description: "banana"),
+                event: Event(meal_id: mealID, id: 3, date: Date.now)
+            )
+            EventView(
+                metricStore: metricStore,
+                meal: Meal(id: mealID, name: "Blueberries and a lot of delicious", description: "Yes yes yes"),
                 event: Event(meal_id: mealID, id: 3, date: Date.now),
                 showDeleteConfirmation: true,
                 showEditSheet: false
@@ -212,63 +249,3 @@ struct EventView_Previews: PreviewProvider {
     }
 }
 
-struct UpdateEventView: View {
-    @EnvironmentObject var eventStore: EventStore
-    @Environment(\.presentationMode) var presentationMode
-    @Binding var event: Event
-    @State var newDate: Date
-    
-    
-    @State var showSuccessAlert: Bool = false
-    @State var successMessage: String = "Updated event"
-    
-    @State var showErrorAlert: Bool = false
-    @State var errorMessage: String = ""
-    
-    var body: some View {
-        VStack {
-            Text("Update event")
-                .font(.headline)
-                .padding()
-            DatePicker("Event date", selection: $newDate, displayedComponents: [.date])
-            DatePicker("Event time", selection: $newDate, displayedComponents: [.hourAndMinute])
-            Spacer()
-            HStack {
-                Button("Save") {
-                    saveEvent(event: event)
-                }
-                Spacer()
-                Button("Cancel") {
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }
-            .padding()
-        }
-        .padding()
-        .onAppear {
-            newDate = event.date
-        }
-        .alert(errorMessage, isPresented: $showErrorAlert) {
-            Button("Ok", role: .cancel) { }
-        }
-        .alert(successMessage, isPresented: $showSuccessAlert) {
-            Button("Ok", role: .cancel) {
-                event.date = newDate
-                presentationMode.wrappedValue.dismiss()
-            }
-        }
-    }
-    
-    func saveEvent(event: Event) {
-        let newEvent = Event(meal_id: event.meal_id, id: event.id, date: newDate)
-        do {
-            try eventStore.saveEvent(event: newEvent)
-            showSuccessAlert = true
-            successMessage = "Saved event"
-        } catch {
-            showErrorAlert = true
-            errorMessage = "Failed saving event: \(error)"
-        }
-    }
-    
-}

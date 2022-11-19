@@ -38,21 +38,12 @@ struct GlucoseStatisticsChart: View {
         } else {
             VStack {
                 Spacer()
-                HStack(alignment: .center) {
+                HStack {
                     Spacer()
-                    VStack(alignment: .center) {
-                        Image(systemName: "tray.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundColor(.secondary.opacity(0.5))
-                            .font(.system(size: 30, weight: .ultraLight))
-                            .frame(width: 50)
-                        
-                        Text("No data")
-                            .font(.subheadline)
-                    }
+                    Text("Glucose")
                     Spacer()
                 }
+                NoDataView(title: "No data")
                 Spacer()
             }
         }
@@ -69,14 +60,18 @@ struct GlucoseStatisticsChart_Previews: PreviewProvider {
         let debug = Debug()
         let samples = (1...5).map { _ in
             (start, debug.getGlucoseSamples(
-                    start: start,
-                    end: end
+                start: start,
+                end: end
             ))
         }
-        return VStack {
-            InsulinStatisticsChart(range: range, resolution: resolution, samples: samples)
+        return Group {
+            VStack {
+                GlucoseStatisticsChart(range: range, resolution: resolution, samples: samples)
+            }
+            .background(.black)
+            .frame(height: 200)
+            
+            GlucoseStatisticsChart(range: range, resolution: resolution, samples: [])
         }
-                .background(.black)
-                .frame(height: 200)
     }
 }
