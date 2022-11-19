@@ -58,7 +58,7 @@ class MealStore: ObservableObject {
             meals.append(mealToSave)
             try JsonUtils.save(data: meals, fileName: MealStore.fileName)
         } else {
-            try updateMeal(meal: meal)
+            try updateMeal(meal: mealToSave)
         }
 
         if let image = image {
