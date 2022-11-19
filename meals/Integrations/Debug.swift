@@ -8,6 +8,12 @@
 import Foundation
 
 class Debug: MetricStore {
+    var noData = false
+    
+    init(noData: Bool = false){
+        self.noData = noData
+    }
+    
     func getGlucoseSamples(start: Date, end: Date, _ completion: @escaping (Result<[MetricSample], Error>) -> Void) {
         completion(.success(getGlucoseSamples(start: start, end: end)))
     }
@@ -18,6 +24,9 @@ class Debug: MetricStore {
 
 
     func getGlucoseSamples(start: Date, end: Date) -> [MetricSample] {
+        if noData {
+            return []
+        }
         var minValue = 50.0
         var maxValue = 500.0
         let startPoint = minValue + 100 * Double.random(in: 0...2)
@@ -38,9 +47,12 @@ class Debug: MetricStore {
     }
 
     func getInsulinSamples(start: Date, end: Date) -> [MetricSample] {
-       [
-           MetricSample(start, Double.random(in: 1...5))
-       ]
+        if noData {
+            return []
+        }
+        return [
+            MetricSample(start, Double.random(in: 1...5))
+        ]
     }
 }
 

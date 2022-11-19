@@ -38,3 +38,32 @@ struct StatisticsBucket {
     var percentile75: Double
     var median: Double
 }
+
+enum DataType: CustomStringConvertible {
+    case Insulin
+    case Glucose
+    
+    var description: String {
+        switch self {
+        case .Insulin:
+            return "Insulin"
+        case .Glucose:
+            return "Glucose"
+        }
+    }
+}
+
+
+let ranges: [DataType: (Double, Double)] = [
+    .Insulin: (0, 10),
+    .Glucose: (40, 400)
+]
+
+let glucoseGradientColors = [
+    Color(hex: 0x360033),
+    Color(hex: 0x0b8793)]
+
+let insulinGradient = [
+    Color(hex: 0x135058),
+    Color(hex: 0xf1f2b5)
+]

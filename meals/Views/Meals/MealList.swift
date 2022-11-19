@@ -52,35 +52,14 @@ struct MealList: View {
         .padding(.leading, 10)
     }
 
-    var noMeals: some View {
-        VStack {
-            Spacer()
-            Image(systemName: "tray.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .font(.system(size: 30, weight: .ultraLight))
-                    .frame(width: 80)
-
-            Text("No meals")
-                    .font(.title)
-
-            HStack(alignment: .center) {
-                Spacer()
-                Text("Click on the plus button")
-                        .font(.body)
-                Spacer()
-            }
-            Spacer()
-        }
-
-    }
-
     var body: some View {
         NavigationView {
             VStack {
                 if mealStore.meals.count == 0 {
-                    noMeals
+                    NoDataView(
+                        title: "No meals",
+                        prompt: "Click the plus button"
+                    )
                 } else {
                     if textFilter != "" {
                         HStack {
