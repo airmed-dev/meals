@@ -228,7 +228,6 @@ struct MealDetails: View {
                 )
             }
         }
-        .frame(maxWidth: .infinity, alignment: .center)
         .background(Color(uiColor: UIColor.systemBackground))
         .cornerRadius(15)
         .padding([.leading, .trailing], 5)

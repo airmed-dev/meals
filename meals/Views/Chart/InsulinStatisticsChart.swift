@@ -29,7 +29,7 @@ struct InsulinStatisticsChart: View {
             VStack {
                 Spacer()
                 Text("Insulin")
-                NoDataView(title:"No data")
+                NoDataView(title:"No health data")
                 Spacer()
             }
         }

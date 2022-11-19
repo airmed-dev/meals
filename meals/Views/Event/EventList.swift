@@ -34,7 +34,9 @@ struct EventList: View {
             if eventStore.events.isEmpty {
                 NoDataView(
                     title: "No events",
-                    prompt: "Log an event"
+                    titleFont: .title,
+                    prompt: "Log an event",
+                    iconSize: 100
                 )
             } else if let selectedEvent = selectedEvent {
                 header

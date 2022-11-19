@@ -43,7 +43,7 @@ struct GlucoseStatisticsChart: View {
                     Text("Glucose")
                     Spacer()
                 }
-                NoDataView(title: "No data")
+                NoDataView(title: "No health data")
                 Spacer()
             }
         }

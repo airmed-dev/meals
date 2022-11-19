@@ -50,7 +50,7 @@ struct NoDataView: View {
 struct NoDataView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            NoDataView(title: "No data")
+            NoDataView(title: "No health data")
             NoDataView(title: "No events", prompt: "Create an event")
         }
     }

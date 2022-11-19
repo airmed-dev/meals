@@ -58,7 +58,9 @@ struct MealList: View {
                 if mealStore.meals.count == 0 {
                     NoDataView(
                         title: "No meals",
-                        prompt: "Click the plus button"
+                        titleFont: .title,
+                        prompt: "Click the plus button",
+                        iconSize: 100
                     )
                 } else {
                     if textFilter != "" {
