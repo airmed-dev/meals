@@ -37,7 +37,7 @@ struct TimelineView: View {
         TrackableScrollView(.horizontal,contentOffset: $offset) {
             LazyHStack(spacing: spacing) {
                 ForEach(eventGroupDateKeys(), id: \.self){ groupDateKey in
-                   cardGroup(groupDateKey:  groupDateKey)
+                    cardGroup(groupDateKey:  groupDateKey)
                 }
             }
         }
@@ -49,14 +49,14 @@ struct TimelineView: View {
             LazyHStack(spacing: spacing) {
                 let events = eventsPerDates(groupDateKey: groupDateKey)
                 ForEach(events){ event in
-                    cardElement(event: event,
+                    timelineCard(event: event,
                                 firstInGroup: events.first!.id == event.id)
                 }
             }
         }
     }
     
-    func cardElement(event: Event, firstInGroup: Bool) -> some View {
+    func timelineCard(event: Event, firstInGroup: Bool) -> some View {
         VStack {
             VStack {
                 if firstInGroup {
@@ -75,28 +75,39 @@ struct TimelineView: View {
             .padding([.leading, .top], 5)
             
             if let meal = mealStore.getMeal(event: event){
-                ZStack(alignment: .topTrailing) {
-                    MealCard(
-                        meal: meal,
-                        image: try? photoStore.loadImage(mealID: meal.id)
-                    )
-                    if selectedEvent?.id == event.id {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(Color.white)
-                            .padding(3)
-                            .background(Color.black.opacity(0.7))
-                            .cornerRadius(3)
-//                            .foregroundColor(.white)
-                    }
-                }
-                .onTapGesture {
-                    selectedEvent = event
-                }
+               mealCard(meal: meal, event: event)
             } else {
                 Text("ERROR: No meal for event \(event.id)")
             }
         }
         .frame(width: cardWidth)
+    }
+    
+    func mealCard(meal: Meal, event: Event) -> some View {
+        VStack() {
+            if selectedEvent?.id == event.id{
+                MealCard(
+                    title: meal.name,
+                    titleFont: .caption,
+                    image: try? photoStore.loadImage(mealID: meal.id)
+                )
+                .cornerRadius(10)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.accentColor, lineWidth: 3)
+                }
+            } else {
+                MealCard(
+                    title: meal.name,
+                    titleFont: .caption,
+                    image: try? photoStore.loadImage(mealID: meal.id)
+                )
+                .cornerRadius(10)
+            }
+        }
+        .onTapGesture {
+            selectedEvent = event
+        }
     }
     
     var stickyHeader: some View {
@@ -167,47 +178,50 @@ struct TimelineView: View {
 
 struct TimelineView_Previews: PreviewProvider {
     static let store = Store(
-            meals: [Meal(id: 0, name: "Dummy meal", description: "")],
-            events: []
-        )
+        meals: [Meal(id: 0, name: "Dummy meal", description: "")],
+        events: []
+    )
     static let events = [
-                    // Day 0
-                    Event(meal_id: 0,id:0, date: Date.now.addingTimeInterval(24*60*60*(-5))),
-                    Event(meal_id: 0,id:1, date: Date.now.addingTimeInterval(24*60*60*(-5.1))),
-                    
-                    // Day 1
-                    Event(meal_id: 0,id:2, date: Date.now.addingTimeInterval(24*60*60*(-4.1))),
-                    Event(meal_id: 0,id:3, date: Date.now.addingTimeInterval(24*60*60*(-4.2))),
-                    Event(meal_id: 0,id:4, date: Date.now.addingTimeInterval(24*60*60*(-4.3))),
-                    
-                    // Day 2
-                    Event(meal_id: 0,id:5, date: Date.now.addingTimeInterval(24*60*60*(-3))),
-                    //
-                    // Day 3
-                    Event(meal_id: 0,id:6, date: Date.now.addingTimeInterval(24*60*60*(-2.1))),
-                    Event(meal_id: 0,id:7, date: Date.now.addingTimeInterval(24*60*60*(-2.3))),
-                    //
-                    // Day 4
-                    Event(meal_id: 0,id:8, date: Date.now.addingTimeInterval(24*60*60*(-1.5))),
-                ]
+        // Day 0
+        Event(meal_id: 0,id:0, date: Date.now.addingTimeInterval(24*60*60*(-5))),
+        Event(meal_id: 0,id:1, date: Date.now.addingTimeInterval(24*60*60*(-5.1))),
+        
+        // Day 1
+        Event(meal_id: 0,id:2, date: Date.now.addingTimeInterval(24*60*60*(-4.1))),
+        Event(meal_id: 0,id:3, date: Date.now.addingTimeInterval(24*60*60*(-4.2))),
+        Event(meal_id: 0,id:4, date: Date.now.addingTimeInterval(24*60*60*(-4.3))),
+        
+        // Day 2
+        Event(meal_id: 0,id:5, date: Date.now.addingTimeInterval(24*60*60*(-3))),
+        //
+        // Day 3
+        Event(meal_id: 0,id:6, date: Date.now.addingTimeInterval(24*60*60*(-2.1))),
+        Event(meal_id: 0,id:7, date: Date.now.addingTimeInterval(24*60*60*(-2.3))),
+        //
+        // Day 4
+        Event(meal_id: 0,id:8, date: Date.now.addingTimeInterval(24*60*60*(-1.5))),
+    ]
     @State static var selectedEvent: Event?
     static var previews: some View {
         VStack {
-                if let selectedEvent = selectedEvent {
-                    Text("Selected Event: \(selectedEvent.date)")
-                }
-                TimelineView(
-                    cardWidth: 120,
-                    events: events,
-                    selectedEvent: $selectedEvent
-                )
-                .frame(height: 200)
-                .environmentObject(
-                    store.mealStore
-                )
-                .environmentObject(
-                    store.photoStore
-                )
+            if let selectedEvent = selectedEvent {
+                Text("Selected Event: \(selectedEvent.date)")
+            }
+            TimelineView(
+                cardWidth: 120,
+                events: events,
+                selectedEvent: $selectedEvent
+            )
+            .frame(height: 200)
+            .environmentObject(
+                store.mealStore
+            )
+            .environmentObject(
+                store.photoStore
+            )
+        }
+        .onAppear  {
+            selectedEvent = events.first
         }
     }
 }

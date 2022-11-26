@@ -30,7 +30,7 @@ struct EventList: View {
     let hourOptions = [3, 6]
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0 ) {
             if eventStore.events.isEmpty {
                 NoDataView(
                     title: "No events",
@@ -65,50 +65,12 @@ struct EventList: View {
         
         return HStack {
             if let selectedEvent = selectedEvent, let meal = meal {
-                // Todo: Maybe this should be it's own component "MealHeader" ?
-                ZStack {
-                    // Photo
-                    GeometryReader{ geo in
-                        HStack {
-                            if let image = image {
-                                Image(uiImage: image).resizable()
-                            } else {
-                                LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
-                            }
-                        }
-                        .scaledToFill()
-                        .frame(width: geo.size.width, height: geo.size.height)
-                        .clipped()
-                    }
-                    
-                    VStack(alignment: .trailing) {
-                        Spacer()
-                        HStack {
-                            Text(meal.name)
-                                .font(.largeTitle)
-                                .minimumScaleFactor(0.01)
-                            Spacer()
-                        }
-                        HStack {
-                            Text("\(DateUtils.formatDateAndTime(date: selectedEvent.date))")
-                            Spacer()
-                        }
-                        Spacer()
-                    }
-                    .padding()
-                    .foregroundColor(.white)
-                    .background(
-                        .linearGradient(
-                            stops:[
-                                Gradient.Stop(color: .black, location: 0),
-                                Gradient.Stop(color: .black.opacity(0), location: 0.9)
-                            ],
-                            startPoint: .bottom,
-                            endPoint: .top)
-                    )
-                    .padding([.leading, .trailing], 5)
-                }
-                
+                MealCard(
+                    title: meal.name,
+                    subtitle: "Consumed at \(selectedEvent.date.formatted())",
+                    subtitleFont: .caption,
+                    image: image
+                )
             } else {
                 ZStack {
                     LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
@@ -153,7 +115,6 @@ struct EventList: View {
         }
         .background(Color(uiColor: .systemBackground))
         .cornerRadius(15)
-        .padding([.leading, .trailing, .bottom], 5)
     }
     
     var timeline: some View {
@@ -163,7 +124,7 @@ struct EventList: View {
                     .font(.headline)
                 Spacer()
             }
-            .padding([.leading, .top, .trailing], 10)
+            .padding([.leading, .top], 10)
             TimelineView(
                 cardWidth: 130,
                 events: eventStore.events,
@@ -171,12 +132,11 @@ struct EventList: View {
             )
             .environmentObject(mealStore)
             .frame(height: 200)
-            .background(.white)
-            .cornerRadius(5)
+            .background(.background)
         }
         .background(Color(uiColor: .systemBackground))
         .cornerRadius(15)
-        .padding([.leading, .trailing], 5)
+        .padding([.leading], 5)
     }
     
     // Event handler

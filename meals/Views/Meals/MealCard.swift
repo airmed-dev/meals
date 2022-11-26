@@ -8,44 +8,61 @@
 import SwiftUI
 
 struct MealCard: View {
-    var font: Font = Font.caption
-    var displayBelow = false
-    @State var meal: Meal
-    @State var image: UIImage?
+    var title: String = ""
+    var titleFont: Font = Font.title
+    var subtitle: String = ""
+    var subtitleFont: Font = Font.title3
+    
+    var image: UIImage?
     
     var body: some View {
-        ZStack(alignment: .bottomLeading){
-            GeometryReader { geo in
+        GeometryReader { geo in
+            // Photo
+            ZStack {
                 VStack {
                     if let image = image {
                         Image(uiImage: image)
                             .resizable()
-                            .frame(width: geo.size.width, height: geo.size.height)
-                            .cornerRadius(10)
+                            .aspectRatio(contentMode: .fill)
+                            .frame(
+                                width: geo.size.width,
+                                height:geo.size.height,
+                                alignment: .center
+                            )
+                            .clipped()
                     } else {
                         renderNoimage()
                     }
                 }
-            }
-            if !displayBelow {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(meal.name)
-                        .font(font)
-                        .fontWeight(.bold)
-                        .minimumScaleFactor(0.001)
+                // Titles
+                if title != "" {
+                    VStack {
+                        Spacer()
+                        VStack {
+                            HStack {
+                                Text(title)
+                                    .font(titleFont)
+                                Spacer()
+                            }
+                            
+                            if subtitle != "" {
+                                HStack {
+                                    Text(subtitle)
+                                        .font(subtitleFont)
+                                    Spacer()
+                                }
+                            }
+                        }
+                        .padding([.leading, .trailing,.bottom], 5)
+                        .padding([.leading, .trailing,.top], 15)
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding([.leading, .trailing, .bottom], 2)
                         .background(
                             .linearGradient(
-                                stops:[
-                                    Gradient.Stop(color: .black, location: 0),
-                                    Gradient.Stop(color: .black.opacity(0.2), location: 0.9)
-                                ],
+                                colors: [.black, .black.opacity(0)],
                                 startPoint: .bottom,
-                                endPoint: .top
-                            )
+                                endPoint: .top)
                         )
+                    }
                 }
             }
         }
@@ -67,13 +84,17 @@ struct MealCard: View {
 struct MealCard_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MealCard(meal: Meal(id:0, name: "Name", description: "Description"))
+            MealCard(title:  "Name")
                 .frame(width:200,height:200)
                 .background(.red)
-            MealCard(font: .largeTitle, meal: Meal(id:0, name: "Super long name for a meal", description: "Description"))
-                .frame(width:200,height:200)
-                .background(.red)
-            MealCard(displayBelow: true, meal: Meal(id:0, name: "Name", description: "Description"))
+            
+            MealCard( title: "Super long name for a meal",
+                      titleFont: .largeTitle
+            )
+            .frame(width:200,height:200)
+            .background(.red)
+            
+            MealCard()
                 .frame(width:200,height:200)
         }
     }
