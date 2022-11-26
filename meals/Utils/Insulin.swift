@@ -11,7 +11,7 @@ import Foundation
 
 import Foundation
 
-let insulinActiveDuration: TimeInterval = 360 * 60
+let insulinActiveDuration: TimeInterval = 3 * 60 * 60
 
 func calculateIOB(insulinDelivery: [MetricSample], start: Date, end: Date) -> [MetricSample] {
     if insulinDelivery.isEmpty {
