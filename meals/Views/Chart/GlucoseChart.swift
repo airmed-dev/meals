@@ -38,7 +38,19 @@ struct GlucoseChart: UIViewRepresentable {
     func getModel() -> AAChartModel{
         let data = getData()
         let categories = getCategories()
+        let backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
+        ? "black"
+        : "white"
+        let foregroundColor = AAStyle(color:
+                                        UITraitCollection.current.userInterfaceStyle == .dark
+                                      ? "white"
+                                      : "black"
+        )
         return AAChartModel()
+            .backgroundColor(backgroundColor)
+            .yAxisLabelsStyle(foregroundColor)
+            .xAxisLabelsStyle(foregroundColor)
+            .dataLabelsStyle(foregroundColor)
             .chartType(.line)
             .animationType(.easeInSine)
             .categories(categories)
