@@ -84,7 +84,7 @@ struct MetricGraph: View {
                 loading = false
             }
         case .Insulin:
-            let start = event.date
+            let start = event.date.addingTimeInterval(-1 * insulinActiveDuration)
             let end = event.date.advanced(by: hoursInSeconds)
             
             metricStore.getInsulinSamples(start: start, end: end) { result in

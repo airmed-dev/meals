@@ -285,9 +285,9 @@ struct MealDetails: View {
         insulinPointCount = 0
         // TODO: Overlaps?
         events.forEach { event in
-            let start = event.date
+            let glucoseStart = event.date
             let end = event.date.advanced(by: TimeInterval(hours * 60 * 60))
-            metricStore.getGlucoseSamples(start: start, end: end) { result in
+            metricStore.getGlucoseSamples(start: glucoseStart, end: end) { result in
                 switch result {
                 case .success(let samples):
                     glucoseSamples[event.id] = (event.date, samples)
@@ -297,8 +297,10 @@ struct MealDetails: View {
                 }
                 
             }
+            
+            let insulinStart = event.date.addingTimeInterval(-1 * insulinActiveDuration)
             metricStore.getInsulinSamples(
-                start: start,
+                start: insulinStart,
                 end: end
             ) { result in
                 switch result {

@@ -77,12 +77,12 @@ struct GlucoseInsulinGraph: View {
             return
         }
         let hoursInSeconds = 60 * 60 * TimeInterval(hours)
-        let start = event.date
+        let glucoseStart = event.date
         let end = event.date.advanced(by: hoursInSeconds)
         
         // Load glucose
         metricStore.getGlucoseSamples(
-            start: start,
+            start: glucoseStart,
             end: end
         ) { result in
             switch result {
@@ -96,13 +96,18 @@ struct GlucoseInsulinGraph: View {
         }
         
         
+        let insulinStart = event.date.addingTimeInterval(-1 * insulinActiveDuration)
         metricStore.getInsulinSamples(
-            start: start,
+            start: insulinStart,
             end: end
         ) { result in
             switch result {
             case .success(let samples):
-                self.insulinSamples = calculateIOB(insulinDelivery: samples, start: start, end: end)
+                self.insulinSamples = calculateIOB(
+                    insulinDelivery: samples,
+                    start: event.date,
+                    end: end
+                )
                 self.error = nil
             case .failure(let error):
                 self.error = error

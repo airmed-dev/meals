@@ -11,6 +11,8 @@ import Foundation
 
 import Foundation
 
+let insulinActiveDuration: TimeInterval = 360 * 60
+
 func calculateIOB(insulinDelivery: [MetricSample], start: Date, end: Date) -> [MetricSample] {
     if insulinDelivery.isEmpty {
         return []
@@ -18,13 +20,12 @@ func calculateIOB(insulinDelivery: [MetricSample], start: Date, end: Date) -> [M
     // Calculate iob for every 5 minute sample between start and end
     // Prepare insulin model. right now just for humalog
     // values are copied from LoopKit
-    let activeDuration: TimeInterval = 360 * 60
     let peakActivityTime: TimeInterval = 75 * 60
     let delay: TimeInterval = 10 * 60
     
     let insulinModel =
     ExponentialInsulinModel(
-        actionDuration: activeDuration,
+        actionDuration: insulinActiveDuration,
         peakActivityTime: peakActivityTime,
         delay: delay
     )
@@ -42,7 +43,7 @@ func calculateIOB(insulinDelivery: [MetricSample], start: Date, end: Date) -> [M
         // Also the insulin delivery is sorted by date, so it could also be optimized
         let relevantInsulinDosage = insulinDelivery.filter { dose in
             return dose.date < currentPoint &&
-            dose.date.advanced(by: activeDuration) >= currentPoint
+            dose.date.advanced(by: insulinActiveDuration) >= currentPoint
         }
         
         // Calculate the active percentage of each sample
