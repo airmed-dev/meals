@@ -38,8 +38,8 @@ struct MealList: View {
                         }
                     }) {
                         MealCard(
-                            font: .headline,
-                            meal: meal,
+                            title: meal.name,
+                            titleFont: .caption,
                             image: try? photoStore.loadImage(mealID: meal.id)
                         )
                         .frame(

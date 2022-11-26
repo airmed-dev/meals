@@ -46,11 +46,18 @@ struct EventView: View {
     var body: some View {
         GeometryReader { geo in
             ScrollView {
-                VStack(alignment: .leading) {
-                    mealImage
+                VStack(alignment: .leading, spacing: 0) {
+                    MealCard(
+                        title: meal.name,
+                        subtitle: "Consumed at: \(event.date.formatted())",
+                        subtitleFont: .caption,
+                        image: image
+                    )
+                        .frame(height: geo.size.height/3)
                     
                     VStack(alignment: .leading) {
-                        mealEventPropertiesView
+                        Text(meal.description)
+                            .padding([.leading,.top])
                         Divider()
                         metricsView
                             .frame(height: geo.size.height/2)
@@ -83,39 +90,6 @@ struct EventView: View {
                 .background(Color(.systemGray6))
     }
     
-    var mealImage: some View {
-        VStack {
-            if let image = image {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .clipped()
-            } else {
-                NoPhotoView()
-            }
-        }
-    }
-    
-    var mealEventPropertiesView: some View {
-        VStack(alignment: .leading) {
-            Text(meal.name)
-                .font(.title)
-                .fontWeight(.bold)
-                .minimumScaleFactor(1)
-                .padding(.leading)
-                .padding(.top, 5)
-            
-            Text("Consumed at: " + event.date.formatted())
-                .font(.footnote)
-                .foregroundColor(.black.opacity(1.00))
-                .padding(.leading)
-            
-            Divider()
-            Text(meal.description)
-                .padding(.leading)
-            
-        }
-    }
     
     var metricsView: some View {
         VStack {

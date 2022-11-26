@@ -97,50 +97,11 @@ struct MealDetails: View {
     }
     
     var header: some View {
-        // Todo: Maybe this should be it's own component "MealHeader" ?
-        let colors = [Color(hex: 0x424242), Color(hex: 0x002266)]
-        return GeometryReader { geo in
-            // Photo
-            ZStack {
-                VStack {
-                    if let image = image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height:200, alignment: .center)
-                            .clipped()
-                    } else {
-                        ZStack {
-                            LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
-                            Image(systemName: "photo")
-                                .resizable()
-                                .frame(width: 70, height: 50)
-                                .aspectRatio(contentMode: .fill)
-                                .foregroundColor(.white)
-                        }
-                    }
-                }
-                // Titles
-                VStack(alignment: .trailing) {
-                    Spacer()
-                    HStack {
-                        Text(meal.name)
-                            .font(.largeTitle)
-                            .minimumScaleFactor(0.001)
-                        Spacer()
-                    }
-                }
-                .padding([.leading, .trailing,.bottom], 5)
-                .foregroundColor(.white)
-                .background(
-                    .linearGradient(
-                        colors: [.black, .black.opacity(0)],
-                        startPoint: .bottom,
-                        endPoint: .top)
-                )
-            }
-        }
-        .frame(height: 200)
+        MealCard(
+            title: meal.name,
+            image: image
+        )
+            .frame(height: 200)
         
     }
     

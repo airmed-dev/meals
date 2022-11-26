@@ -31,6 +31,11 @@ struct GlucoseInsulinGraph: View {
                 if glucoseSamples.isEmpty && insulinSamples.isEmpty {
                     NoDataView(title: "No health data")
                 } else {
+                    HStack {
+                        Spacer()
+                        Text("Glucose")
+                        Spacer()
+                    }
                     if glucoseSamples.isEmpty {
                         NoDataView(title: "No health data")
                         Spacer()
@@ -43,7 +48,11 @@ struct GlucoseInsulinGraph: View {
                         )
                     }
                     
-                    
+                    HStack {
+                        Spacer()
+                        Text("Insulin")
+                        Spacer()
+                    }
                     if insulinSamples.count == 0 {
                         NoDataView(title: "No health data")
                     } else {
