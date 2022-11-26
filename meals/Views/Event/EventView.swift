@@ -56,9 +56,9 @@ struct EventView: View {
                             .frame(height: geo.size.height/2)
                     }
                     .background(.background)
+                    
                     buttonsView
                 }
-                .frame(minHeight: geo.size.height)
                 .alert(isPresented: $showDeleteConfirmation) {
                     Alert(title: Text("Are you sure you want to delete this event?"),
                           primaryButton: .destructive(Text("Yes")) {

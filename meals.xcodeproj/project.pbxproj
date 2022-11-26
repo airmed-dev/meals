@@ -30,12 +30,15 @@
 		DF12302C28784216007156DD /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF12302B28784216007156DD /* BottomSheet */; };
 		DF123030287955F1007156DD /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12302F287955F1007156DD /* Nightscout.swift */; };
 		DF12303328795D6F007156DD /* MetricStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12303228795D6F007156DD /* MetricStore.swift */; };
-		DF2083D9288B071200100694 /* ValueStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2083D8288B071200100694 /* ValueStats.swift */; };
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
 		DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */; };
 		DF30479528F92A33007E2CC6 /* SwiftUITrackableScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = DF30479428F92A33007E2CC6 /* SwiftUITrackableScrollView */; };
 		DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF37D5E828354573007BEFE3 /* HealthKit.swift */; };
 		DF3D07C3282FFB8D003E36BD /* MealDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D07C2282FFB8D003E36BD /* MealDetails.swift */; };
+		DF4FE1472928B8A20074F360 /* NoDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4FE1462928B8A20074F360 /* NoDataView.swift */; };
+		DF4FE1492928C1170074F360 /* GlucoseInsulinGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4FE1482928C1170074F360 /* GlucoseInsulinGraph.swift */; };
+		DF4FE14B2928E6B60074F360 /* UpdateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4FE14A2928E6B60074F360 /* UpdateEventView.swift */; };
+		DF4FE14D2928E7F40074F360 /* NoPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4FE14C2928E7F40074F360 /* NoPhotoView.swift */; };
 		DF59D90328E2C93800A7333E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF07B3212826933800C164AB /* Preview Assets.xcassets */; };
 		DF7C9EDB290E6455000BA6C7 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7C9EDA290E6455000BA6C7 /* Math.swift */; };
 		DF8A73A028DF32C50095E9FF /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8A739F28DF32C50095E9FF /* Debug.swift */; };
@@ -82,11 +85,14 @@
 		DF11C2E82916479F00C18242 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		DF12302F287955F1007156DD /* Nightscout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
 		DF12303228795D6F007156DD /* MetricStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricStore.swift; sourceTree = "<group>"; };
-		DF2083D8288B071200100694 /* ValueStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueStats.swift; sourceTree = "<group>"; };
 		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
 		DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerRadiusModifier.swift; sourceTree = "<group>"; };
 		DF37D5E828354573007BEFE3 /* HealthKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKit.swift; sourceTree = "<group>"; };
 		DF3D07C2282FFB8D003E36BD /* MealDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetails.swift; sourceTree = "<group>"; };
+		DF4FE1462928B8A20074F360 /* NoDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoDataView.swift; sourceTree = "<group>"; };
+		DF4FE1482928C1170074F360 /* GlucoseInsulinGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseInsulinGraph.swift; sourceTree = "<group>"; };
+		DF4FE14A2928E6B60074F360 /* UpdateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventView.swift; sourceTree = "<group>"; };
+		DF4FE14C2928E7F40074F360 /* NoPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoPhotoView.swift; sourceTree = "<group>"; };
 		DF7C9EDA290E6455000BA6C7 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		DF8A739F28DF32C50095E9FF /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		DF8A73A128DF38E60095E9FF /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
@@ -226,7 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				DF9375782830156500CBE618 /* MetricGraph.swift */,
-				DF2083D8288B071200100694 /* ValueStats.swift */,
+				DF4FE1482928C1170074F360 /* GlucoseInsulinGraph.swift */,
 			);
 			path = Metrics;
 			sourceTree = "<group>";
@@ -257,6 +263,8 @@
 				DFE8D35B2840CA5400937CAB /* PhotoPicker.swift */,
 				DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */,
 				DFF2DFCD28813E88008251DC /* LoadingButton.swift */,
+				DF4FE1462928B8A20074F360 /* NoDataView.swift */,
+				DF4FE14C2928E7F40074F360 /* NoPhotoView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -280,6 +288,7 @@
 				DFA0E56A2847DE1100323B35 /* EventList.swift */,
 				8FFA3615549B73CF0DCB6D79 /* EventListSkeleton.swift */,
 				DF98888628FBCC9D001B0D92 /* TimelineView.swift */,
+				DF4FE14A2928E6B60074F360 /* UpdateEventView.swift */,
 			);
 			path = Event;
 			sourceTree = "<group>";
@@ -375,7 +384,6 @@
 				DF282F712838B8380044C1EF /* MealCard.swift in Sources */,
 				DF11C2E92916479F00C18242 /* OnboardingView.swift in Sources */,
 				DF37D5E928354573007BEFE3 /* HealthKit.swift in Sources */,
-				DF2083D9288B071200100694 /* ValueStats.swift in Sources */,
 				DF07B33928269A2A00C164AB /* MealEditor.swift in Sources */,
 				DF8A73A028DF32C50095E9FF /* Debug.swift in Sources */,
 				DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */,
@@ -395,12 +403,16 @@
 				8FFA3FBEC18E8E8FFF166875 /* EventListSkeleton.swift in Sources */,
 				8FFA38A56F641618F18F3FCB /* SettingsView.swift in Sources */,
 				8FFA330E49738C2FB106E80A /* Store.swift in Sources */,
+				DF4FE14B2928E6B60074F360 /* UpdateEventView.swift in Sources */,
 				8FFA3F2607F2938D6DD3BA22 /* MealStore.swift in Sources */,
+				DF4FE1472928B8A20074F360 /* NoDataView.swift in Sources */,
 				8FFA336FC60D5D29940DB80E /* EventStore.swift in Sources */,
 				DFDEC41628F006BC00E0410C /* InsulinChart.swift in Sources */,
 				8FFA310A5ED6DEA4868EF241 /* PhotoStore.swift in Sources */,
+				DF4FE1492928C1170074F360 /* GlucoseInsulinGraph.swift in Sources */,
 				8FFA362D05719805CFF50452 /* Integrations.swift in Sources */,
 				8FFA3F036412E2B7F2D8358D /* README.md in Sources */,
+				DF4FE14D2928E7F40074F360 /* NoPhotoView.swift in Sources */,
 				8FFA31139F73232981DCD7B2 /* Color.swift in Sources */,
 				8FFA3567C2B9C90968230486 /* Insulin.swift in Sources */,
 				8FFA37B3B7031523D3EE7BF7 /* Statistics.swift in Sources */,

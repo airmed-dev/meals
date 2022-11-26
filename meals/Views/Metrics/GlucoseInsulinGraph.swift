@@ -31,11 +31,10 @@ struct GlucoseInsulinGraph: View {
                 if glucoseSamples.isEmpty && insulinSamples.isEmpty {
                     NoDataView(title: "No health data")
                 } else {
-                    Text("Glucose Samples: \(glucoseSamples.count)")
                     if glucoseSamples.isEmpty {
-                        NoDataView(title: "No data")
+                        NoDataView(title: "No health data")
                         Spacer()
-                    }else{
+                    } else{
                         GlucoseChart(start: event.date,
                                      end: event.date.advanced(
                                         by: TimeInterval(hours*60*60)
@@ -45,9 +44,8 @@ struct GlucoseInsulinGraph: View {
                     }
                     
                     
-                    Text("Insulin Samples: \(insulinSamples.count)")
                     if insulinSamples.count == 0 {
-                        NoDataView(title: "No data")
+                        NoDataView(title: "No health data")
                     } else {
                         InsulinChart(
                             start: event.date,
@@ -79,13 +77,13 @@ struct GlucoseInsulinGraph: View {
             return
         }
         let hoursInSeconds = 60 * 60 * TimeInterval(hours)
+        let glucoseStart = event.date
+        let end = event.date.advanced(by: hoursInSeconds)
         
         // Load glucose
-        let glucoseStart = event.date
-        let glucoseEnd = event.date.advanced(by: hoursInSeconds)
         metricStore.getGlucoseSamples(
             start: glucoseStart,
-            end: glucoseEnd
+            end: end
         ) { result in
             switch result {
             case .success(let samples):
@@ -97,16 +95,19 @@ struct GlucoseInsulinGraph: View {
             loading = false
         }
         
-        // Load insulin
-        let insulinStart = event.date
-        let insulinEnd = event.date.advanced(by: hoursInSeconds)
+        
+        let insulinStart = event.date.addingTimeInterval(-1 * insulinActiveDuration)
         metricStore.getInsulinSamples(
-            start: glucoseStart,
-            end: glucoseEnd
+            start: insulinStart,
+            end: end
         ) { result in
             switch result {
             case .success(let samples):
-                self.insulinSamples = calculateIOB(insulinDelivery: samples, start: insulinStart, end: insulinEnd)
+                self.insulinSamples = calculateIOB(
+                    insulinDelivery: samples,
+                    start: event.date,
+                    end: end
+                )
                 self.error = nil
             case .failure(let error):
                 self.error = error

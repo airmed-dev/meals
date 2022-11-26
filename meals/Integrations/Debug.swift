@@ -27,8 +27,8 @@ class Debug: MetricStore {
         if noData {
             return []
         }
-        var minValue = 50.0
-        var maxValue = 500.0
+        let minValue = 50.0
+        let maxValue = 500.0
         let startPoint = minValue + 100 * Double.random(in: 0...2)
         var point = startPoint
         var samples: [MetricSample] = []
@@ -50,9 +50,18 @@ class Debug: MetricStore {
         if noData {
             return []
         }
-        return [
-            MetricSample(start, Double.random(in: 1...5))
+        // Random sample at start+insulinActiveDuration
+        let startAfterLastInsulin = start.addingTimeInterval(insulinActiveDuration)
+        var insulinDelivery =  [
+            MetricSample(startAfterLastInsulin, Double.random(in: 1...5))
         ]
+        
+        // Randomly inject before start time 0.1 probablity
+        let deliveryBeforeStart = start.addingTimeInterval(insulinActiveDuration/2)
+        if Int.random(in: 1...10) > 9 {
+            insulinDelivery.insert(MetricSample(deliveryBeforeStart, Double.random(in: 1...5)), at: 0)
+        }
+        return insulinDelivery
     }
 }
 

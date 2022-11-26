@@ -21,16 +21,16 @@ struct SettingsView: View {
     
     @State var nightscoutURL: String = ""
     @State var nightscoutToken: String = ""
+    
 
+    
     var body: some View {
         VStack {
             List {
                 Section("Data") {
                     HStack {
                         Picker("Datasource", selection: $datasourceType) {
-                            ForEach(DatasourceType.allCases.filter{
-                                developerMode || $0 != DatasourceType.Debug
-                            }) { datasourceType in
+                            ForEach(getDatasourceTypes()) { datasourceType in
                                 Text(datasourceType.rawValue)
                                     .tag(datasourceType)
                             }
@@ -58,12 +58,7 @@ struct SettingsView: View {
                 
                 Section("About") {
                     HStack {
-                        Button(action: {
-                            devClickCount+=1
-                            if devClickCount >= requiredDevClickCount {
-                                developerMode = true
-                            }
-                        }){
+                        Button(action: versionClick ){
                             Text("Version")
                                 .foregroundColor(.primary)
                         }
@@ -72,26 +67,7 @@ struct SettingsView: View {
                     }
                 }
                 HStack {
-                    Button(action: {
-                        let defaults = UserDefaults()
-                        defaults.set(datasourceType.rawValue, forKey: "datasource.type")
-                        switch datasourceType {
-                        case .NightScout:
-                            defaults.set(nightscoutURL, forKey:  "datasource.nightscout.url")
-                            defaults.set(nightscoutToken, forKey: "datasource.nightscout.token")
-                        case .HealthKit:
-                            HealthKitUtils.requestHKAuthorization { wasPresented, error in
-                                authorizeRequested = false
-                                if let error = error {
-                                    showErrorAlert = true
-                                    errorMessage = error.localizedDescription
-                                }
-                            }
-                        case .Debug:
-                            break
-                        }
-                        showSuccessAlert = true
-                    }) {
+                    Button(action: save) {
                         Text("Save")
                     }
                     Spacer()
@@ -100,13 +76,7 @@ struct SettingsView: View {
             .listStyle(.insetGrouped)
         }
         .onAppear {
-            let defaults = UserDefaults()
-            let datasourceTypeRawValue = defaults.string(forKey: "datasource.type") ?? DatasourceType.HealthKit.rawValue
-            datasourceType = DatasourceType(rawValue: datasourceTypeRawValue)!
-            if datasourceType == DatasourceType.NightScout {
-                nightscoutURL = defaults.string(forKey: "datasource.nightscout.url") ?? ""
-                nightscoutToken = defaults.string(forKey: "datasource.nightscout.token") ?? ""
-            }
+            initSettings()
         }
         .alert(isPresented: $developerMode){
             Alert(title: Text("Developer mode enabled"))
@@ -116,9 +86,63 @@ struct SettingsView: View {
         }
         .alert(isPresented: $showErrorAlert) {
             Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .cancel())
+            
+        }
+    }
+    
+    func getDatasourceTypes() -> [DatasourceType] {
+        DatasourceType.allCases.filter{
+            developerMode || $0 != DatasourceType.Debug
+        }
+    }
+    
+    func initSettings() {
+        let defaults = UserDefaults()
+        let datasourceTypeRawValue = defaults.string(forKey: "datasource.type") ?? DatasourceType.HealthKit.rawValue
+        datasourceType = DatasourceType(rawValue: datasourceTypeRawValue)!
+        if datasourceType == DatasourceType.NightScout {
+            nightscoutURL = defaults.string(forKey: "datasource.nightscout.url") ?? ""
+            nightscoutToken = defaults.string(forKey: "datasource.nightscout.token") ?? ""
         }
         
+        if defaults.bool(forKey: "developer") {
+           developerMode = true
+        }
+    }
+    
+    func save() {
+        let defaults = UserDefaults()
+        defaults.set(datasourceType.rawValue, forKey: "datasource.type")
+        switch datasourceType {
+        case .NightScout:
+            defaults.set(nightscoutURL, forKey:  "datasource.nightscout.url")
+            defaults.set(nightscoutToken, forKey: "datasource.nightscout.token")
+        case .HealthKit:
+            HealthKitUtils.requestHKAuthorization { wasPresented, error in
+                authorizeRequested = false
+                if let error = error {
+                    showErrorAlert = true
+                    errorMessage = error.localizedDescription
+                }
+            }
+        case .Debug:
+            break
+        }
+        showSuccessAlert = true
         
+    }
+    
+    func versionClick() {
+        devClickCount+=1
+        if devClickCount >= requiredDevClickCount {
+            enableDeveloperMode()
+        }
+    }
+    
+    func enableDeveloperMode() {
+        developerMode = true
+        let defaults = UserDefaults()
+        defaults.set(true, forKey: "developer")
     }
 }
 
