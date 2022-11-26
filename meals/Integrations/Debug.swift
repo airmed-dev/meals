@@ -27,8 +27,8 @@ class Debug: MetricStore {
         if noData {
             return []
         }
-        var minValue = 50.0
-        var maxValue = 500.0
+        let minValue = 50.0
+        let maxValue = 500.0
         let startPoint = minValue + 100 * Double.random(in: 0...2)
         var point = startPoint
         var samples: [MetricSample] = []
