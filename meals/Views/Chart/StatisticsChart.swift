@@ -33,6 +33,9 @@ struct StatisticsChart: UIViewRepresentable {
 
     func makeUIView(context: Context) -> some UIView {
         let aaChartView = AAChartView()
+        aaChartView.backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
+        ? UIColor.black
+        : UIColor.white
         let aaChartModel = getModel()
         aaChartView.aa_drawChartWithChartModel(aaChartModel)
         return aaChartView
@@ -50,13 +53,26 @@ struct StatisticsChart: UIViewRepresentable {
         let medians = statisticsBuckets.map {
             [$0.index, $0.median]
         }
+        let backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
+        ? "black"
+        : "white"
+        let foregroundColor = AAStyle(color:
+                                        UITraitCollection.current.userInterfaceStyle == .dark
+                                      ? "white"
+                                      : "black"
+        )
         return AAChartModel()
+            .backgroundColor(backgroundColor)
+            .yAxisLabelsStyle(foregroundColor)
+            .xAxisLabelsStyle(foregroundColor)
+            .dataLabelsStyle(foregroundColor)
                 .title(title)
                 .xAxisTickInterval(2)
                 .categories(categories)
                 .colorsTheme(colors)
                 .legendEnabled(false)
                 .dataLabelsEnabled(false)
+                .backgroundColor(backgroundColor)
                 .series([
                     AASeriesElement()
                             .type(.line)

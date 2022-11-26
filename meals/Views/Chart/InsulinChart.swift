@@ -13,6 +13,14 @@ struct InsulinChart: UIViewRepresentable {
     let start: Date
     let end: Date
     let samples: [MetricSample]
+    let backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
+    ? "black"
+    : "white"
+    let foregroundColor = AAStyle(color:
+                                    UITraitCollection.current.userInterfaceStyle == .dark
+                                  ? "white"
+                                  : "black"
+    )
     
     init(start: Date, end: Date, samples: [MetricSample]){
         self.start = start
@@ -23,6 +31,9 @@ struct InsulinChart: UIViewRepresentable {
     func updateUIView(_ uiView: UIViewType, context: Context) {
         if let chartView = uiView as? AAChartView {
             let aaChartModel = getModel()
+            chartView.backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
+            ? UIColor.black
+            : UIColor.white
             chartView.aa_drawChartWithChartModel(aaChartModel)
         }
     }
@@ -38,7 +49,12 @@ struct InsulinChart: UIViewRepresentable {
     func getModel() -> AAChartModel{
         let data = getData()
         let categories = getCategories()
+       
         return AAChartModel()
+            .backgroundColor(backgroundColor)
+            .yAxisLabelsStyle(foregroundColor)
+            .xAxisLabelsStyle(foregroundColor)
+            .dataLabelsStyle(foregroundColor)
             .chartType(.area)
             .animationType(.easeInSine)
             .categories(categories)
