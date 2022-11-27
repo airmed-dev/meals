@@ -13,6 +13,7 @@ struct EventList: View {
     @EnvironmentObject var mealStore: MealStore
     @EnvironmentObject var eventStore: EventStore
     @EnvironmentObject var photoStore: PhotoStore
+    var metricStore: MetricStore = Store.createMetricStore()
     @State var ready = false
     
     // Meal event logging
@@ -40,7 +41,7 @@ struct EventList: View {
                 )
             } else if let selectedEvent = selectedEvent {
                 header
-                statistics(event: selectedEvent)
+                metrics(event: selectedEvent)
                 timeline
             } else {
                 EventListSkeleton()
@@ -92,8 +93,7 @@ struct EventList: View {
         .frame(height: 150)
     }
     
-    func statistics(event: Event) -> some View {
-        let metricStore = Store.createMetricStore()
+    func metrics(event: Event) -> some View {
         return VStack {
             HStack {
                 Text("Metrics")
@@ -156,6 +156,7 @@ struct EventList_Previews: PreviewProvider {
     
     static var previews: some View {
         let mealID = 1
+        let metricStore = Debug()
         let store = Store(
             meals: [
                 Meal(id: mealID, name: "Test", description: "Test")
@@ -172,7 +173,7 @@ struct EventList_Previews: PreviewProvider {
                 Event(meal_id: mealID),
             ]
         )
-        EventList()
+        EventList(metricStore: metricStore)
             .environmentObject(store.mealStore)
             .environmentObject(store.eventStore)
             .environmentObject(store.photoStore)
@@ -184,7 +185,7 @@ struct EventList_Previews: PreviewProvider {
             events: [
             ]
         )
-        EventList()
+        EventList(metricStore: metricStore)
             .environmentObject(emptyStore.mealStore)
             .environmentObject(emptyStore.eventStore)
             .environmentObject(emptyStore.photoStore)
