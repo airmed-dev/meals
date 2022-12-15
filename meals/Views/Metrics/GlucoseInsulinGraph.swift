@@ -12,6 +12,7 @@ import AAInfographics
 struct GlucoseInsulinGraph: View {
     var metricStore: MetricStore
     
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     @State var insulinSamples: [MetricSample] = []
     @State var glucoseSamples: [MetricSample] = []
     
@@ -44,7 +45,8 @@ struct GlucoseInsulinGraph: View {
                                      end: event.date.advanced(
                                         by: TimeInterval(hours*60*60)
                                      ),
-                                     samples: glucoseSamples
+                                     samples: glucoseSamples,
+                                     colorScheme: colorScheme
                         )
                     }
                     
@@ -61,7 +63,8 @@ struct GlucoseInsulinGraph: View {
                             end: event.date.addingTimeInterval(
                                 TimeInterval(60*60*hours)
                             ),
-                            samples: insulinSamples
+                            samples: insulinSamples,
+                            colorScheme: colorScheme
                         )
                     }
                 }

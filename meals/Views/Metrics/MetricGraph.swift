@@ -11,12 +11,13 @@ import AAInfographics
 
 
 struct MetricGraph: View {
-    var metricStore: MetricStore
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     @State private var samples: [MetricSample] = []
     @State var error: Error? = nil
     @State var loading = false
     
+    var metricStore: MetricStore
     var hideTitle: Bool = false
     var event: Event
     var dataType: DataType
@@ -45,12 +46,14 @@ struct MetricGraph: View {
                     InsulinChart(
                         start: event.date,
                         end: event.date.addingTimeInterval(TimeInterval(60*60*hours)),
-                        samples: samples
+                        samples: samples,
+                        colorScheme: colorScheme
                     )
                 case .Glucose:
                     GlucoseChart(start: event.date,
                                  end: event.date.advanced(by: TimeInterval(hours*60*60)),
-                                 samples: samples
+                                 samples: samples,
+                                 colorScheme: colorScheme
                     )
                 }
                 

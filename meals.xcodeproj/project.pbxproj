@@ -30,6 +30,7 @@
 		DF12302C28784216007156DD /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF12302B28784216007156DD /* BottomSheet */; };
 		DF123030287955F1007156DD /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12302F287955F1007156DD /* Nightscout.swift */; };
 		DF12303328795D6F007156DD /* MetricStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12303228795D6F007156DD /* MetricStore.swift */; };
+		DF27CFD52945D87D0044D3B0 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27CFD42945D87D0044D3B0 /* Theme.swift */; };
 		DF282F712838B8380044C1EF /* MealCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F702838B8380044C1EF /* MealCard.swift */; };
 		DF282F762838C27F0044C1EF /* CornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */; };
 		DF30479528F92A33007E2CC6 /* SwiftUITrackableScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = DF30479428F92A33007E2CC6 /* SwiftUITrackableScrollView */; };
@@ -85,6 +86,7 @@
 		DF11C2E82916479F00C18242 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		DF12302F287955F1007156DD /* Nightscout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
 		DF12303228795D6F007156DD /* MetricStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricStore.swift; sourceTree = "<group>"; };
+		DF27CFD42945D87D0044D3B0 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		DF282F702838B8380044C1EF /* MealCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealCard.swift; sourceTree = "<group>"; };
 		DF282F752838C27F0044C1EF /* CornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerRadiusModifier.swift; sourceTree = "<group>"; };
 		DF37D5E828354573007BEFE3 /* HealthKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKit.swift; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 				DFF2DFCD28813E88008251DC /* LoadingButton.swift */,
 				DF4FE1462928B8A20074F360 /* NoDataView.swift */,
 				DF4FE14C2928E7F40074F360 /* NoPhotoView.swift */,
+				DF27CFD42945D87D0044D3B0 /* Theme.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -347,6 +350,7 @@
 				DF12302A28784216007156DD /* XCRemoteSwiftPackageReference "BottomSheet" */,
 				DFDEC41028EFF63600E0410C /* XCRemoteSwiftPackageReference "AAChartKit-Swift" */,
 				DF30479328F92A33007E2CC6 /* XCRemoteSwiftPackageReference "trackable-scroll-view" */,
+				DF43DFA6294A0E9400E66554 /* XCRemoteSwiftPackageReference "SwiftCharts" */,
 			);
 			productRefGroup = DF07B3182826933700C164AB /* Products */;
 			projectDirPath = "";
@@ -401,6 +405,7 @@
 				DFF2DFCE28813E88008251DC /* LoadingButton.swift in Sources */,
 				DF8A73A228DF38E60095E9FF /* Error.swift in Sources */,
 				8FFA3FBEC18E8E8FFF166875 /* EventListSkeleton.swift in Sources */,
+				DF27CFD52945D87D0044D3B0 /* Theme.swift in Sources */,
 				8FFA38A56F641618F18F3FCB /* SettingsView.swift in Sources */,
 				8FFA330E49738C2FB106E80A /* Store.swift in Sources */,
 				DF4FE14B2928E6B60074F360 /* UpdateEventView.swift in Sources */,
@@ -649,6 +654,14 @@
 		DF38A93D286EE71B0041F304 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		DF43DFA6294A0E9400E66554 /* XCRemoteSwiftPackageReference "SwiftCharts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ivanschuetz/SwiftCharts";
 			requirement = {
 				branch = master;
 				kind = branch;
