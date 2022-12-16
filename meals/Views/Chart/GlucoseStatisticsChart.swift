@@ -25,6 +25,7 @@ struct GlucoseStatisticsChart: View {
     let range: TimeInterval
     let resolution: TimeInterval
     var samples: [(Date, [MetricSample])]
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
         let pointCount = samples.map{$1.count}.reduce(0, +)
@@ -34,7 +35,10 @@ struct GlucoseStatisticsChart: View {
                     colors: colors,
                     samples: samples,
                     range: range,
-                    resolution: resolution)
+                    resolution: resolution,
+                    roundingTo: 0, // TODO: Depends on units of glucose
+                    colorScheme: colorScheme
+            )
         } else {
             VStack {
                 Spacer()

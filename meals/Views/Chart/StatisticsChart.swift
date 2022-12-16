@@ -15,13 +15,24 @@ struct StatisticsChart: UIViewRepresentable {
     let resolution: TimeInterval
     let range: TimeInterval
     var samples: [(Date, [MetricSample])]
+    var roundingTo: Int
+    var colorScheme: ColorScheme
 
-    init(title: String, colors: [String], samples: [(Date, [MetricSample])], range: TimeInterval, resolution: TimeInterval) {
+    init(title: String,
+         colors: [String],
+         samples: [(Date, [MetricSample])],
+         range: TimeInterval,
+         resolution: TimeInterval,
+         roundingTo: Int,
+         colorScheme: ColorScheme
+    ) {
         self.title = title
         self.colors = colors
         self.samples = samples
         self.resolution = resolution
         self.range = range
+        self.roundingTo = roundingTo
+        self.colorScheme = colorScheme
     }
 
     func updateUIView(_ uiView: UIViewType, context: Context) {
@@ -45,27 +56,33 @@ struct StatisticsChart: UIViewRepresentable {
         let categories = getCategories()
         let statisticsBuckets = calculatePercentiles(eventSamples: samples, resolution: resolution)
         let percentiles25to75 = statisticsBuckets.map {
-            [$0.index, $0.percentile25, $0.percentile75]
+            [
+                $0.index,
+                rounded($0.percentile25, toPlaces: roundingTo),
+                rounded($0.percentile75, toPlaces: roundingTo)
+            ]
         }
         let minMaxs = statisticsBuckets.map {
-            [$0.index, $0.min, $0.max]
+            [
+                $0.index,
+                rounded($0.min, toPlaces: roundingTo),
+                rounded($0.max, toPlaces: roundingTo)
+            ]
         }
         let medians = statisticsBuckets.map {
-            [$0.index, $0.median]
+            [
+                $0.index,
+                rounded($0.median, toPlaces: roundingTo),
+            ]
         }
-        let backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
-        ? "black"
-        : "white"
-        let foregroundColor = AAStyle(color:
-                                        UITraitCollection.current.userInterfaceStyle == .dark
-                                      ? "white"
-                                      : "black"
-        )
+        let backgroundColor: String = Theme.backgroundColor(scheme: colorScheme).toHex()
+        let foregroundColor: String = Theme.foregroundColor(scheme: colorScheme).toHex()
+        let foregroundStyle = AAStyle(color: foregroundColor)
         return AAChartModel()
             .backgroundColor(backgroundColor)
-            .yAxisLabelsStyle(foregroundColor)
-            .xAxisLabelsStyle(foregroundColor)
-            .dataLabelsStyle(foregroundColor)
+            .yAxisLabelsStyle(foregroundStyle)
+            .xAxisLabelsStyle(foregroundStyle)
+            .dataLabelsStyle(foregroundStyle)
                 .title(title)
                 .xAxisTickInterval(2)
                 .categories(categories)
@@ -121,7 +138,9 @@ struct StatisticsChart_Previews: PreviewProvider {
                     title: "Insulin",
                     colors: ["#f00", "#800", "#500"],
                     samples: samples,
-                    range: range, resolution: 15 * 60
+                    range: range, resolution: 15 * 60,
+                    roundingTo: 2,
+                    colorScheme: .light
             )
         }
                 .background(.black)
