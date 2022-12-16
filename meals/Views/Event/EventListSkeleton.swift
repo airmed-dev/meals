@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Darwin
 import SwiftUI
 
 struct EventListSkeleton: View {
@@ -14,27 +15,29 @@ struct EventListSkeleton: View {
 
     // Skeletons sections
     var headerSkeleton: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Circle()
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(Color(uiColor: .systemGray3))
-            VStack {
-                Spacer()
-                HStack {
-                    textSkeleton.frame(height: 30)
-                    Spacer()
-                }
-                HStack {
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(
+                colors: [
+                    Color(uiColor: .systemGray6),
+                    Color(uiColor: .systemGray5),
+                ],
+                startPoint: .bottomLeading,
+                endPoint: .topTrailing
+            )
+            .frame(height: 150)
+            
+            HStack {
+                VStack(alignment: .leading) {
                     textSkeleton
-                            .frame(height: 10)
-                    Spacer()
+                        .frame(width: 200)
+                        .frame(height: 15)
+                    textSkeleton
+                        .frame(width: 100)
+                        .frame(height: 10)
                 }
-                Spacer()
             }
-            Spacer()
+            .padding()
         }
-                .frame(height: 100)
-                .padding(.leading, 5)
     }
 
     var statisticsSkeleton: some View {
@@ -44,6 +47,7 @@ struct EventListSkeleton: View {
                         .font(.headline)
                         .padding(.bottom, 5)
                         .padding(.leading, 5)
+                        .padding(.top, 5)
                 Spacer()
             }
             withAnimation(.spring()) {
@@ -56,21 +60,12 @@ struct EventListSkeleton: View {
 
     var timelineSkeleton: some View {
         VStack {
-            HStack {
+            HStack(alignment: .firstTextBaseline) {
                 Text("Timeline")
                         .font(.headline)
                         .padding(.bottom, 5)
                         .padding(.top, 5)
                         .padding(.leading, 10)
-                Spacer()
-                Circle()
-                        .foregroundColor(Color(uiColor: .systemGray3))
-                        .frame(width: 25)
-                        .frame(height: 25)
-                        .overlay {
-                            Image(systemName: "plus")
-                                    .padding()
-                        }
             }
                     .frame(height: 20)
                     .padding(.trailing, 10)
@@ -101,6 +96,7 @@ struct EventListSkeleton: View {
                 Text("Glucose")
                         .font(.subheadline)
                         .padding(.leading, 5)
+                        .padding(.top, 5)
                 Spacer()
             }
             statisticsGraphSkeleton
@@ -114,6 +110,7 @@ struct EventListSkeleton: View {
                 Text("Insulin")
                         .font(.subheadline)
                         .padding(.leading, 5)
+                        .padding(.top, 5)
                 Spacer()
             }
             statisticsGraphSkeleton
@@ -127,14 +124,29 @@ struct EventListSkeleton: View {
                     .foregroundColor(Color(uiColor: .systemGray6))
                     .cornerRadius(15)
             GeometryReader { geo in
-                ForEach(
-                        Array(stride(from: 30, to: geo.size.width, by: geo.size.width/7)), id: \.self
-                ) { index in
-                    Rectangle()
+                let xOffset:CGFloat = 5
+                let yOffset:CGFloat = 30
+                let stepSize = geo.size.width/30
+                let pointSize:CGFloat = 10
+                let xValues = Array(stride(
+                    from: xOffset,
+                    to: geo.size.width,
+                    by: stepSize
+                ))
+                
+                let yRange = (geo.size.height - yOffset) / 2
+                ForEach( xValues , id: \.self ) { xValue in
+                    let yValue = yRange + sin(CGFloat(xValue / stepSize)) * pointSize
+                    Circle()
                             .foregroundColor(Color(uiColor: .systemGray3))
-                            .frame(width: 30, height: geo.size.height*0.8)
-                            .cornerRadius(15)
-                            .position(x: index, y: geo.size.height/2)
+                            .frame(
+                                width: pointSize,
+                                height: pointSize
+                            )
+                            .position(
+                                x: xValue,
+                                y: yOffset + yValue
+                            )
                 }
             }
         }
@@ -171,4 +183,11 @@ struct EventListSkeleton: View {
         }
     }
 
+}
+
+
+struct EventListSkeleton_Previews: PreviewProvider {
+    static var previews: some View {
+        EventListSkeleton()
+    }
 }
