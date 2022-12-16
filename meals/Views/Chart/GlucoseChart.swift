@@ -41,8 +41,20 @@ struct GlucoseChart: UIViewRepresentable {
     func getModel() -> AAChartModel{
         let data = getData()
         var stepSize:Double = 50
-        let yAxisMinimum: Double = floor(min(50, data.min()!) / stepSize) * stepSize
-        let yAxisMaximum = ceil(data.max()! / stepSize) * stepSize
+        let largestMinimum:Double = 50
+        let smallestMaximum:Double = 150
+        let yAxisMinimum: Double = floor(
+            min(
+                largestMinimum,
+                data.min()!
+            ) / stepSize
+        ) * stepSize
+        let yAxisMaximum = ceil(
+            max(
+                data.max()!,
+                smallestMaximum
+            ) / stepSize
+        ) * stepSize
         
         let yRange = yAxisMaximum - yAxisMinimum
         let stepCount = yRange / stepSize
@@ -104,7 +116,15 @@ struct GlucoseChart: UIViewRepresentable {
     }
     
     func getCategories() -> [String] {
-        samples.map { formatTime(date: $0.date)}
+        samples.map { formatTime(
+            date: roundDate($0.date)
+        )}
+    }
+    
+    func roundDate(_ date: Date) -> Date {
+        let stepSize = TimeInterval(60) * 30
+        let roundedSeconds = floor(date.timeIntervalSince1970 / stepSize) * stepSize
+        return Date(timeIntervalSince1970: roundedSeconds)
     }
     
     func formatTime(date: Date) -> String{
