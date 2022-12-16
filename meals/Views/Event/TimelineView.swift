@@ -11,7 +11,6 @@ import SwiftUITrackableScrollView
 struct TimelineView: View {
     @EnvironmentObject var mealStore: MealStore
     @EnvironmentObject var photoStore: PhotoStore
-    @State private var offset: CGFloat = 0.0
     @Binding var selectedEvent: Event?
     private let cardWidth: CGFloat
     private let spacing:CGFloat = 5
@@ -25,28 +24,18 @@ struct TimelineView: View {
     }
     
     var body: some View {
-        VStack {
-            ZStack(alignment: .top) {
-                scrollableTimeline
-                stickyHeader
-            }
-            Spacer()
-        }
-    }
-    var scrollableTimeline: some View {
-        TrackableScrollView(.horizontal,contentOffset: $offset) {
+        ScrollView(.horizontal) {
             LazyHStack(spacing: spacing) {
                 ForEach(eventGroupDateKeys(), id: \.self){ groupDateKey in
                     cardGroup(groupDateKey:  groupDateKey)
                 }
             }
         }
-        
     }
-    
+
     func cardGroup(groupDateKey: String) -> some View {
         VStack() {
-            LazyHStack(spacing: spacing) {
+            HStack(spacing: spacing) {
                 let events = eventsPerDates(groupDateKey: groupDateKey)
                 ForEach(events){ event in
                     timelineCard(event: event,
@@ -108,51 +97,6 @@ struct TimelineView: View {
         .onTapGesture {
             selectedEvent = event
         }
-    }
-    
-    var stickyHeader: some View {
-        // Sticky date/time header
-        HStack {
-            VStack {
-                HStack {
-                    Text(DateUtils.formatDayMonth(date: leftMostDate))
-                    Spacer()
-                }
-                Spacer()
-                HStack {
-                    Text(DateUtils.formatTime(date: leftMostDate))
-                    Spacer()
-                }
-            }
-            .padding([.leading, .top], 5)
-            .background(
-                LinearGradient(
-                    stops: [
-                        Gradient.Stop(color: Color(UIColor.systemBackground), location: 0),
-                        Gradient.Stop(color: Color(UIColor.systemBackground), location: 0.9),
-                        Gradient.Stop(color: .white.opacity(0), location: 0.99)
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .frame(width: cardWidth)
-            Spacer()
-        }
-        .frame(height: 50)
-    }
-    
-    var leftMostDate: Date {
-        let cardWithSpacing = cardWidth + spacing
-        let adjustedToMidPoint = offset + (cardWithSpacing / 2)
-        let eventIndexByOffset = max(
-            0,
-            min(
-                Int(adjustedToMidPoint / cardWithSpacing),
-                events.count-1
-            )
-        )
-        return events[eventIndexByOffset].date
     }
     
     func eventGroupDateKeys() -> [String] {
