@@ -13,27 +13,18 @@ struct InsulinChart: UIViewRepresentable {
     let start: Date
     let end: Date
     let samples: [MetricSample]
-    let backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
-    ? "black"
-    : "white"
-    let foregroundColor = AAStyle(color:
-                                    UITraitCollection.current.userInterfaceStyle == .dark
-                                  ? "white"
-                                  : "black"
-    )
+    let colorScheme: ColorScheme
     
-    init(start: Date, end: Date, samples: [MetricSample]){
+    init(start: Date, end: Date, samples: [MetricSample], colorScheme: ColorScheme){
         self.start = start
         self.end = end
         self.samples = samples
+        self.colorScheme = colorScheme
     }
     
     func updateUIView(_ uiView: UIViewType, context: Context) {
         if let chartView = uiView as? AAChartView {
             let aaChartModel = getModel()
-            chartView.backgroundColor = UITraitCollection.current.userInterfaceStyle == .dark
-            ? UIColor.black
-            : UIColor.white
             chartView.aa_drawChartWithChartModel(aaChartModel)
         }
     }
@@ -49,12 +40,14 @@ struct InsulinChart: UIViewRepresentable {
     func getModel() -> AAChartModel{
         let data = getData()
         let categories = getCategories()
-       
+        let backgroundColor: String = Theme.backgroundColor(scheme: colorScheme).toHex()
+        let foregroundColor: String = Theme.foregroundColor(scheme: colorScheme).toHex()
+        let foregroundStyle = AAStyle(color: foregroundColor)
         return AAChartModel()
             .backgroundColor(backgroundColor)
-            .yAxisLabelsStyle(foregroundColor)
-            .xAxisLabelsStyle(foregroundColor)
-            .dataLabelsStyle(foregroundColor)
+            .yAxisLabelsStyle(foregroundStyle)
+            .xAxisLabelsStyle(foregroundStyle)
+            .dataLabelsStyle(foregroundStyle)
             .chartType(.area)
             .animationType(.easeInSine)
             .categories(categories)

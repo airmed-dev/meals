@@ -54,7 +54,7 @@ struct MealCard: View {
                             }
                         }
                         .padding([.leading, .trailing,.bottom], 5)
-                        .padding([.leading, .trailing,.top], 15)
+                        .padding([.leading, .trailing,.top], 1)
                         .foregroundColor(.white)
                         .background(
                             .linearGradient(
