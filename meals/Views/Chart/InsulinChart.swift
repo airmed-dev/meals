@@ -43,17 +43,28 @@ struct InsulinChart: UIViewRepresentable {
         let backgroundColor: String = Theme.backgroundColor(scheme: colorScheme).toHex()
         let foregroundColor: String = Theme.foregroundColor(scheme: colorScheme).toHex()
         let foregroundStyle = AAStyle(color: foregroundColor)
+        let max = ceil(data.max()!)
+        var yAxisTickPositions = Array(stride(
+            from: 0,
+            through: max,
+            by: 1
+        ))
+        if yAxisTickPositions.last != max {
+            yAxisTickPositions.append(max)
+        }
         return AAChartModel()
             .backgroundColor(backgroundColor)
             .yAxisLabelsStyle(foregroundStyle)
+            .yAxisTickPositions(yAxisTickPositions)
             .xAxisLabelsStyle(foregroundStyle)
+            .xAxisGridLineWidth(1)
+            .xAxisTickInterval(5)
             .dataLabelsStyle(foregroundStyle)
             .chartType(.area)
             .animationType(.easeInSine)
             .categories(categories)
             .colorsTheme(["#fe9711"])
             .markerRadius(0)
-            .xAxisTickInterval(5)
             .dataLabelsEnabled(false)
             .legendEnabled(false)
             .series([
