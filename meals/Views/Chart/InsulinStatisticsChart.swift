@@ -14,6 +14,7 @@ struct InsulinStatisticsChart: View {
     let range: TimeInterval
     let resolution: TimeInterval
     var samples: [(Date, [MetricSample])]
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var body: some View {
         let pointCount = samples
@@ -24,7 +25,10 @@ struct InsulinStatisticsChart: View {
                 colors: colors,
                 samples: samples,
                 range: range,
-                resolution: resolution)
+                resolution: resolution,
+                roundingTo: 2,
+                colorScheme: colorScheme
+            )
         } else {
             VStack {
                 Spacer()

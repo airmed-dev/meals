@@ -66,7 +66,8 @@ struct GlucoseChart: UIViewRepresentable {
     }
     
     func getData() -> [Double] {
-        samples.map { $0.value }
+        // TODO: It should behave differently for mmol/L
+        samples.map { rounded($0.value, toPlaces: 0)}
     }
     
     func getCategories() -> [String] {
