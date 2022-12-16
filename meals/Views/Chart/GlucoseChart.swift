@@ -40,14 +40,39 @@ struct GlucoseChart: UIViewRepresentable {
     
     func getModel() -> AAChartModel{
         let data = getData()
+        var stepSize:Double = 50
+        let yAxisMinimum: Double = floor(min(50, data.min()!) / stepSize) * stepSize
+        let yAxisMaximum = ceil(data.max()! / stepSize) * stepSize
+        
+        let yRange = yAxisMaximum - yAxisMinimum
+        let stepCount = yRange / stepSize
+        if  stepCount > 4 &&
+            stepCount.truncatingRemainder(dividingBy: 2) == 0 {
+            stepSize *= 2
+        }
+        
+        let ySteps = Array(
+            stride(
+                from: yAxisMinimum,
+                through: yAxisMaximum,
+                by: stepSize
+            )
+            .map {
+                    rounded($0, toPlaces: 0)
+                }
+        )
+        
         let categories = getCategories()
         let backgroundColor: String = Theme.backgroundColor(scheme: colorScheme).toHex()
         let foregroundColor: String = Theme.foregroundColor(scheme: colorScheme).toHex()
         let foregroundStyle = AAStyle(color: foregroundColor)
         return AAChartModel()
             .backgroundColor(backgroundColor)
+            .yAxisTickPositions(ySteps)
+            .animationDuration(300)
             .yAxisLabelsStyle(foregroundStyle)
             .xAxisLabelsStyle(foregroundStyle)
+            .xAxisGridLineWidth(1)
             .dataLabelsStyle(foregroundStyle)
             .chartType(.line)
             .animationType(.easeInSine)
@@ -55,12 +80,20 @@ struct GlucoseChart: UIViewRepresentable {
             .colorsTheme(["#11a7fe"])
             .markerRadius(3)
             .xAxisTickInterval(5)
+            .yAxisMin(50)
             .dataLabelsEnabled(false)
             .legendEnabled(false)
             .series([
                 AASeriesElement()
                     .lineWidth(0)
                     .name("Glucose")
+                    .zones([
+                        AAZonesElement()
+                            .value(70)
+                            .color(Color.red.toHex()),
+                        AAZonesElement().value(200).color(Color.green.toHex()),
+                        AAZonesElement().value(999).color(Color.red.toHex()),
+                    ])
                     .data(data),
             ])
     }
